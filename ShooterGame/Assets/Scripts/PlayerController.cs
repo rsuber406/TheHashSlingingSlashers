@@ -26,7 +26,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
         Movement();
+        Sprint();
+      
+
     }
 
     void Movement()
@@ -39,6 +43,31 @@ public class PlayerController : MonoBehaviour
         }
         moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
         controller.Move(moveDir * movementSpeed * Time.deltaTime);
+        Jump();
+        controller.Move(playerVel * Time.deltaTime);
+        playerVel.y -= gravity * Time.deltaTime;
 
+    }
+    void Sprint()
+    {
+        if (Input.GetButtonDown("Sprint") && !isSprinting)
+        {
+            isSprinting = true;
+            movementSpeed = movementSpeed * sprintMod;
+        }
+        else if(Input.GetButtonUp("Sprint") && controller.isGrounded)
+        {
+            isSprinting= false;
+            movementSpeed = movementSpeed / sprintMod;
+        }
+    }
+
+    void Jump()
+    {
+        if(Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        {
+            jumpCount++;
+            playerVel.y = jumpSpeed;
+        }
     }
 }
