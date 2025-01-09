@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
             isSprinting = true;
             movementSpeed = movementSpeed * sprintMod;
         }
-        else if(Input.GetButtonUp("Sprint") && controller.isGrounded)
+        else if(Input.GetButtonUp("Sprint") )
         {
             isSprinting= false;
             movementSpeed = movementSpeed / sprintMod;
