@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamage
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] int movementSpeed;
@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int gravity;
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
+    [SerializeField] int health;
 
     
 
@@ -68,6 +69,15 @@ public class PlayerController : MonoBehaviour
         {
             jumpCount++;
             playerVel.y = jumpSpeed;
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        if(health <= 0)
+        {
+            GameManager.instance.statePause();
         }
     }
 }

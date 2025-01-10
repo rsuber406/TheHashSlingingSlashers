@@ -17,6 +17,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] int facePlayerSpeed;
     [SerializeField] bool chasePlayer;
     [SerializeField] GameObject bullet;
+    [SerializeField] Transform shootPos;
 
     Vector3 playerDirection;
     Vector3 playerPosition;
@@ -98,6 +99,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             // Implement shooting at player
             // Implement random number offsets so the AI does not laser beam the player
+            Instantiate(bullet, shootPos.position, transform.rotation);
             yield return new WaitForSeconds(shootRate);
             isShooting = false;
         }
@@ -106,7 +108,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             // 
-
+            Instantiate(bullet, shootPos.position, transform.rotation);
             yield return new WaitForSeconds(shootRate);
             isShooting = false;
         }
