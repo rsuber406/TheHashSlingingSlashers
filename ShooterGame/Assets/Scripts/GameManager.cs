@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 
     public Image playerHPBar;
     public GameObject damagePanel;
+    public ScoreSys scoreSys;
 
     public PlayerController playerscript;
     public GameObject player;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
+        scoreSys = FindFirstObjectByType<ScoreSys>();
     }
 
     // Update is called once per frame
@@ -81,5 +83,7 @@ public class GameManager : MonoBehaviour
         menuActive = menuLose;
         menuActive.SetActive(true);
     }
+
+    
 }
 
