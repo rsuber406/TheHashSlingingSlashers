@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,9 +15,12 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] Renderer model;
     [SerializeField] float shootRate;
     [SerializeField] int facePlayerSpeed;
+    [SerializeField] bool chasePlayer;
+    [SerializeField] GameObject bullet;
 
     Vector3 playerDirection;
-   
+    Vector3 playerPosition;
+    Vector3 playerPreviousPosition;
     bool isShooting;
     bool playerInRange;
     Color originalColor;
@@ -30,18 +34,25 @@ public class EnemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
+        PlayerDetection();
+    }
+    void PlayerDetection()
+    {
         if (playerInRange)
         {
+            playerPreviousPosition = GameManager.instance.player.transform.position;
             playerDirection = GameManager.instance.player.transform.position - transform.position;
+
+            if(chasePlayer)
             agent.SetDestination(GameManager.instance.player.transform.position);
 
-            if(agent.remainingDistance < agent.stoppingDistance)
+            if (agent.remainingDistance < agent.stoppingDistance)
             {
                 FaceTarget();
             }
             if (!isShooting)
             {
-                // Implement shoot
+                StartCoroutine(Shoot());
             }
         }
     }
@@ -76,6 +87,29 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         Quaternion rotation = Quaternion.LookRotation(playerDirection);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, facePlayerSpeed * Time.deltaTime);
+    }
+
+    IEnumerator Shoot()
+    {
+        isShooting = true;
+        playerPosition = GameManager.instance.player.transform.position;
+        bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+        if (playerStationary)
+        {
+            // Implement shooting at player
+            // Implement random number offsets so the AI does not laser beam the player
+            yield return new WaitForSeconds(shootRate);
+            isShooting = false;
+        }
+
+        else
+        {
+            // Implement prediction of player movement with random offset to the player is not being laser beamed
+            // 
+
+            yield return new WaitForSeconds(shootRate);
+            isShooting = false;
+        }
     }
   
 }
