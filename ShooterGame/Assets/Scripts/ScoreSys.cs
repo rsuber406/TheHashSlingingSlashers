@@ -7,10 +7,11 @@ public class ScoreSys : MonoBehaviour
     [SerializeField] private Text scoreText;
 
     private float startTime;
+
     void Start()
     {
        
-        startTime = Time.time; // records start time
+        startTime = Time.time;
         UpdateScoreUI();
         
     }
@@ -25,7 +26,9 @@ public class ScoreSys : MonoBehaviour
     }
     private void UpdateScoreUI()
     {
-
+        //TODO need UI stuff done before I can do anything with this. ~Dakota
     }
+
+
     
 }
