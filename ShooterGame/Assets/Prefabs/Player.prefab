@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 29848391063268711}
   - component: {fileID: 7068933434233072819}
   - component: {fileID: 2320961185408548562}
+  - component: {fileID: 5430685285324889793}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -180,7 +181,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   health: 0
-  shootPos: {fileID: 0}
   bullet: {fileID: 0}
 --- !u!23 &29848391063268711
 MeshRenderer:
@@ -275,3 +275,16 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5430685285324889793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5957547874870576521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e1d452161e0314f9078ec95d32d3b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  score: 0
