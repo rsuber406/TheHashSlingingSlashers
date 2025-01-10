@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
                 menuActive = menuPause;
                 menuActive.SetActive(true);
             }
-            else if (menuActive == menuPause)
+            else if (menuActive != null)
             {
                 stateUnpause();
             }
@@ -49,19 +49,20 @@ public class GameManager : MonoBehaviour
 
     public void statePause()
     {
-        isPaused = !isPaused;
-        Time.timeScale = 0f;
+        isPaused = true;
+        Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }
     public void stateUnpause()
     {
-        isPaused = !isPaused;
-        Time.timeScale = 1f;
+        isPaused = false;
+        Time.timeScale = 1;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+
     }
 
     public void updateGameGoal(int amount)
@@ -77,13 +78,15 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void youLose()
+    public void Lose()
     {
         statePause();
         menuActive = menuLose;
         menuActive.SetActive(true);
     }
 
-    
+
+
+
 }
 

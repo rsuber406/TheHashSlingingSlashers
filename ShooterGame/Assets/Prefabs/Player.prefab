@@ -50,6 +50,10 @@ MonoBehaviour:
   lockVertMin: -90
   lockVertMax: 90
   invYAxis: 0
+  leftLean: 0
+  rightLean: 0
+  leanSpeed: 0
+  leftCameraLeanMovement: 0
 --- !u!20 &9099559038996362664
 Camera:
   m_ObjectHideFlags: 0
@@ -175,6 +179,9 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  health: 0
+  shootPos: {fileID: 0}
+  bullet: {fileID: 0}
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0

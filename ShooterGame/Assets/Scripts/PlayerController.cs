@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamage
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] int movementSpeed;
@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int gravity;
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
+    [SerializeField] int health;
+    [SerializeField] GameObject bullet;
 
     
 
@@ -29,7 +31,7 @@ public class PlayerController : MonoBehaviour
        
         Movement();
         Sprint();
-      
+        Shoot();
 
     }
 
@@ -68,6 +70,24 @@ public class PlayerController : MonoBehaviour
         {
             jumpCount++;
             playerVel.y = jumpSpeed;
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        if(health <= 0)
+        {
+            GameManager.instance.Lose();
+        }
+    }
+
+    void Shoot()
+    {
+        if (Input.GetButtonDown("Shoot"))
+        {
+            Instantiate(bullet, Camera.main.transform.position, Camera.main.transform.rotation);
+
         }
     }
 }
