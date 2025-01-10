@@ -48,9 +48,11 @@ public class EnemyAI : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         health -= amount;
-        if(health <= 0)
+       //TODO FLASH RED ~Dakota
+        if (health <= 0)
         {
-
+            GameManager.instance.scoreSys.AddScore(100);
+            Destroy(gameObject);
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -75,4 +77,5 @@ public class EnemyAI : MonoBehaviour, IDamage
         Quaternion rotation = Quaternion.LookRotation(playerDirection);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, facePlayerSpeed * Time.deltaTime);
     }
+  
 }
