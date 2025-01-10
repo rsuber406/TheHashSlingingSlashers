@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
+    [SerializeField] GameObject bullet;
 
     
 
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour, IDamage
        
         Movement();
         Sprint();
-      
+        Shoot();
 
     }
 
@@ -77,7 +78,16 @@ public class PlayerController : MonoBehaviour, IDamage
         health -= amount;
         if(health <= 0)
         {
-            GameManager.instance.statePause();
+            GameManager.instance.Lose();
+        }
+    }
+
+    void Shoot()
+    {
+        if (Input.GetButtonDown("Shoot"))
+        {
+            Instantiate(bullet, Camera.main.transform.position, Camera.main.transform.rotation);
+
         }
     }
 }

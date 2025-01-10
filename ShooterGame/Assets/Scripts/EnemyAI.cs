@@ -63,6 +63,7 @@ public class EnemyAI : MonoBehaviour, IDamage
        //TODO FLASH RED ~Dakota
         if (health <= 0)
         {
+            // Without the proper reference, this will cause issues and not despawn the gameobject
             GameManager.instance.scoreSys.AddScore(100);
             Destroy(gameObject);
         }

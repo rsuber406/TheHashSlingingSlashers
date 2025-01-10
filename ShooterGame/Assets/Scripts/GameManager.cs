@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void youLose()
+    public void Lose()
     {
         statePause();
         menuActive = menuLose;
@@ -87,6 +87,6 @@ public class GameManager : MonoBehaviour
 
 
 
-    
+
 }
 
