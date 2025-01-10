@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public Image playerHPBar;
     public GameObject damagePanel;
 
-  ///  public playerController playerscript;
+    public PlayerController playerscript;
     public GameObject player;
 
     public bool isPaused;
@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-        player = GameObject.FindWithTag("player");
- //       playerscript = player.GetComponent<playerController>();
+        player = GameObject.FindWithTag("Player");
+        playerscript = player.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
