@@ -25,7 +25,6 @@ public class ScoreDisplay : MonoBehaviour
         if (scoreSys != null)
         {
             scoreText.text = "Score: " + scoreSys.GetScore().ToString();
-
         }
     }
 }

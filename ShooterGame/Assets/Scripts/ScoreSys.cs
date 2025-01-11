@@ -6,10 +6,11 @@ public class ScoreSys : MonoBehaviour
     [SerializeField] private int score;
 
     private float startTime;
+    GameTimer currGameTime;
 
     void Start()
     {
-       
+       currGameTime = FindFirstObjectByType<GameTimer>();
         startTime = Time.time;
         
     }
@@ -23,8 +24,9 @@ public class ScoreSys : MonoBehaviour
 
     public void AddFinalScore(int basePoints)
     {
-        float timeTaken = Time.time - startTime; 
-        float scoreMultiplier = Mathf.Max(1f, 10f - timeTaken);
+        float timeTaken = Time.time - startTime;
+        float gameTimer = currGameTime.GetTime();
+        float scoreMultiplier = Mathf.Max(1f, gameTimer - timeTaken);
         int finalScore = Mathf.RoundToInt(scoreMultiplier * basePoints);
         score += finalScore;
        //This is for end of game

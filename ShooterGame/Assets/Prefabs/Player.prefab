@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2064390844922374682}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0.273}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50,10 +50,10 @@ MonoBehaviour:
   lockVertMin: -90
   lockVertMax: 90
   invYAxis: 0
-  leftLean: 0
-  rightLean: 0
-  leanSpeed: 0
-  leftCameraLeanMovement: 0
+  leftLean: -45
+  rightLean: 45
+  leanSpeed: 20
+  leftCameraLeanMovement: -5
 --- !u!20 &9099559038996362664
 Camera:
   m_ObjectHideFlags: 0
@@ -123,6 +123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4125394140292719060}
   - component: {fileID: 4252975970622285560}
+  - component: {fileID: 5125041522626363649}
   - component: {fileID: 1480984659832651383}
   - component: {fileID: 29848391063268711}
   - component: {fileID: 7068933434233072819}
@@ -160,6 +161,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5957547874870576521}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &5125041522626363649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5957547874870576521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f177bd83796f57d498d5baf6ec9b2397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameTime: 120
 --- !u!114 &1480984659832651383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,13 +190,13 @@ MonoBehaviour:
   sprintMod: 2
   jumpSpeed: 20
   jumpMax: 2
-  gravity: 25
+  gravity: 40
   controller: {fileID: 2320961185408548562}
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
-  health: 0
-  bullet: {fileID: 0}
+  health: 5
+  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -243,7 +257,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
