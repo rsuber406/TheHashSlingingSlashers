@@ -1,26 +1,29 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FinishLine : MonoBehaviour
 {
     public ScoreSys scoreSys;
-    private bool FinishPlane = false;
+    private bool finishPlane = false;
 
     // Use this for initialization
     void Start()
     {
         scoreSys = FindFirstObjectByType<ScoreSys>();
-        FinishPlane = false;
+        finishPlane = false;
 
     }
 
     void OnTriggerEnter(Collider other)
     {
-        //game pause code goes here
 
-            FinishPlane = true;
-            scoreSys.AddScore(10);
+        if (other.CompareTag("Player"))
+        {
+            finishPlane = true;
+            GameManager.instance.statePause();
+            GameManager.instance.Win();
+        }
 
+        
     }
 
 }
