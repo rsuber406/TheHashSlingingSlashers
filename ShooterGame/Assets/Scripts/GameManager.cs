@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     public PlayerController playerscript;
     public GameObject player;
+    public GameTimer gameTimer;
 
     public bool isPaused;
 

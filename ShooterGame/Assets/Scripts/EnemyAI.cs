@@ -64,7 +64,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         if (health <= 0)
         {
             // Without the proper reference, this will cause issues and not despawn the gameobject
-            GameManager.instance.scoreSys.AddScore(100);
+            GameManager.instance.scoreSys.AddFlatScore(100);
             Destroy(gameObject);
         }
     }

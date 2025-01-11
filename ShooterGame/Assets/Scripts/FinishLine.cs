@@ -19,6 +19,8 @@ public class FinishLine : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             finishPlane = true;
+          int finalScore = GameManager.instance.scoreSys.GetScore();
+          GameManager.instance.scoreSys.AddFinalScore(finalScore);
             GameManager.instance.statePause();
             GameManager.instance.Win();
         }
