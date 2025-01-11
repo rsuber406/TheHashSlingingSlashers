@@ -15,13 +15,19 @@ public class ScoreSys : MonoBehaviour
     }
 
 
-    public void AddScore(int basePoints)
+    public void AddFlatScore(int basePoints)
+    {
+        score += basePoints; 
+        //for kills
+    }
+
+    public void AddFinalScore(int basePoints)
     {
         float timeTaken = Time.time - startTime; 
         float scoreMultiplier = Mathf.Max(1f, 10f - timeTaken);
         int finalScore = Mathf.RoundToInt(scoreMultiplier * basePoints);
         score += finalScore;
-       
+       //This is for end of game
     }
 
     public int GetScore()

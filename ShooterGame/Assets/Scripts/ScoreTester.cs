@@ -22,7 +22,7 @@ public class ScoreTester : MonoBehaviour
 
         if(timer >= 5f)
         {
-            scoreSys.AddScore(pointsToAdd);
+            scoreSys.AddFlatScore(pointsToAdd);
             timer = 0f;
         }
         
