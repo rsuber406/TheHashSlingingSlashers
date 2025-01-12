@@ -59,7 +59,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     }
     public void TakeDamage(int amount)
     {
-        health -= amount;
+       // health -= amount;
        //TODO FLASH RED ~Dakota
         if (health <= 0)
         {
