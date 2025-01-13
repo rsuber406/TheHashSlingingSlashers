@@ -97,5 +97,6 @@ public class PlayerController : MonoBehaviour, IDamage
         GameManager.instance.FlashDamageScreenOn();
         yield return new WaitForSeconds(0.1f);
         GameManager.instance.FlashDamageScreenOff();
+      
     }
 }
