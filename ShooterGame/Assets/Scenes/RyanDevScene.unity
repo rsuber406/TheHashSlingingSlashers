@@ -389,17 +389,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1773191027522776447, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.66
+      objectReference: {fileID: 0}
     - target: {fileID: 1885009563012216244, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
       propertyPath: health
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1885009563012216244, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
       propertyPath: shootRate
-      value: 1
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4456816469251933450, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456816469251933450, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8853378385432115658, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8853378385432115658, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8853378385432115658, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8853378385432115658, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8853378385432115658, guid: 1f1d66e2435b508459c134e96862fb55, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

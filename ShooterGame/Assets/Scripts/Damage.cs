@@ -15,28 +15,33 @@ public class Damage : MonoBehaviour
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
 
-    
+
     void Start()
     {
-        if(damageType == DamageType.Moving)
+        if (damageType == DamageType.Moving)
         {
             rigidBody.linearVelocity = transform.forward * bulletSpeed;
             Destroy(gameObject, timeToDespawn);
         }
     }
 
-    // Update is called once per frame
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger) return;
+        if (other.isTrigger)
+        {
+            return;
+        }
+
         IDamage dmg = other.GetComponent<IDamage>();
-        if(dmg != null)
+        if (dmg != null)
         {
             dmg.TakeDamage(damage);
         }
-        if(damageType == DamageType.Moving)
+        if (damageType == DamageType.Moving)
         {
             Destroy(gameObject);
         }
+
     }
 }
