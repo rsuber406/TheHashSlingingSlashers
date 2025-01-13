@@ -17,7 +17,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] int facePlayerSpeed;
     [SerializeField] bool chasePlayer;
     [SerializeField] GameObject bullet;
-    [SerializeField] Transform shootPos;
+    [SerializeField] Transform shootPos; 
 
     Vector3 playerDirection;
     Vector3 playerPosition;
@@ -60,14 +60,8 @@ public class EnemyAI : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         health -= amount;
-        //TODO FLASH RED ~Dakota
         StartCoroutine(RegisterHit());
-        if (health <= 0)
-        {
-            // Without the proper reference, this will cause issues and not despawn the gameobject
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            Destroy(gameObject);
-        }
+
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -133,7 +127,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     Vector3 PredictPlayerMovement(Vector3 aiPosition, Vector3 playerPosition, Vector3 playerVelocity, float projectileSpeed)
     {
-        Vector3 toPlayer = aiPosition - playerPosition;
+        Vector3 toPlayer = playerPosition - aiPosition;
         float distance = toPlayer.magnitude;
         float timeToHit = distance / projectileSpeed;
         return playerPosition + playerVelocity * timeToHit;
@@ -150,6 +144,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
+        if (health <= 0)
+        {
+            // Without the proper reference, this will cause issues and not despawn the gameobject
+            GameManager.instance.scoreSys.AddFlatScore(100);
+            Destroy(gameObject);
+        }
     }
 
 
