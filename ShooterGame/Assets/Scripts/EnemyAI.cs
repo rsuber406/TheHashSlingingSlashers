@@ -61,12 +61,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         health -= amount;
         StartCoroutine(RegisterHit());
-        if (health <= 0)
-        {
-            // Without the proper reference, this will cause issues and not despawn the gameobject
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            Destroy(gameObject);
-        }
+
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -149,6 +144,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
+        if (health <= 0)
+        {
+            // Without the proper reference, this will cause issues and not despawn the gameobject
+            GameManager.instance.scoreSys.AddFlatScore(100);
+            Destroy(gameObject);
+        }
     }
 
 

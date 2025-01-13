@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
 
-    
+
 
     Vector3 playerVel;
     Vector3 moveDir;
@@ -23,13 +23,13 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-       
+
         Movement();
         Sprint();
         Shoot();
@@ -58,16 +58,16 @@ public class PlayerController : MonoBehaviour, IDamage
             isSprinting = true;
             movementSpeed = movementSpeed * sprintMod;
         }
-        else if(Input.GetButtonUp("Sprint") )
+        else if (Input.GetButtonUp("Sprint"))
         {
-            isSprinting= false;
+            isSprinting = false;
             movementSpeed = movementSpeed / sprintMod;
         }
     }
 
     void Jump()
     {
-        if(Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVel.y = jumpSpeed;
@@ -78,10 +78,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         health -= amount;
         StartCoroutine(FlashDmgScreen());
-        if(health <= 0)
-        {
-            GameManager.instance.Lose();
-        }
+       
     }
 
     void Shoot()
@@ -97,6 +94,9 @@ public class PlayerController : MonoBehaviour, IDamage
         GameManager.instance.FlashDamageScreenOn();
         yield return new WaitForSeconds(0.1f);
         GameManager.instance.FlashDamageScreenOff();
-      
+        if(health <= 0)
+        {
+            GameManager.instance.Lose();
+        }
     }
 }
