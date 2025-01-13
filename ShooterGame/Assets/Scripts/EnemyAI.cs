@@ -28,7 +28,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     void Start()
     {
         originalColor = model.material.color;
-        
+
 
     }
 
@@ -44,8 +44,8 @@ public class EnemyAI : MonoBehaviour, IDamage
             playerPreviousPosition = GameManager.instance.player.transform.position;
             playerDirection = GameManager.instance.player.transform.position - transform.position;
 
-            if(chasePlayer)
-            agent.SetDestination(GameManager.instance.player.transform.position);
+            if (chasePlayer)
+                agent.SetDestination(GameManager.instance.player.transform.position);
 
             if (agent.remainingDistance < agent.stoppingDistance)
             {
@@ -60,7 +60,8 @@ public class EnemyAI : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         health -= amount;
-       //TODO FLASH RED ~Dakota
+        //TODO FLASH RED ~Dakota
+        StartCoroutine(RegisterHit());
         if (health <= 0)
         {
             // Without the proper reference, this will cause issues and not despawn the gameobject
@@ -75,7 +76,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             playerInRange = true;
 
         }
-    
+
     }
     private void OnTriggerExit(Collider other)
     {
@@ -96,11 +97,20 @@ public class EnemyAI : MonoBehaviour, IDamage
         isShooting = true;
         playerPosition = GameManager.instance.player.transform.position;
         bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+        // This will allow us to decrease the accuracy so out player is not being laser beamed
+        int applyInaccuracy = 20;
+        int inaccuracyChance = Random.Range(0, 100);
+        Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
         if (playerStationary)
         {
             // Implement shooting at player
             // Implement random number offsets so the AI does not laser beam the player
-            Instantiate(bullet, shootPos.position, transform.rotation);
+            if (inaccuracyChance > applyInaccuracy)
+            {
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f));
+
+            }
+            Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
             yield return new WaitForSeconds(shootRate);
             isShooting = false;
         }
@@ -108,11 +118,40 @@ public class EnemyAI : MonoBehaviour, IDamage
         else
         {
             // Implement prediction of player movement with random offset to the player is not being laser beamed
-            // 
-            Instantiate(bullet, shootPos.position, transform.rotation);
+            if (inaccuracyChance > applyInaccuracy)
+            {
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f));
+
+            }
+            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+            RotateToPlayer(rotateDir);
+            Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
             yield return new WaitForSeconds(shootRate);
             isShooting = false;
         }
     }
-  
+
+    Vector3 PredictPlayerMovement(Vector3 aiPosition, Vector3 playerPosition, Vector3 playerVelocity, float projectileSpeed)
+    {
+        Vector3 toPlayer = aiPosition - playerPosition;
+        float distance = toPlayer.magnitude;
+        float timeToHit = distance / projectileSpeed;
+        return playerPosition + playerVelocity * timeToHit;
+    }
+
+    void RotateToPlayer(Vector3 direction)
+    {
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
+    }
+
+    IEnumerator RegisterHit()
+    {
+        model.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        model.material.color = originalColor;
+    }
+
+
+
 }

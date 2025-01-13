@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
+    [SerializeField] GameObject playerDmgScreen;
 
     public Image playerHPBar;
     public GameObject damagePanel;
@@ -93,6 +94,16 @@ public class GameManager : MonoBehaviour
         menuActive.SetActive(true);
     }
 
+    public void FlashDamageScreenOn()
+    {
+        menuActive = playerDmgScreen;
+        menuActive.SetActive(true);
+    }
+    public void FlashDamageScreenOff()
+    {
+        menuActive.SetActive(false);
+        menuActive = null;
+    }
 
 
 

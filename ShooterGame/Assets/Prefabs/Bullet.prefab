@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 25
+  bulletSpeed: 150
   damage: 1
   travelDistance: 20
   timeToDespawn: 3
@@ -150,7 +150,7 @@ TrailRenderer:
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.025
+    widthMultiplier: 0.01
     widthCurve:
       serializedVersion: 2
       m_Curve:
