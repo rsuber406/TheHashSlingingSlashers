@@ -61,6 +61,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         health -= amount;
         //TODO FLASH RED ~Dakota
+        StartCoroutine(RegisterHit());
         if (health <= 0)
         {
             // Without the proper reference, this will cause issues and not despawn the gameobject
@@ -122,10 +123,33 @@ public class EnemyAI : MonoBehaviour, IDamage
                 randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f));
 
             }
+            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+            RotateToPlayer(rotateDir);
             Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
             yield return new WaitForSeconds(shootRate);
             isShooting = false;
         }
+    }
+
+    Vector3 PredictPlayerMovement(Vector3 aiPosition, Vector3 playerPosition, Vector3 playerVelocity, float projectileSpeed)
+    {
+        Vector3 toPlayer = aiPosition - playerPosition;
+        float distance = toPlayer.magnitude;
+        float timeToHit = distance / projectileSpeed;
+        return playerPosition + playerVelocity * timeToHit;
+    }
+
+    void RotateToPlayer(Vector3 direction)
+    {
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
+    }
+
+    IEnumerator RegisterHit()
+    {
+        model.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        model.material.color = originalColor;
     }
 
 
