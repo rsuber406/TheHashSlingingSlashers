@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamage
@@ -76,6 +77,7 @@ public class PlayerController : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         health -= amount;
+        StartCoroutine(FlashDmgScreen());
         if(health <= 0)
         {
             GameManager.instance.Lose();
@@ -89,5 +91,11 @@ public class PlayerController : MonoBehaviour, IDamage
             Instantiate(bullet, Camera.main.transform.position, Camera.main.transform.rotation);
 
         }
+    }
+    IEnumerator FlashDmgScreen()
+    {
+        GameManager.instance.FlashDamageScreenOn();
+        yield return new WaitForSeconds(0.1f);
+        GameManager.instance.FlashDamageScreenOff();
     }
 }
