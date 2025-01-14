@@ -16,6 +16,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] float shootRate;
     [SerializeField] int facePlayerSpeed;
     [SerializeField] bool chasePlayer;
+    [SerializeField] float distanceToActivateSprint;
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos; 
 
@@ -43,9 +44,21 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             playerPreviousPosition = GameManager.instance.player.transform.position;
             playerDirection = GameManager.instance.player.transform.position - transform.position;
+            float distance = playerDirection.magnitude;
+
 
             if (chasePlayer)
+            {
                 agent.SetDestination(GameManager.instance.player.transform.position);
+                if(distance > distanceToActivateSprint)
+                {
+                    movementSpeed *= sprintMod;
+                }
+                else
+                {
+                    movementSpeed = movementSpeed / sprintMod;
+                }
+            }
 
             if (agent.remainingDistance < agent.stoppingDistance)
             {

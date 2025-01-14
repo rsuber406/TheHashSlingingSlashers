@@ -199,6 +199,7 @@ MonoBehaviour:
   shootRate: 1
   facePlayerSpeed: 250
   chasePlayer: 1
+  distanceToActivateSprint: 15
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
   shootPos: {fileID: 3828426492534889248}
 --- !u!195 &7967720148001108979
