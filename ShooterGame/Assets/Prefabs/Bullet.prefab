@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 25
+  bulletSpeed: 45
   damage: 1
   travelDistance: 20
   timeToDespawn: 3
@@ -125,7 +125,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f8e54ed038764ac4c8ec70f999448ab0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -146,7 +146,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.5
+  m_Time: 0.055
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
