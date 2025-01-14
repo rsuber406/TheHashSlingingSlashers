@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
+    [SerializeField] GameObject firearm;
+
 
 
 
@@ -21,10 +23,10 @@ public class PlayerController : MonoBehaviour, IDamage
     Vector3 moveDir;
     int jumpCount;
     bool isSprinting;
-
+    GunScripts firearmScript;
     void Start()
     {
-
+        firearmScript = firearm.GetComponent<GunScripts>();
     }
 
     // Update is called once per frame
@@ -88,7 +90,7 @@ public class PlayerController : MonoBehaviour, IDamage
         
         if (Input.GetButtonDown("Shoot"))
         {
-            Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
+            firearmScript.PlayerShoot();
 
         }
     }

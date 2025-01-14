@@ -89,8 +89,31 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3828426492534889248}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1849364768512390854, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8360735144081000265}
   m_SourcePrefab: {fileID: 100100000, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+--- !u!1 &8104168380762224150 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1849364768512390854, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+  m_PrefabInstance: {fileID: 7628404257041236176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8360735144081000265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8104168380762224150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireRate: 0.35
+  shootPos: {fileID: 3828426492534889248}
+  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
 --- !u!4 &8880001808726535340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
@@ -196,12 +219,11 @@ MonoBehaviour:
   health: 3
   maxHealth: 10
   model: {fileID: 8213156068011551408}
-  shootRate: 1
   facePlayerSpeed: 250
   chasePlayer: 1
   distanceToActivateSprint: 15
-  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
-  shootPos: {fileID: 3828426492534889248}
+  isMelee: 0
+  firearm: {fileID: 8104168380762224150}
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0

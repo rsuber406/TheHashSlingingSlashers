@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8094748238353878035}
   - component: {fileID: 1293759822161049781}
   - component: {fileID: 7067692936370030786}
+  - component: {fileID: 6568810451197061473}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -132,11 +133,13 @@ MonoBehaviour:
   health: 5
   maxHealth: 10
   model: {fileID: 6710388772087828189}
-  shootRate: 0.25
   facePlayerSpeed: 200
   chasePlayer: 0
-  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
-  shootPos: {fileID: 2147514991440133174}
+  distanceToActivateSprint: 0
+  isMelee: 0
+  isTurrent: 1
+  firearm: {fileID: 0}
+  firearmScript: {fileID: 6568810451197061473}
 --- !u!195 &1293759822161049781
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -180,6 +183,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 20
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6568810451197061473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105406076715429508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireRate: 0.25
+  shootPos: {fileID: 2147514991440133174}
+  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
 --- !u!1 &8657573435666726773
 GameObject:
   m_ObjectHideFlags: 0

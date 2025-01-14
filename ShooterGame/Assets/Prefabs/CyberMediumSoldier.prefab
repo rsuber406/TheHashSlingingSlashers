@@ -136,12 +136,11 @@ MonoBehaviour:
   health: 20
   maxHealth: 20
   model: {fileID: 6493151389803643984}
-  shootRate: 0.1
   facePlayerSpeed: 300
   chasePlayer: 1
   distanceToActivateSprint: 20
-  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
-  shootPos: {fileID: 4747451899016110582}
+  isMelee: 0
+  firearm: {fileID: 8756609836623010577}
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -179,9 +178,9 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 10
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -278,10 +277,33 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 940922439798051129, guid: a8d295ed300740b4aadcb450113ada35, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4747451899016110582}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 451771004783102851, guid: a8d295ed300740b4aadcb450113ada35, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6106075915634653030}
   m_SourcePrefab: {fileID: 100100000, guid: a8d295ed300740b4aadcb450113ada35, type: 3}
 --- !u!4 &8272667131232600491 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 940922439798051129, guid: a8d295ed300740b4aadcb450113ada35, type: 3}
   m_PrefabInstance: {fileID: 9205561141134102674}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8756609836623010577 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 451771004783102851, guid: a8d295ed300740b4aadcb450113ada35, type: 3}
+  m_PrefabInstance: {fileID: 9205561141134102674}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6106075915634653030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8756609836623010577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireRate: 0.25
+  shootPos: {fileID: 4747451899016110582}
+  bullet: {fileID: 5514111550016177597, guid: 259c29f2cb145d148aabdc8a0eda9a43, type: 3}
