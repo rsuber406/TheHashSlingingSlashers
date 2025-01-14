@@ -101,7 +101,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement random number offsets so the AI does not laser beam the player
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f));
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
 
             }
             Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
@@ -114,7 +114,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f));
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
 
             }
             Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
