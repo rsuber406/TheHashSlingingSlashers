@@ -6,7 +6,8 @@ public class Damage : MonoBehaviour
     enum DamageType
     {
         Moving,
-        Stationary
+        Stationary,
+        HealthPack
     }
     [SerializeField] int bulletSpeed;
     [SerializeField] int damage;
@@ -23,6 +24,8 @@ public class Damage : MonoBehaviour
             rigidBody.linearVelocity = transform.forward * bulletSpeed;
             Destroy(gameObject, timeToDespawn);
         }
+       
+
     }
 
 
@@ -40,6 +43,9 @@ public class Damage : MonoBehaviour
         }
         if (damageType == DamageType.Moving)
         {
+            Destroy(gameObject);
+        }
+        if (damageType == DamageType.HealthPack) { 
             Destroy(gameObject);
         }
 
