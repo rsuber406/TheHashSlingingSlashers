@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7683405830819012674}
+  - component: {fileID: 9147176664111765662}
   - component: {fileID: 3803267477663141802}
   - component: {fileID: 9141092300187970157}
-  - component: {fileID: 9147176664111765662}
   - component: {fileID: 8497015660955065382}
   m_Layer: 0
   m_Name: Bullet
@@ -35,6 +35,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9147176664111765662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4271366464552701038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletSpeed: 45
+  damage: 1
+  travelDistance: 20
+  timeToDespawn: 3
+  rigidBody: {fileID: 9141092300187970157}
+  damageType: 0
 --- !u!135 &3803267477663141802
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -83,24 +101,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &9147176664111765662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4271366464552701038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletSpeed: 45
-  damage: 1
-  travelDistance: 20
-  timeToDespawn: 3
-  rigidBody: {fileID: 9141092300187970157}
-  damageType: 0
 --- !u!96 &8497015660955065382
 TrailRenderer:
   serializedVersion: 3

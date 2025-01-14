@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerDmgScreen;
 
     public Image playerHPBar;
-    public GameObject damagePanel;
+    
     public ScoreSys scoreSys;
 
     public PlayerController playerscript;
