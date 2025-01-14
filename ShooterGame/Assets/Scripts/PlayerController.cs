@@ -15,10 +15,11 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject firearm;
+    [SerializeField] const int maxHealth = 0;
 
 
 
-
+    private int previousHealth;
     Vector3 playerVel;
     Vector3 moveDir;
 
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Movement();
         Sprint();
         Shoot();
-
+        PerformReload();
     }
 
     void Movement()
@@ -86,6 +87,8 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void TakeDamage(int amount)
     {
+        previousHealth = health;
+
         health -= amount;
         StartCoroutine(FlashDmgScreen());
         UpdatePlayerUI();
@@ -110,12 +113,27 @@ public class PlayerController : MonoBehaviour, IDamage
     }
     IEnumerator FlashDmgScreen()
     {
-        GameManager.instance.FlashDamageScreenOn();
-        yield return new WaitForSeconds(0.1f);
-        GameManager.instance.FlashDamageScreenOff();
+        if (previousHealth > health)
+        {
+            GameManager.instance.FlashDamageScreenOn();
+            yield return new WaitForSeconds(0.1f);
+            GameManager.instance.FlashDamageScreenOff();
+        } else
+        {
+            GameManager.instance.FlashHealthScreenOn();
+            yield return new WaitForSeconds(0.1f);
+            GameManager.instance.FlashDamageScreenOff();
+        }
         if(health <= 0)
         {
             GameManager.instance.Lose();
+        }
+    }
+    void PerformReload()
+    {
+        if (Input.GetButtonDown("Reload"))
+        {
+            StartCoroutine(firearmScript.Reload());
         }
     }
 }

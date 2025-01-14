@@ -53,6 +53,8 @@ MonoBehaviour:
   menuWin: {fileID: 749478330730839912}
   menuLose: {fileID: 6108856010584727029}
   playerDmgScreen: {fileID: 6503075276398383793}
+  playerGainHealth: {fileID: 4756601860196656015}
+  playerHPBar: {fileID: 0}
   CurrentHPText: {fileID: 7245111256473213519}
   playerHPBar: {fileID: 2457266392033597647}
   scoreSys: {fileID: 0}
@@ -1590,6 +1592,7 @@ RectTransform:
   - {fileID: 5045328031897745267}
   - {fileID: 8652382634887660939}
   - {fileID: 8729844036723365147}
+  - {fileID: 6128737601416987939}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2195,47 +2198,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &4871949107299043703
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4313133124871209792}
-  m_Layer: 5
-  m_Name: PlayerHUD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &4313133124871209792
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4871949107299043703}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6784909498089265729}
-  - {fileID: 1367355511866811255}
-  - {fileID: 4670754272902932701}
-  - {fileID: 6759745572816865650}
-  - {fileID: 4621077299158560975}
-  - {fileID: 7970142471122444482}
-  m_Father: {fileID: 1778286646739975059}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5138996274218270351
 GameObject:
   m_ObjectHideFlags: 0
