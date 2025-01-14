@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Movement();
         Sprint();
         Shoot();
-
+        PerformReload();
     }
 
     void Movement()
@@ -115,6 +115,13 @@ public class PlayerController : MonoBehaviour, IDamage
         if(health <= 0)
         {
             GameManager.instance.Lose();
+        }
+    }
+    void PerformReload()
+    {
+        if (Input.GetButtonDown("Reload"))
+        {
+            StartCoroutine(firearmScript.Reload());
         }
     }
 }
