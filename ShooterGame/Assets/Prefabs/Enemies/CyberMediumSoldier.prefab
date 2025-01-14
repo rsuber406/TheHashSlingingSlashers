@@ -188,7 +188,7 @@ MonoBehaviour:
   chasePlayer: 1
   distanceToActivateSprint: 20
   headPos: {fileID: 4578084996333317927}
-  fov: 45
+  fov: 70
   isMelee: 0
   isTurrent: 0
   firearm: {fileID: 8756609836623010577}
@@ -259,7 +259,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 30
+  m_Radius: 50
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &9205561141134102674
 PrefabInstance:
