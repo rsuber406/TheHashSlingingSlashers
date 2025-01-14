@@ -21,11 +21,17 @@ public class PlayerController : MonoBehaviour, IDamage
 
     Vector3 playerVel;
     Vector3 moveDir;
+
     int jumpCount;
     bool isSprinting;
+    int maxHealth;
+
     GunScripts firearmScript;
+
+
     void Start()
     {
+        maxHealth = health;
         firearmScript = firearm.GetComponent<GunScripts>();
     }
 
@@ -82,7 +88,13 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         health -= amount;
         StartCoroutine(FlashDmgScreen());
-       
+        UpdatePlayerUI();
+    }
+
+    void UpdatePlayerUI()
+    {
+        GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
+        GameManager.instance.PubcurrentHPText.SetText(health.ToString());            
     }
 
     void Shoot()

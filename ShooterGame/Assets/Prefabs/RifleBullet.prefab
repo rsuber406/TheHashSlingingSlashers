@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpeed: 45
-  damage: 5
+  damage: 20
   travelDistance: 60
   timeToDespawn: 3
   rigidBody: {fileID: 7358968758472418336}
