@@ -140,7 +140,9 @@ MonoBehaviour:
   chasePlayer: 1
   distanceToActivateSprint: 20
   isMelee: 0
+  isTurrent: 0
   firearm: {fileID: 8756609836623010577}
+  firearmScript: {fileID: 0}
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -304,6 +306,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0.25
+  fireRate: 0.15
   shootPos: {fileID: 4747451899016110582}
   bullet: {fileID: 5514111550016177597, guid: 259c29f2cb145d148aabdc8a0eda9a43, type: 3}
+  shotsPerMagazine: 60
+  reloadTime: 2.5
+  isAIControlled: 1

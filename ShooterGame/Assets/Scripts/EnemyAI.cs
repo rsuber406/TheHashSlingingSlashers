@@ -47,6 +47,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     void Update()
     {
         PlayerDetection();
+        PerformReload();
     }
     void PlayerDetection()
     {
@@ -180,6 +181,14 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Without the proper reference, this will cause issues and not despawn the gameobject
             GameManager.instance.scoreSys.AddFlatScore(100);
             Destroy(gameObject);
+        }
+    }
+
+    void PerformReload()
+    {
+        if(firearmScript.GetBulletsRemaining() <= 0)
+        {
+            StartCoroutine(firearmScript.Reload());
         }
     }
 

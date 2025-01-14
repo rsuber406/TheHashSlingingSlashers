@@ -40,16 +40,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 8213156068008344458}
     m_Modifications:
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.0000060647735
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.26176363
+      value: 0.266
       objectReference: {fileID: 0}
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.28603572
+      value: 0.14
       objectReference: {fileID: 0}
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -114,6 +126,9 @@ MonoBehaviour:
   fireRate: 0.35
   shootPos: {fileID: 3828426492534889248}
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
+  shotsPerMagazine: 15
+  reloadTime: 1.5
+  isAIControlled: 1
 --- !u!4 &8880001808726535340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
@@ -223,7 +238,9 @@ MonoBehaviour:
   chasePlayer: 1
   distanceToActivateSprint: 15
   isMelee: 0
+  isTurrent: 0
   firearm: {fileID: 8104168380762224150}
+  firearmScript: {fileID: 0}
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0

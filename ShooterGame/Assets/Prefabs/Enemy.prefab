@@ -198,6 +198,9 @@ MonoBehaviour:
   fireRate: 0.25
   shootPos: {fileID: 2147514991440133174}
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
+  shotsPerMagazine: 100
+  reloadTime: 0.5
+  isAIControlled: 1
 --- !u!1 &8657573435666726773
 GameObject:
   m_ObjectHideFlags: 0
