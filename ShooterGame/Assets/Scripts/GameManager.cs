@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] GameObject playerDmgScreen;
+    [SerializeField] GameObject playerGainHealth;
 
     public Image playerHPBar;
     
@@ -104,7 +105,11 @@ public class GameManager : MonoBehaviour
         menuActive.SetActive(false);
         menuActive = null;
     }
-
+    public void FlashHealthScreenOn()
+    {
+        menuActive = playerGainHealth;
+        menuActive.SetActive(true);
+    }
 
 
 }
