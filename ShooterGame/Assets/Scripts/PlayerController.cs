@@ -94,7 +94,9 @@ public class PlayerController : MonoBehaviour, IDamage
     void UpdatePlayerUI()
     {
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
-        GameManager.instance.PubcurrentHPText.SetText(health.ToString());            
+        GameManager.instance.PubcurrentHPText.SetText(health.ToString());       
+        if(health < 0)
+            GameManager.instance.PubcurrentHPText.SetText("0");
     }
 
     void Shoot()
