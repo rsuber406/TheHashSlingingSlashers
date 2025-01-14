@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 500
   lockVertMin: -90
-  lockVertMax: 90
+  lockVertMax: 50
   invYAxis: 0
   leftLean: -45
   rightLean: 45
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 29848391063268711}
   - component: {fileID: 2320961185408548562}
   - component: {fileID: 5430685285324889793}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ MonoBehaviour:
   controller: {fileID: 2320961185408548562}
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   health: 5
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
   shootPos: {fileID: 0}
@@ -329,7 +329,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.561
+      value: 0.612
       objectReference: {fileID: 0}
     - target: {fileID: 1360531126921063548, guid: e82b3141db60b2946a92bc769b9380a7, type: 3}
       propertyPath: m_LocalRotation.w

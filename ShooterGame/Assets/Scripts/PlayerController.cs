@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
         Shoot();
@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Shoot()
     {
+        RaycastHit hit;
         if (Input.GetButtonDown("Shoot"))
         {
             Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
