@@ -90,6 +90,10 @@ public class PlayerController : MonoBehaviour, IDamage
         previousHealth = health;
 
         health -= amount;
+        if(health > previousHealth)
+        {
+            // Input healing screen
+        }
         StartCoroutine(FlashDmgScreen());
         UpdatePlayerUI();
     }
