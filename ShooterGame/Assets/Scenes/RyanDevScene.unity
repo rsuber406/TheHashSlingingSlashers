@@ -409,26 +409,9 @@ MonoBehaviour:
   fireRate: 0.25
   shootPos: {fileID: 967136502}
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
---- !u!1 &1222899278 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4622633277716792300, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  m_PrefabInstance: {fileID: 666462916063626564}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1222899280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1222899278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fireRate: 0.1
-  shootPos: {fileID: 56024095}
-  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
+  shotsPerMagazine: 0
+  reloadTime: 0
+  isAIControlled: 0
 --- !u!1001 &1452986978
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -691,6 +674,10 @@ PrefabInstance:
       propertyPath: leftCameraLeanMovement
       value: -5
       objectReference: {fileID: 0}
+    - target: {fileID: 5527166102024051009, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: reloadTime
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 5957547874870576521, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_Name
       value: Player
@@ -703,10 +690,7 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 6718255793349679888, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4622633277716792300, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1222899280}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
 --- !u!1001 &2736035525376014624
 PrefabInstance:
