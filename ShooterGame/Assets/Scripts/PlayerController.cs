@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
+    [SerializeField] Transform shootPos;
 
 
 
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Jump();
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
+        shootPos.transform.rotation = Camera.main.transform.rotation;
 
     }
     void Sprint()
@@ -85,7 +87,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (Input.GetButtonDown("Shoot"))
         {
-            Instantiate(bullet, Camera.main.transform.position, Camera.main.transform.rotation);
+            Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
 
         }
     }
