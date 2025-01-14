@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Shoot()
     {
-        RaycastHit hit;
+        
         if (Input.GetButtonDown("Shoot"))
         {
             Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
