@@ -13,13 +13,15 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] int health;
     [SerializeField] int maxHealth;
     [SerializeField] Renderer model;
-    [SerializeField] float shootRate;
     [SerializeField] int facePlayerSpeed;
     [SerializeField] bool chasePlayer;
     [SerializeField] float distanceToActivateSprint;
-    [SerializeField] GameObject bullet;
-    [SerializeField] Transform shootPos; 
-
+    [SerializeField] bool isMelee;
+    [SerializeField] bool isTurrent;
+    [SerializeField] GameObject firearm;
+    [SerializeField] GunScripts firearmScript;
+    float fireRate;
+    
     Vector3 playerDirection;
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
@@ -29,8 +31,16 @@ public class EnemyAI : MonoBehaviour, IDamage
     void Start()
     {
         originalColor = model.material.color;
-
-
+       
+        if(firearm != null)
+        {
+            firearmScript = firearm.GetComponent<GunScripts>();
+            fireRate = firearmScript.GetFireRate();
+        }
+        else
+        {
+            fireRate = firearmScript.GetFireRate();
+        }
     }
 
     // Update is called once per frame
@@ -50,7 +60,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             if (chasePlayer)
             {
                 agent.SetDestination(GameManager.instance.player.transform.position);
-                if(distance > distanceToActivateSprint)
+                if (distance > distanceToActivateSprint)
                 {
                     movementSpeed *= sprintMod;
                 }
@@ -64,9 +74,14 @@ public class EnemyAI : MonoBehaviour, IDamage
             {
                 FaceTarget();
             }
-            if (!isShooting)
+            if (!isShooting && !isMelee)
             {
                 StartCoroutine(Shoot());
+            }
+
+            else
+            {
+                // Handle melee
             }
         }
     }
@@ -101,41 +116,44 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     IEnumerator Shoot()
     {
-        isShooting = true;
-        playerPosition = GameManager.instance.player.transform.position;
-        bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
-        // This will allow us to decrease the accuracy so out player is not being laser beamed
-        int applyInaccuracy = 20;
-        int inaccuracyChance = Random.Range(0, 100);
-        Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
-        if (playerStationary)
-        {
-            // Implement shooting at player
-            // Implement random number offsets so the AI does not laser beam the player
-            if (inaccuracyChance > applyInaccuracy)
+
+            isShooting = true;
+            playerPosition = GameManager.instance.player.transform.position;
+            bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+            // This will allow us to decrease the accuracy so out player is not being laser beamed
+            int applyInaccuracy = 20;
+            int inaccuracyChance = Random.Range(0, 100);
+            Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
+            if (playerStationary)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                // Implement shooting at player
+                // Implement random number offsets so the AI does not laser beam the player
+                if (inaccuracyChance > applyInaccuracy)
+                {
+                    randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+
+                }
+
+                firearmScript.AIShoot(transform.rotation * randomRotation);
+              
 
             }
-            Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
-            yield return new WaitForSeconds(shootRate);
-            isShooting = false;
-        }
 
-        else
-        {
-            // Implement prediction of player movement with random offset to the player is not being laser beamed
-            if (inaccuracyChance > applyInaccuracy)
+            else
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                // Implement prediction of player movement with random offset to the player is not being laser beamed
+                if (inaccuracyChance > applyInaccuracy)
+                {
+                    randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
 
+                }
+                Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+                RotateToPlayer(rotateDir);
+                firearmScript.AIShoot(transform.rotation * randomRotation);
             }
-            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
-            RotateToPlayer(rotateDir);
-            Instantiate(bullet, shootPos.position, transform.rotation * randomRotation);
-            yield return new WaitForSeconds(shootRate);
-            isShooting = false;
-        }
+                yield return new WaitForSeconds(fireRate);
+                isShooting = false;
+        
     }
 
     Vector3 PredictPlayerMovement(Vector3 aiPosition, Vector3 playerPosition, Vector3 playerVelocity, float projectileSpeed)
@@ -149,7 +167,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     void RotateToPlayer(Vector3 direction)
     {
         Quaternion rotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * facePlayerSpeed);
     }
 
     IEnumerator RegisterHit()
@@ -164,6 +182,8 @@ public class EnemyAI : MonoBehaviour, IDamage
             Destroy(gameObject);
         }
     }
+
+   
 
 
 
