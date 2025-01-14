@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject firearm;
-    [SerializeField] const int maxHealth = 0;
+   
 
 
 
