@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 5
   sprintMod: 2
-  jumpSpeed: 20
+  jumpSpeed: 18
   jumpMax: 2
   gravity: 40
   controller: {fileID: 2320961185408548562}
@@ -227,7 +227,7 @@ MonoBehaviour:
     m_Bits: 64
   health: 5
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
-  shootPos: {fileID: 0}
+  shootPos: {fileID: 7813841620199333718}
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0
