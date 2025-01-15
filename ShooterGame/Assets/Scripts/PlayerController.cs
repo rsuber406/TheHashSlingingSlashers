@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour, IDamage
 {
 
     // Public Variables
-    public bool IsDebugMode;
+    public bool isDebugMode;
     
     
     // Serialized fields
@@ -36,13 +36,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
-
-
-
     private int previousHealth;
-
-
- 
     int maxHealth;
 
     GunScripts firearmScript;
