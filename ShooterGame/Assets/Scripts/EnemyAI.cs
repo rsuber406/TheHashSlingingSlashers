@@ -16,12 +16,16 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] int facePlayerSpeed;
     [SerializeField] bool chasePlayer;
     [SerializeField] float distanceToActivateSprint;
+    [SerializeField] Transform headPos;
+    [SerializeField] int fov;
     [SerializeField] bool isMelee;
     [SerializeField] bool isTurrent;
     [SerializeField] GameObject firearm;
     [SerializeField] GunScripts firearmScript;
+    [SerializeField] Animator animatorController;
+    [SerializeField] int animSpeedTrans;
     float fireRate;
-    
+    float angleOfPlayer;
     Vector3 playerDirection;
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
@@ -31,13 +35,13 @@ public class EnemyAI : MonoBehaviour, IDamage
     void Start()
     {
         originalColor = model.material.color;
-       
-        if(firearm != null)
+
+        if (firearm != null)
         {
             firearmScript = firearm.GetComponent<GunScripts>();
             fireRate = firearmScript.GetFireRate();
         }
-        else
+        else if(!isMelee)
         {
             fireRate = firearmScript.GetFireRate();
         }
@@ -46,43 +50,21 @@ public class EnemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
+        float characterSpeed = agent.velocity.normalized.magnitude;
+        float animSpeed = animatorController.GetFloat("Speed");
+        animatorController.SetFloat("Speed", Mathf.MoveTowards(animSpeed, characterSpeed, Time.deltaTime * animSpeedTrans));
         PlayerDetection();
+        if(!isMelee)
+        PerformReload();
     }
     void PlayerDetection()
     {
-        if (playerInRange)
+
+        if (playerInRange && CanSeePlayer())
         {
-            playerPreviousPosition = GameManager.instance.player.transform.position;
-            playerDirection = GameManager.instance.player.transform.position - transform.position;
-            float distance = playerDirection.magnitude;
 
 
-            if (chasePlayer)
-            {
-                agent.SetDestination(GameManager.instance.player.transform.position);
-                if (distance > distanceToActivateSprint)
-                {
-                    movementSpeed *= sprintMod;
-                }
-                else
-                {
-                    movementSpeed = movementSpeed / sprintMod;
-                }
-            }
 
-            if (agent.remainingDistance < agent.stoppingDistance)
-            {
-                FaceTarget();
-            }
-            if (!isShooting && !isMelee)
-            {
-                StartCoroutine(Shoot());
-            }
-
-            else
-            {
-                // Handle melee
-            }
         }
     }
     public void TakeDamage(int amount)
@@ -117,43 +99,43 @@ public class EnemyAI : MonoBehaviour, IDamage
     IEnumerator Shoot()
     {
 
-            isShooting = true;
-            playerPosition = GameManager.instance.player.transform.position;
-            bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
-            // This will allow us to decrease the accuracy so out player is not being laser beamed
-            int applyInaccuracy = 20;
-            int inaccuracyChance = Random.Range(0, 100);
-            Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
-            if (playerStationary)
+        isShooting = true;
+        playerPosition = GameManager.instance.player.transform.position;
+        bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+        // This will allow us to decrease the accuracy so out player is not being laser beamed
+        int applyInaccuracy = 20;
+        int inaccuracyChance = Random.Range(0, 100);
+        Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
+        if (playerStationary)
+        {
+            // Implement shooting at player
+            // Implement random number offsets so the AI does not laser beam the player
+            if (inaccuracyChance > applyInaccuracy)
             {
-                // Implement shooting at player
-                // Implement random number offsets so the AI does not laser beam the player
-                if (inaccuracyChance > applyInaccuracy)
-                {
-                    randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
-
-                }
-
-                firearmScript.AIShoot(transform.rotation * randomRotation);
-              
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
 
             }
 
-            else
-            {
-                // Implement prediction of player movement with random offset to the player is not being laser beamed
-                if (inaccuracyChance > applyInaccuracy)
-                {
-                    randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+            firearmScript.AIShoot(transform.rotation * randomRotation);
 
-                }
-                Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
-                RotateToPlayer(rotateDir);
-                firearmScript.AIShoot(transform.rotation * randomRotation);
+
+        }
+
+        else
+        {
+            // Implement prediction of player movement with random offset to the player is not being laser beamed
+            if (inaccuracyChance > applyInaccuracy)
+            {
+                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+
             }
-                yield return new WaitForSeconds(fireRate);
-                isShooting = false;
-        
+            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+            RotateToPlayer(rotateDir);
+            firearmScript.AIShoot(transform.rotation * randomRotation);
+        }
+        yield return new WaitForSeconds(fireRate);
+        isShooting = false;
+
     }
 
     Vector3 PredictPlayerMovement(Vector3 aiPosition, Vector3 playerPosition, Vector3 playerVelocity, float projectileSpeed)
@@ -183,7 +165,63 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
 
-   
+    void PerformReload()
+    {
+        if (firearmScript.GetBulletsRemaining() <= 0)
+        {
+            StartCoroutine(firearmScript.Reload());
+        }
+    }
+
+    bool CanSeePlayer()
+    {
+        RaycastHit hit;
+        playerPreviousPosition = GameManager.instance.player.transform.position;
+        playerDirection = GameManager.instance.player.transform.position - headPos.position;
+        float distance = playerDirection.magnitude;
+        if (Physics.Raycast(headPos.position, playerDirection, out hit))
+        {
+            if (hit.collider.CompareTag("Player") && angleOfPlayer <= fov)
+            {
+                if (chasePlayer)
+                {
+                    agent.SetDestination(GameManager.instance.player.transform.position);
+                    if (distance > distanceToActivateSprint)
+                    {
+                        movementSpeed *= sprintMod;
+                    }
+                    else
+                    {
+                        movementSpeed = movementSpeed / sprintMod;
+                    }
+                }
+
+                if (agent.remainingDistance < agent.stoppingDistance)
+                {
+                    FaceTarget();
+                }
+                if (!isShooting && !isMelee)
+                {
+                    StartCoroutine(Shoot());
+                }
+
+                else
+                {
+                    // Handle melee
+                    MeleeAttack();
+                }
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    void MeleeAttack()
+    {
+        animatorController.SetTrigger("Attack");
+    }
+
 
 
 
