@@ -27,4 +27,14 @@ public class GameTimer : MonoBehaviour
     {
         return timer;
     }
+    public float GetInitialTime()
+    {
+        return gameTime;
+    }
+    public float GetTimeRatio()
+    {
+        return timer / gameTime;
+    }
+ 
+
 }
