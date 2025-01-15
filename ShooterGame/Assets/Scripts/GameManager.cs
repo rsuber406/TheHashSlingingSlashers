@@ -14,8 +14,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerGainHealth;
 
     [SerializeField] TMP_Text CurrentHPText;
+    [SerializeField] GameObject lowHealthScreen;
+    [SerializeField] TMP_Text CurrentBulletsMagText;
+    [SerializeField] TMP_Text CurrentBulletsReserveText;
+    [SerializeField] TMP_Text ReloadText;
 
-    public TMP_Text PubcurrentHPText => CurrentHPText;
+    public TMP_Text PubReloadText => ReloadText;
+    public TMP_Text PubcurrentHPText => CurrentHPText; 
+    public TMP_Text PubcurrentBulletsMagText => CurrentBulletsMagText;
+    public TMP_Text PubcurrentBulletsReserveText => CurrentBulletsReserveText;
+    public GameObject PublowHealthScreen => lowHealthScreen;
 
     public Image playerHPBar;
     

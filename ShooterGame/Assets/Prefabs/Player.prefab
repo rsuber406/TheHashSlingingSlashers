@@ -396,7 +396,7 @@ MonoBehaviour:
   shootPos: {fileID: 7813841620199333718}
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
   shotsPerMagazine: 15
-  reloadTime: 1.5
+  reloadTime: 2.5
   isAIControlled: 0
 --- !u!4 &5435058418891479382 stripped
 Transform:
