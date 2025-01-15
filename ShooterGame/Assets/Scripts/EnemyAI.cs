@@ -208,12 +208,18 @@ public class EnemyAI : MonoBehaviour, IDamage
                 else
                 {
                     // Handle melee
+                    MeleeAttack();
                 }
                 return true;
             }
 
         }
         return false;
+    }
+
+    void MeleeAttack()
+    {
+        animatorController.SetTrigger("Attack");
     }
 
 

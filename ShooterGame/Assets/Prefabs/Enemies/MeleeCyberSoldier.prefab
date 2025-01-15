@@ -1411,6 +1411,8 @@ GameObject:
   - component: {fileID: 8736694986036147651}
   - component: {fileID: 8736694986036917731}
   - component: {fileID: 8736694986038048547}
+  - component: {fileID: 6909000549712832115}
+  - component: {fileID: 6781321041183919076}
   m_Layer: 0
   m_Name: 1HSword
   m_TagString: Untagged
@@ -1486,6 +1488,40 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6909000549712832115
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8736694986035784163}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3911797, y: 1.302745, z: 0.14509305}
+  m_Center: {x: -0.00022500432, y: 0.44038758, z: -0.00000018093306}
+--- !u!114 &6781321041183919076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8736694986035784163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a1cca90c68224468bfb0b207a4f2d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meleeDamage: 30
 --- !u!1 &8811580570349302817
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ public class GunScripts : MonoBehaviour
     // Update is called once per frame
     int referenceToOriginalShots;
 
-    private void Start()
+    private void Awake()
     {
         referenceToOriginalShots = shotsPerMagazine;
     }
