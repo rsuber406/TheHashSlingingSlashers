@@ -47,17 +47,23 @@ public class PlayerController : MonoBehaviour, IDamage
 
     GunScripts firearmScript;
 
+    int numBulletsReserve = 60;
+    int numBulletsinMag;
+
+    float Timesincereload = Time.time + 10000;
+    //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     void Start()
     {
         maxHealth = health;
         firearmScript = firearm.GetComponent<GunScripts>();
+        numBulletsinMag = firearmScript.GetBulletsRemaining();
     }
 
 
     void Update()
     {
-
+       
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
@@ -67,6 +73,7 @@ public class PlayerController : MonoBehaviour, IDamage
         
         if (IsDebugMode)
             DrawDebugLines();
+        CheckTimeSinceReload();
     }
 
     void Movement()
@@ -168,9 +175,20 @@ public class PlayerController : MonoBehaviour, IDamage
     void UpdatePlayerUI()
     {
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
-        GameManager.instance.PubcurrentHPText.SetText(health.ToString());       
-        if(health < 0)
+        GameManager.instance.PubcurrentHPText.SetText(health.ToString());
+
+        if (health < 0)
+        {
             GameManager.instance.PubcurrentHPText.SetText("0");
+            GameManager.instance.PublowHealthScreen.SetActive(false);
+        }
+        else if (health < 50)
+        {
+            GameManager.instance.PublowHealthScreen.SetActive(true);
+        }
+        else
+            GameManager.instance.PublowHealthScreen.SetActive(false);
+
     }
 
     void Shoot()
@@ -179,10 +197,16 @@ public class PlayerController : MonoBehaviour, IDamage
 
          Camera camRef = Camera.main;
         if (Input.GetButtonDown("Shoot"))
+        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsinMag > 0)))
         {
             firearmScript.PlayerShoot();
-
-
+            //count bullets set new bullet count on UI
+            numBulletsinMag--;
+            GameManager.instance.PubcurrentBulletsMagText.SetText(numBulletsinMag.ToString());
+            if(numBulletsReserve == 0)
+            {
+                Timesincereload = Time.time + 3;
+            }
         }
     }
 
@@ -329,8 +353,28 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (Input.GetButtonDown("Reload"))
         {
-            StartCoroutine(firearmScript.Reload());
+            if (numBulletsReserve > 0)
+            {
+                StartCoroutine(firearmScript.Reload());
+                GameManager.instance.PubReloadText.enabled = false;
+                numBulletsReserve -= 15;
+                numBulletsinMag = 15;
+                GameManager.instance.PubcurrentBulletsMagText.SetText("15");
+                GameManager.instance.PubcurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+            }
+            else
+            {
+                GameManager.instance.PubReloadText.enabled = true;
+                GameManager.instance.PubReloadText.SetText("Out Of Ammo!");
+            }
+        }
+    }
 
+    void CheckTimeSinceReload()//TO DO: I DONT WORK!
+    {
+        if(numBulletsinMag ==0 && Timesincereload >= Time.time)
+        {
+            GameManager.instance.PubReloadText.enabled = true;
         }
     }
 }
