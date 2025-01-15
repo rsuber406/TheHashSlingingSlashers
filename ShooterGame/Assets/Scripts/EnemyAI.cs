@@ -41,7 +41,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             firearmScript = firearm.GetComponent<GunScripts>();
             fireRate = firearmScript.GetFireRate();
         }
-        else
+        else if(!isMelee)
         {
             fireRate = firearmScript.GetFireRate();
         }
@@ -54,6 +54,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         float animSpeed = animatorController.GetFloat("Speed");
         animatorController.SetFloat("Speed", Mathf.MoveTowards(animSpeed, characterSpeed, Time.deltaTime * animSpeedTrans));
         PlayerDetection();
+        if(!isMelee)
         PerformReload();
     }
     void PlayerDetection()
@@ -207,12 +208,18 @@ public class EnemyAI : MonoBehaviour, IDamage
                 else
                 {
                     // Handle melee
+                    MeleeAttack();
                 }
                 return true;
             }
 
         }
         return false;
+    }
+
+    void MeleeAttack()
+    {
+        animatorController.SetTrigger("Attack");
     }
 
 

@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour, IDamage
     int numBulletsReserve = 60;
     int numBulletsinMag;
 
-    float Timesincereload = Time.time + 10000;
+    float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     void Start()
@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour, IDamage
         maxHealth = health;
         firearmScript = firearm.GetComponent<GunScripts>();
         numBulletsinMag = firearmScript.GetBulletsRemaining();
+        Timesincereload = Time.time + 10000;
     }
 
 
@@ -163,6 +164,10 @@ public class PlayerController : MonoBehaviour, IDamage
         previousHealth = health;
 
         health -= amount;
+        if(health > previousHealth)
+        {
+            // Input healing screen
+        }
         StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
