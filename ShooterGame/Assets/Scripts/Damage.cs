@@ -45,9 +45,12 @@ public class Damage : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if (damageType == DamageType.HealthPack) { 
+        if (damageType == DamageType.HealthPack)
+        {
             Destroy(gameObject);
         }
 
     }
 }
+
+//pushing fake commit to fix whoever fucked up the repo
