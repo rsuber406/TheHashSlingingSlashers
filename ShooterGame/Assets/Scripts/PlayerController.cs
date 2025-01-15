@@ -32,11 +32,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
 
     private int previousHealth;
-    Vector3 playerVel;
-    Vector3 moveDir;
 
-    int jumpCount;
-    bool isSprinting;
+
+ 
     int maxHealth;
 
     GunScripts firearmScript;
@@ -90,11 +88,11 @@ public class PlayerController : MonoBehaviour, IDamage
             controller.Move(playerVel * Time.deltaTime);
             playerVel.y -= gravity * Time.deltaTime;
         }
-    }
-
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
         shootPos.transform.rotation = Camera.main.transform.rotation;
+    }
+
 
 
     private bool IsGrounded()
