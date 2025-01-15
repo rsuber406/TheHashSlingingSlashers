@@ -1074,6 +1074,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CyberCloseRange (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8213156068008437684, guid: f2aee532e040d64449fc2ee2a9e37c8e, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1084,63 +1088,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
   m_PrefabInstance: {fileID: 1939974995}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &172779335
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -9.3813305
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 15.5401325
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_Name
-      value: CyberMediumSoldier (4)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
 --- !u!4 &196892429 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
@@ -3846,63 +3793,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
---- !u!1001 &678555881
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -21.120121
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 9.48
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 3.999277
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_Name
-      value: CyberMediumSoldier (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
 --- !u!1001 &684051785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5691,6 +5581,71 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
   m_PrefabInstance: {fileID: 98910025}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1096502380
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6106075915634653030, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -20.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.479996
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -16.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_Name
+      value: CyberMediumSoldier (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
 --- !u!4 &1114071500 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
@@ -6112,6 +6067,10 @@ PrefabInstance:
     - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
       propertyPath: m_Name
       value: CyberMediumSoldier
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7630,63 +7589,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
   m_PrefabInstance: {fileID: 2086976965}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1504362888
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -18.194422
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 9.479996
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -17.918211
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
-      propertyPath: m_Name
-      value: CyberMediumSoldier (3)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
 --- !u!1001 &1516324675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7695,6 +7597,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: health
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4125394140292719060, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_LocalPosition.x
       value: -36.2
@@ -8014,6 +7920,71 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 405476ec14db8f545bffff47fee75199, type: 3}
+--- !u!1001 &1632308485
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6106075915634653030, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -22.382645
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.479996
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_Name
+      value: CyberMediumSoldier (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
 --- !u!4 &1632763723 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
@@ -8904,6 +8875,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6106075915634653030, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
     - target: {fileID: 6493151389815117174, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -22.382645
@@ -8947,6 +8922,10 @@ PrefabInstance:
     - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
       propertyPath: m_Name
       value: CyberMediumSoldier (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6493151389815146836, guid: 15115ce034c92c148bf1ffe039a5b96b, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10876,6 +10855,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
+--- !u!1001 &3181505331789900550
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5064943971325758982, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_Name
+      value: CyberMediumSoldierTESTAI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -21.120121
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.999277
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064943971326186020, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3a26c0ae6ad0d5c46b1b1ece3c2c9abe, type: 3}
 --- !u!1001 &4009444419792344042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10960,7 +10996,7 @@ SceneRoots:
   - {fileID: 55289844734414263}
   - {fileID: 1764730027}
   - {fileID: 4009444419792344042}
-  - {fileID: 678555881}
+  - {fileID: 3181505331789900550}
   - {fileID: 1806871813}
-  - {fileID: 1504362888}
-  - {fileID: 172779335}
+  - {fileID: 1096502380}
+  - {fileID: 1632308485}

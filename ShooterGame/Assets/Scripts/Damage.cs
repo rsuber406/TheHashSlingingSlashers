@@ -15,6 +15,7 @@ public class Damage : MonoBehaviour
     [SerializeField] int timeToDespawn;
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
+    [SerializeField] string sourceTag;
 
 
     void Start()
@@ -35,6 +36,11 @@ public class Damage : MonoBehaviour
         {
             return;
         }
+        if (other.CompareTag(sourceTag))
+        {
+            return; 
+        }
+        
 
         IDamage dmg = other.GetComponent<IDamage>();
         if (dmg != null)
