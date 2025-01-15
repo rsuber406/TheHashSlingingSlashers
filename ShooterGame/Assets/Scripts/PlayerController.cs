@@ -40,11 +40,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
 
     private int previousHealth;
-    Vector3 playerVel;
-    Vector3 moveDir;
 
-    int jumpCount;
-    bool isSprinting;
+
+ 
     int maxHealth;
 
     GunScripts firearmScript;
