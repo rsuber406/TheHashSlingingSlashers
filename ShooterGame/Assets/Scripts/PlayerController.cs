@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
@@ -13,22 +12,21 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
-    [SerializeField] float wallRunSpeed = 10f;
-    [SerializeField] float wallRunDuration = 2f;
-    [SerializeField] float groundCheckDistance = 1.2f;
-
-    [SerializeField] private CollisionInfo collisionInfo;
-
-    private WallRunController wallRunHandler;
-    Vector3 playerVel;
-    Vector3 moveDir;
-    int jumpCount;
-    bool isSprinting;
+    [SerializeField] float wallRunSpeed = 20f;
+    [SerializeField] float wallRunDuration = 5f;
+    [SerializeField] float wallRunGroundCheckThreshhold = 3f;
+    [SerializeField] float groundCheckRay = 1.2f;
+    
+    private CollisionInfo collisionInfo;
+    private Vector3 playerVel;
+    private Vector3 moveDir;
+    private int jumpCount;
+    private bool isSprinting;
+    private bool isGrounded;
+    private bool isWallRunning;
 
     void Start()
-    {
-        wallRunHandler = new WallRunController(controller, wallRunSpeed, wallRunDuration);
-    }
+    { }
 
     void Update()
     {
@@ -37,55 +35,59 @@ public class PlayerController : MonoBehaviour, IDamage
         Shoot();
         CheckWallRun();
         DrawDebugLines();
-
-        Debug.Log("IsGrounded: " + IsGrounded());
-
-        if (wallRunHandler.IsWallRunning() && !IsAgainstWall())
-        {
-            wallRunHandler.EndWallRun();
-        }
     }
 
     void Movement()
     {
-        if (IsGrounded())
+        isGrounded = IsGrounded();
+        
+        if (isGrounded)
         {
             jumpCount = 0;
             playerVel = Vector3.zero;
         }
 
         // If wall running, handle movement against the wall
-        if (wallRunHandler.IsWallRunning())
+        if (isWallRunning)
         {
-            Vector3 forwardMovement = transform.forward * Input.GetAxis("Vertical");
-            wallRunHandler.Move(forwardMovement);
+            moveDir = transform.forward * Input.GetAxis("Vertical");
+            WallRunMovement(moveDir);
         }
         else
         {
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
-            controller.Move(moveDir * movementSpeed * Time.deltaTime);
+            GroundedMovement(moveDir);
         }
 
         Jump();
-        controller.Move(playerVel * Time.deltaTime);
-        if (!wallRunHandler.IsWallRunning())
+        if (!isWallRunning)
         {
+            controller.Move(playerVel * Time.deltaTime);
             playerVel.y -= gravity * Time.deltaTime;
         }
     }
 
     private bool IsGrounded()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay ))
         {
-            if (hit.collider.CompareTag("Ground"))
-            {
-                return true;
-            }
+            if (hit.collider.CompareTag("Ground")) return true;
         }
 
         return false;
+    }
+    
+    private bool HasGroundClearance()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckThreshhold ))
+        {
+            if (hit.collider.CompareTag("Ground"))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     void Sprint()
@@ -119,9 +121,10 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Shoot()
     {
-        if (Input.GetButtonDown("Shoot"))
+        Camera camRef = Camera.main;
+        if (Input.GetButtonDown("Shoot") && camRef)
         {
-            Instantiate(bullet, Camera.main.transform.position, Camera.main.transform.rotation);
+            Instantiate(bullet, camRef.transform.position, camRef.transform.rotation);
         }
     }
 
@@ -138,11 +141,15 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckWallRun()
     {
-        if (!IsGrounded() && IsAgainstWall())
+        if (!isGrounded && IsAgainstWall())
         {
-            Debug.Log("WallRun");
+            // Maybe dont need this after the refactor
             Vector3 wallNormal = GetWallNormal();
-            wallRunHandler.StartWallRun(wallNormal);
+            StartWallRun(wallNormal);
+        }
+        else
+        {
+            EndWallRun();
         }
     }
 
@@ -151,20 +158,14 @@ public class PlayerController : MonoBehaviour, IDamage
         collisionInfo.Reset();
 
         // Raycast to the left
-        RaycastHit leftHit;
-        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out leftHit, 1f);
+        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out var leftHit, 1f);
         if (isCollidingOnLeftWall && leftHit.collider.CompareTag("Wall"))
-        {
             collisionInfo.left = true;
-        }
 
         // Raycast to the right
-        RaycastHit rightHit;
-        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out rightHit, 1f);
+        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out var rightHit, 1f);
         if (isCollidingOnRightWall && rightHit.collider.CompareTag("Wall"))
-        {
             collisionInfo.right = true;
-        }
 
         return collisionInfo.left || collisionInfo.right;
     }
@@ -197,9 +198,49 @@ public class PlayerController : MonoBehaviour, IDamage
         Debug.DrawRay(transform.position, transform.right, isCollidingOnRightWall ? Color.red : Color.green);
 
         // Draw a raycast to the ground
-        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.blue);
+        Debug.DrawRay(transform.position, Vector3.down * groundCheckRay, Color.blue);
+    }
+    
+    public void StartWallRun(Vector3 wallNormal)
+    {
+        if (!isWallRunning)
+        {
+            isWallRunning = true;
+
+            // Lock the player's rotation to the wall, slerp makes the transition smoother
+            // Dissabling this because some snaping happens that maked this unbearable
+            // Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up);
+            // Quaternion targetRotation = Quaternion.LookRotation(wallDirection);
+            // controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, Time.deltaTime * 10f);
+
+            StartCoroutine(EndWallRun_Internal());
+        }
     }
 
+    private IEnumerator EndWallRun_Internal()
+    {
+        yield return new WaitForSeconds(wallRunDuration);
+        EndWallRun();
+    }
+
+    public void EndWallRun()
+    {
+        isWallRunning = false;
+    }
+
+    void WallRunMovement(Vector3 direction)
+    {
+        Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
+        controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
+    }
+    
+    void GroundedMovement(Vector3 direction)
+    {
+        controller.Move(direction * (movementSpeed * Time.deltaTime));
+    }
+
+    
+    // Expand this to store character collision data in all directions and adata about what is being collided with.
     public struct CollisionInfo
     {
         public bool above, below;
