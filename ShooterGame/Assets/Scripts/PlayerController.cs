@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
+
+    // Public Variables
+    public bool IsDebugMode;
+    
+    
+    // Serialized fields
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
@@ -21,6 +27,8 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float wallRunGroundCheckThreshhold = 3f;
     [SerializeField] float groundCheckRay = 1.2f;
     
+    
+    // Private fields
     private CollisionInfo collisionInfo;
     private Vector3 playerVel;
     private Vector3 moveDir;
@@ -56,9 +64,11 @@ public class PlayerController : MonoBehaviour, IDamage
         Movement();
         Sprint();
         CheckWallRun();
-        DrawDebugLines();
         Shoot();
         PerformReload();
+        
+        if (IsDebugMode)
+            DrawDebugLines();
     }
 
     void Movement()
@@ -84,19 +94,15 @@ public class PlayerController : MonoBehaviour, IDamage
         }
 
         Jump();
-
-        if (!isWallRunning)
-        {
-            controller.Move(playerVel * Time.deltaTime);
-            playerVel.y -= gravity * Time.deltaTime;
-        }
-    }
-
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
         shootPos.transform.rotation = Camera.main.transform.rotation;
+    }
 
-
+    /// <summary>
+    /// Evaluates if a player is touching the ground using a raycast and is colliding with a surface with the "Ground" Tag
+    /// </summary>
+    /// <returns>book</returns>
     private bool IsGrounded()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay ))
@@ -107,6 +113,10 @@ public class PlayerController : MonoBehaviour, IDamage
         return false;
     }
     
+    /// <summary>
+    /// Check If a player is far enough off the ground to start wall running
+    /// </summary>
+    /// <returns>bool</returns>
     private bool HasGroundClearance()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckThreshhold ))
@@ -288,6 +298,7 @@ public class PlayerController : MonoBehaviour, IDamage
     void WallRunMovement(Vector3 direction)
     {
         Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
+        playerVel.y = 0;
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
     
