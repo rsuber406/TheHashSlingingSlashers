@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Shoot();
         PerformReload();
         
-        if (IsDebugMode)
+        if (isDebugMode)
             DrawDebugLines();
         CheckTimeSinceReload();
     }
