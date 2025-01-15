@@ -45,7 +45,8 @@ public class Damage : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if (damageType == DamageType.HealthPack) { 
+        if (damageType == DamageType.HealthPack)
+        {
             Destroy(gameObject);
         }
 

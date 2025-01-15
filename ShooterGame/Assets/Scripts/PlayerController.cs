@@ -42,23 +42,24 @@ public class PlayerController : MonoBehaviour, IDamage
     private int previousHealth;
 
 
- 
-    int maxHealth;
+
+    int maxHealth = 100;
 
     GunScripts firearmScript;
 
     int numBulletsReserve = 60;
-    int numBulletsinMag;
+    int numBulletsInMag;
 
     float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     void Start()
     {
-        maxHealth = health;
+        health = maxHealth;
         firearmScript = firearm.GetComponent<GunScripts>();
-        numBulletsinMag = firearmScript.GetBulletsRemaining();
+        numBulletsInMag = firearmScript.GetBulletsRemaining();
         Timesincereload = Time.time + 10000;
+        GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
 
@@ -162,8 +163,13 @@ public class PlayerController : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         previousHealth = health;
-
+        
         health -= amount;
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        GameManager.instance.UpdatePlayerHeathUI(health);
         if(health > previousHealth)
         {
             // Input healing screen
@@ -198,12 +204,12 @@ public class PlayerController : MonoBehaviour, IDamage
 
          Camera camRef = Camera.main;
         if (Input.GetButtonDown("Shoot"))
-        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsinMag > 0)))
+        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
             firearmScript.PlayerShoot();
             //count bullets set new bullet count on UI
-            numBulletsinMag--;
-            GameManager.instance.PubcurrentBulletsMagText.SetText(numBulletsinMag.ToString());
+            numBulletsInMag--;
+            GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
             if(numBulletsReserve == 0)
             {
                 Timesincereload = Time.time + 3;
@@ -352,16 +358,21 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void PerformReload()
     {
+
         if (Input.GetButtonDown("Reload"))
         {
             if (numBulletsReserve > 0)
             {
+               int bulletsToLoad = 15 - numBulletsInMag;
+
+                bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
                 GameManager.instance.PubReloadText.enabled = false;
-                numBulletsReserve -= 15;
-                numBulletsinMag = 15;
-                GameManager.instance.PubcurrentBulletsMagText.SetText("15");
-                GameManager.instance.PubcurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+                numBulletsReserve -= bulletsToLoad;
+                numBulletsInMag += bulletsToLoad;
+
+                GameManager.instance.pubCurrentBulletsMagText.SetText("15");
+                GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
             }
             else
             {
@@ -373,9 +384,16 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
-        if(numBulletsinMag ==0 && Timesincereload >= Time.time)
+        if(numBulletsInMag ==0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
+    }
+    public void AddAmmo(int amount)
+    {
+        int maxReserveAmount = 50;
+        numBulletsReserve = Mathf.Min(numBulletsReserve + amount, maxReserveAmount);
+
+        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
     }
 }
