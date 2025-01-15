@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class ScoreSys : MonoBehaviour
 {
     [SerializeField] private int score;
-
+    [SerializeField] private float currentMultiplier; 
+    [SerializeField] private float currentTimeRatio;
     private float startTime;
     GameTimer currGameTime;
 
@@ -24,6 +25,14 @@ public class ScoreSys : MonoBehaviour
         startTime = Time.time;
         
     }
+    private void Update()
+    {
+        currentMultiplier = CalculatePotentialReward();
+        if (currGameTime != null)
+        {
+            currentTimeRatio = currGameTime.GetTime() / currGameTime.GetInitialTime();
+        }
+    }
 
 
     public void AddFlatScore(int basePoints)
@@ -34,26 +43,8 @@ public class ScoreSys : MonoBehaviour
 
     public void AddFinalScore(int basePoints)
     {
-        float timeTaken = Time.time - startTime;
-        float gameTimer = currGameTime.GetTime();
-
-        float timeRatio = gameTimer / timeTaken;
-
-      
-        float scoreMultiplier = 1f;
-        int currentTier = 0; 
-
-        for (int i = 0; i < timeTiers.Count; i++)
-        {
-            if (timeRatio >= timeTiers[i].Key)
-            {
-                scoreMultiplier = timeTiers[i].Value;
-                currentTier = i + 1; 
-                break;
-            }
-        }
-
-        int potentialReward = Mathf.RoundToInt(scoreMultiplier * basePoints);
+        float multiplier = CalculatePotentialReward();
+        int potentialReward = Mathf.RoundToInt(multiplier * basePoints);
         score += potentialReward;
 
 
@@ -65,22 +56,23 @@ public class ScoreSys : MonoBehaviour
     }
     public float CalculatePotentialReward()
     {
-        float timeTaken = Time.time - startTime;
-        float gameTimer = currGameTime.GetTime();
-        float timeRatio = gameTimer / timeTaken;
 
-        float scoreMultiplier = 1f;
+        if (currGameTime == null) return 1f;
 
-        foreach (KeyValuePair<float, float> tier in timeTiers)
+        float totalTime = currGameTime.GetInitialTime();
+        float timeRemaining = currGameTime.GetTime();
+        float timeRatio = timeRemaining / totalTime;
+
+        for (int i = 0; i < timeTiers.Count; i++)
         {
-            if (timeRatio >= tier.Key)
+            if (timeRatio >= timeTiers[i].Key)
             {
-                scoreMultiplier = tier.Value;
-                break;
+                return timeTiers[i].Value; 
             }
         }
+        return 1f;
 
-        return scoreMultiplier;
+     
     }
   
 
