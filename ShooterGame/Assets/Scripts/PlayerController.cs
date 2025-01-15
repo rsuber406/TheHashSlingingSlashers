@@ -206,16 +206,20 @@ public class PlayerController : MonoBehaviour, IDamage
         if (Input.GetButtonDown("Shoot"))
         if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
-            firearmScript.PlayerShoot();
-            //count bullets set new bullet count on UI
-            numBulletsInMag--;
-            GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-            if(numBulletsReserve == 0)
-            {
-                Timesincereload = Time.time + 3;
+                if (numBulletsInMag > 0)
+                {
+                    firearmScript.PlayerShoot();
+                    //count bullets set new bullet count on UI
+                    numBulletsInMag--;
+                    GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+                    if (numBulletsReserve == 0)
+                    {
+                        Timesincereload = Time.time + 3;
+
+                    }
+                }
+                }
             }
-        }
-    }
 
     IEnumerator FlashDmgScreen()
     {
