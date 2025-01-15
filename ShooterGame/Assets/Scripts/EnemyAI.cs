@@ -30,12 +30,13 @@ public class EnemyAI : MonoBehaviour, IDamage
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
     bool isShooting;
+    bool canMeleeAttack;
     bool playerInRange;
     Color originalColor;
     void Start()
     {
         originalColor = model.material.color;
-
+        canMeleeAttack = isMelee;
         if (firearm != null)
         {
             firearmScript = firearm.GetComponent<GunScripts>();
@@ -92,7 +93,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     void FaceTarget()
     {
-        Quaternion rotation = Quaternion.LookRotation(playerDirection);
+        Quaternion rotation = Quaternion.LookRotation(new Vector3(playerDirection.x, 0, playerDirection.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, facePlayerSpeed * Time.deltaTime);
     }
 
@@ -205,7 +206,7 @@ public class EnemyAI : MonoBehaviour, IDamage
                     StartCoroutine(Shoot());
                 }
 
-                else
+                else if(isMelee && distance < 5)
                 {
                     // Handle melee
                     MeleeAttack();
@@ -219,7 +220,20 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     void MeleeAttack()
     {
+        if (canMeleeAttack)
+        {
+            StartCoroutine(WeaponAttack());
+        }
+        else return;
+        
+    }
+
+    IEnumerator WeaponAttack()
+    {
+        canMeleeAttack = false;
         animatorController.SetTrigger("Attack");
+        yield return new WaitForSeconds(0.1f);
+        canMeleeAttack = true;
     }
 
 
