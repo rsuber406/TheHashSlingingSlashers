@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] GameObject playerDmgScreen;
+    [SerializeField] GameObject playerGainHealth;
+
+    [SerializeField] TMP_Text CurrentHPText;
+
+    public TMP_Text PubcurrentHPText => CurrentHPText;
 
     public Image playerHPBar;
-    public GameObject damagePanel;
+    
     public ScoreSys scoreSys;
 
     public PlayerController playerscript;
@@ -28,6 +34,7 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
         scoreSys = FindFirstObjectByType<ScoreSys>();
+
     }
 
     // Update is called once per frame
@@ -104,7 +111,11 @@ public class GameManager : MonoBehaviour
         menuActive.SetActive(false);
         menuActive = null;
     }
-
+    public void FlashHealthScreenOn()
+    {
+        menuActive = playerGainHealth;
+        menuActive.SetActive(true);
+    }
 
 
 }

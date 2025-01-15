@@ -12,6 +12,10 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
+
+
+    [SerializeField] Transform shootPos;
+    [SerializeField] GameObject firearm;
     [SerializeField] float wallRunSpeed = 20f;
     [SerializeField] float wallRunDuration = 5f;
     [SerializeField] float wallRunGroundCheckThreshhold = 3f;
@@ -25,16 +29,36 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isGrounded;
     private bool isWallRunning;
 
+
+
+    private int previousHealth;
+    Vector3 playerVel;
+    Vector3 moveDir;
+
+    int jumpCount;
+    bool isSprinting;
+    int maxHealth;
+
+    GunScripts firearmScript;
+
+
     void Start()
-    { }
+    {
+        maxHealth = health;
+        firearmScript = firearm.GetComponent<GunScripts>();
+    }
+
 
     void Update()
     {
+
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
-        Shoot();
         CheckWallRun();
         DrawDebugLines();
+        Shoot();
+        PerformReload();
     }
 
     void Movement()
@@ -60,12 +84,18 @@ public class PlayerController : MonoBehaviour, IDamage
         }
 
         Jump();
+
         if (!isWallRunning)
         {
             controller.Move(playerVel * Time.deltaTime);
             playerVel.y -= gravity * Time.deltaTime;
         }
     }
+
+        controller.Move(playerVel * Time.deltaTime);
+        playerVel.y -= gravity * Time.deltaTime;
+        shootPos.transform.rotation = Camera.main.transform.rotation;
+
 
     private bool IsGrounded()
     {
@@ -115,29 +145,56 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void TakeDamage(int amount)
     {
+        previousHealth = health;
+
         health -= amount;
         StartCoroutine(FlashDmgScreen());
+
+        UpdatePlayerUI();
+    }
+
+    void UpdatePlayerUI()
+    {
+        GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
+        GameManager.instance.PubcurrentHPText.SetText(health.ToString());       
+        if(health < 0)
+            GameManager.instance.PubcurrentHPText.SetText("0");
     }
 
     void Shoot()
     {
-        Camera camRef = Camera.main;
-        if (Input.GetButtonDown("Shoot") && camRef)
+
+
+         Camera camRef = Camera.main;
+        if (Input.GetButtonDown("Shoot"))
         {
-            Instantiate(bullet, camRef.transform.position, camRef.transform.rotation);
+            firearmScript.PlayerShoot();
+
+
         }
     }
 
     IEnumerator FlashDmgScreen()
     {
-        GameManager.instance.FlashDamageScreenOn();
-        yield return new WaitForSeconds(0.1f);
-        GameManager.instance.FlashDamageScreenOff();
-        if (health <= 0)
+
+        if (previousHealth > health)
+        {
+            GameManager.instance.FlashDamageScreenOn();
+            yield return new WaitForSeconds(0.1f);
+            GameManager.instance.FlashDamageScreenOff();
+        } else
+        {
+            GameManager.instance.FlashHealthScreenOn();
+            yield return new WaitForSeconds(0.1f);
+            GameManager.instance.FlashDamageScreenOff();
+        }
+        if(health <= 0)
+
         {
             GameManager.instance.Lose();
         }
     }
+
 
     void CheckWallRun()
     {
@@ -252,6 +309,15 @@ public class PlayerController : MonoBehaviour, IDamage
             above = below = false;
             left = right = false;
             backward = forward = false;
+        }
+     }
+
+    void PerformReload()
+    {
+        if (Input.GetButtonDown("Reload"))
+        {
+            StartCoroutine(firearmScript.Reload());
+
         }
     }
 }
