@@ -177,6 +177,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CyberCloseRange
       objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -274,7 +278,7 @@ MonoBehaviour:
   movementSpeed: 500
   sprintMod: 2
   agent: {fileID: 7967720148001108979}
-  health: 3
+  health: 40
   maxHealth: 10
   model: {fileID: 8213156068011551408}
   facePlayerSpeed: 250
@@ -288,6 +292,7 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   animatorController: {fileID: 8213156068015854704}
   animSpeedTrans: 1
+  distanceRunTowardPlayerOnDmg: 0
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0

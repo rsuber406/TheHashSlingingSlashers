@@ -412,6 +412,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 527936863065299303}
+  - {fileID: 9193405878861994825}
   m_Father: {fileID: 6784633155977321280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1855603013382868641
@@ -925,6 +926,37 @@ Transform:
   - {fileID: 2229484577392026348}
   m_Father: {fileID: 4177160134188844948}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5054093776783082262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9193405878861994825}
+  m_Layer: 0
+  m_Name: FindWallPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9193405878861994825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054093776783082262}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.043132115, y: -2.4192554e-10, z: -0.000000038227526, w: 0.9990694}
+  m_LocalPosition: {x: 3.792522e-12, y: 0.22500001, z: 0.015000002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8466279742029186789}
+  m_LocalEulerAnglesHint: {x: -4.944, y: 0, z: 0}
 --- !u!1 &5146021881989365622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,7 +1135,7 @@ GameObject:
   - component: {fileID: -2204462272274185328}
   m_Layer: 0
   m_Name: MeleeCyberSoldier
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1176,6 +1208,9 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   animatorController: {fileID: 3700920318263449828}
   animSpeedTrans: 2
+  distanceRunTowardPlayerOnDmg: 20
+  locateWallPos: {fileID: 9193405878861994825}
+  searchForWall: 1000
 --- !u!136 &-71839492652128871
 CapsuleCollider:
   m_ObjectHideFlags: 0

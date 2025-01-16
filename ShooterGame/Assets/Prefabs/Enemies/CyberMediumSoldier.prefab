@@ -74,6 +74,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CyberMediumSoldier
       objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -195,6 +199,7 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   animatorController: {fileID: 6493151389807901328}
   animSpeedTrans: 1
+  distanceRunTowardPlayerOnDmg: 0
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
