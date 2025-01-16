@@ -533,11 +533,11 @@ public class PlayerController : MonoBehaviour, IDamage
             }
         }
     }
-}
-
-
     public void TakeDamage(int amount, Vector3 origin)
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
 }
+
+
+
