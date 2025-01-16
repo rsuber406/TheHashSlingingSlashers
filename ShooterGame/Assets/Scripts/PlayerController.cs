@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Sprint();
         Crouch();
         Slide();
-        CheckWallRun();
+       //CheckWallRun();
         Shoot();
         PerformReload();
         
