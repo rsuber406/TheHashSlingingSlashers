@@ -83,7 +83,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
         else
         {
-
+            if (!isShooting) 
             HandleRangedCombatOnDmg(ref playerDirection);
 
 
@@ -262,12 +262,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             Debug.Log("I am running away");
             // rotate 90 degrees and run
-            //Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
-            //rotateCalc = rotateCalc + playerDirection;
-            //Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
-            //transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
-            //agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
-            FindNearestWall();
+            Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
+            rotateCalc = rotateCalc + playerDirection;
+            Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
+            agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
+            //FindNearestWall();
         }
         else
         {
