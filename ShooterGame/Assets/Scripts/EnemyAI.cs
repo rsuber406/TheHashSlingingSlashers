@@ -84,7 +84,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         else
         {
             if (!isShooting) 
-            HandleRangedCombatOnDmg(ref playerDirection);
+            HandleRangedCombatOnDmg(playerDirection);
 
 
         }
@@ -135,7 +135,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
             }
 
-            firearmScript.AIShoot(transform.rotation * randomRotation);
+            firearmScript.AIShoot(transform.rotation, transform.position);
 
 
         }
@@ -150,7 +150,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             }
             Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
             RotateToPlayer(rotateDir);
-            firearmScript.AIShoot(transform.rotation * randomRotation);
+            firearmScript.AIShoot(transform.rotation, transform.position);
         }
         yield return new WaitForSeconds(fireRate);
         isShooting = false;
@@ -278,11 +278,10 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         }
     }
-    void HandleRangedCombatOnDmg(ref Vector3 playerDirection)
+    void HandleRangedCombatOnDmg( Vector3 playerDirection)
     {
-        Debug.Log("Hit ranged enemy");
-        Quaternion lookRotation = Quaternion.LookRotation(playerDirection);
-        transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, facePlayerSpeed * Time.deltaTime);
+        Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
+        transform.rotation = rotateAi;
         agent.SetDestination(playerDirection);
         PerformReload();
         StartCoroutine(Shoot());

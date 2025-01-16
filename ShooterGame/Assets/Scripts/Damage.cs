@@ -24,7 +24,7 @@ public class Damage : MonoBehaviour
         if (damageType == DamageType.Moving)
         {
             rigidBody.linearVelocity = transform.forward * bulletSpeed;
-            originPosition = transform.position;
+            originPosition = rigidBody.position;
             Destroy(gameObject, timeToDespawn);
         }
 
