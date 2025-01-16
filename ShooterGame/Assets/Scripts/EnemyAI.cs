@@ -302,7 +302,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         Transform originalWallPos = locateWallPos;
         for (int i = 0; i < 5; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5);
+            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5f);
 
             if (Physics.Raycast(locateWallPos.position, directionForCast, out hit)) 
             if (hit.collider.gameObject.CompareTag("Wall"))
@@ -342,7 +342,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
 
         }
-        else Debug.Log("Did not find a wall");
+        else //Debug.Log("Did not find a wall");
 
         locateWallPos = originalWallPos;
 
