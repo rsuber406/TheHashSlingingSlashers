@@ -197,7 +197,7 @@ MonoBehaviour:
   movementSpeed: 500
   sprintMod: 2
   agent: {fileID: 4130550149115217785}
-  health: 20
+  health: 120
   maxHealth: 20
   model: {fileID: 6493151389803643984}
   facePlayerSpeed: 300
@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0.15
+  fireRate: 0.09
   shootPos: {fileID: 4747451899016110582}
   bullet: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
   shotsPerMagazine: 60

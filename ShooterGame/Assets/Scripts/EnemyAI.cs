@@ -76,6 +76,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     public void TakeDamage(int amount, Vector3 origin)
     {
         Vector3 playerDirection = origin - transform.position;
+
         if (isMelee)
         {
             HandleMeleeAIMoveOnDmg(ref playerDirection);
@@ -271,7 +272,9 @@ public class EnemyAI : MonoBehaviour, IDamage
         else
         {
             Debug.Log("I am running towards");
-            agent.SetDestination(playerDirection);
+            Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
+            agent.SetDestination(GameManager.instance.player.transform.position);
 
         }
     }

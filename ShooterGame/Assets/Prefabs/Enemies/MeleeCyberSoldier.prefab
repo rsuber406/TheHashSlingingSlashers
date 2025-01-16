@@ -1194,7 +1194,7 @@ MonoBehaviour:
   movementSpeed: 600
   sprintMod: 2
   agent: {fileID: -2204462272274185328}
-  health: 50
+  health: 80
   maxHealth: 50
   model: {fileID: 589467511998648494}
   facePlayerSpeed: 250
@@ -1208,7 +1208,7 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   animatorController: {fileID: 3700920318263449828}
   animSpeedTrans: 2
-  distanceRunTowardPlayerOnDmg: 20
+  distanceRunTowardPlayerOnDmg: 40
   locateWallPos: {fileID: 9193405878861994825}
   searchForWall: 1000
 --- !u!136 &-71839492652128871
@@ -1253,7 +1253,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 25
+  m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &-2204462272274185328
 NavMeshAgent:

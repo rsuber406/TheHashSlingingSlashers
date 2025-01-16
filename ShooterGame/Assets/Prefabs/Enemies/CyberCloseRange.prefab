@@ -290,7 +290,7 @@ MonoBehaviour:
   movementSpeed: 500
   sprintMod: 2
   agent: {fileID: 7967720148001108979}
-  health: 40
+  health: 80
   maxHealth: 10
   model: {fileID: 8213156068011551408}
   facePlayerSpeed: 250
