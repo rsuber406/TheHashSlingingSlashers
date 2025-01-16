@@ -37,9 +37,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isGrounded;
     private bool isWallRunning;
     // jump
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int jumpMax;
-    [SerializeField] int gravity;
+
 
     // crouch
     [SerializeField] float crouchHeight;
@@ -54,14 +52,13 @@ public class PlayerController : MonoBehaviour, IDamage
 
     private int previousHealth;
 
-    Vector3 playerVel;
-    Vector3 moveDir;
+ 
 
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
-    int jumpCount;
-    bool isSprinting, isCrouching, isSliding;
+   
+    bool isCrouching, isSliding;
 
 
 
@@ -185,7 +182,7 @@ public class PlayerController : MonoBehaviour, IDamage
                 {
                     isCrouching = false;
                     Crouch();
-                    movementSpeed = origMovementSpeed;
+                    movementSpeed = (int) origMovementSpeed;
                 }
 
                 isSprinting = true;
@@ -195,7 +192,7 @@ public class PlayerController : MonoBehaviour, IDamage
             if (Input.GetButtonUp("Sprint"))
             {
                 isSprinting = false;
-                movementSpeed = origMovementSpeed;
+                movementSpeed = (int) origMovementSpeed;
             }
         }
     }
@@ -463,7 +460,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
                 if (controller.height <= crouchHeight)
                 {
-                    movementSpeed = crouchMovementSpeed;
+                    movementSpeed = (int) crouchMovementSpeed;
                     controller.height = crouchHeight;
                 }
             }
@@ -481,7 +478,7 @@ public class PlayerController : MonoBehaviour, IDamage
                     controller.height = origHeight;
 
                     if (!isSprinting)
-                        movementSpeed = origMovementSpeed;
+                        movementSpeed = (int) origMovementSpeed;
 
                 }
             }
@@ -501,8 +498,8 @@ public class PlayerController : MonoBehaviour, IDamage
             slideTimer = 0f;
             controller.height = crouchHeight;
 
-            movementSpeed = origMovementSpeed;
-            movementSpeed *= slideMod;
+            movementSpeed = (int)origMovementSpeed;
+            movementSpeed *= (int) slideMod;
         }
 
         else if (isSliding)
@@ -512,7 +509,7 @@ public class PlayerController : MonoBehaviour, IDamage
             {
                 isCrouching = false;
                 isSliding = false;
-                movementSpeed = origMovementSpeed;
+                movementSpeed = (int) origMovementSpeed;
 
             }
 
@@ -522,14 +519,14 @@ public class PlayerController : MonoBehaviour, IDamage
                 controller.Move(moveDir * slideMod * Time.deltaTime);
 
                 slideTimer += Time.deltaTime;
-                movementSpeed -= slideMod * slideMomentum * Time.deltaTime;
+                movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
 
             }
 
             // End slide if timer exceeds duration or player's speed drops below threshold
             if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
             {
-                movementSpeed = origMovementSpeed;
+                movementSpeed = (int) origMovementSpeed;
                 isSliding = false;
                 isCrouching = true;
 
