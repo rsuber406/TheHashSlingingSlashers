@@ -7,7 +7,8 @@ public class Damage : MonoBehaviour
     {
         Moving,
         Stationary,
-        HealthPack
+        HealthPack,
+        GroundTrap
     }
     [SerializeField] int bulletSpeed;
     [SerializeField] int damage;
@@ -15,16 +16,18 @@ public class Damage : MonoBehaviour
     [SerializeField] int timeToDespawn;
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
-
+    [SerializeField] string sourceTag;
+    Vector3 originPosition;
 
     void Start()
     {
         if (damageType == DamageType.Moving)
         {
             rigidBody.linearVelocity = transform.forward * bulletSpeed;
+            originPosition = transform.position;
             Destroy(gameObject, timeToDespawn);
         }
-       
+
 
     }
 
@@ -36,18 +39,63 @@ public class Damage : MonoBehaviour
             return;
         }
 
+
         IDamage dmg = other.GetComponent<IDamage>();
         if (dmg != null)
         {
-            dmg.TakeDamage(damage);
+            if (other.CompareTag(sourceTag))
+            {
+                return;
+            }
+
+            if (other.gameObject.CompareTag("Enemy"))
+            {
+                DamageAI(ref dmg);
+            }
+            else
+            {
+                DamagePlayer(ref dmg);
+            }
+
         }
+        else
+        {
+            DestroyItems();
+        }
+
+
+    }
+    void DamagePlayer(ref IDamage dmg)
+    {
+
+        dmg.TakeDamage(damage);
+        DestroyItems();
+
+    }
+
+    void DamageAI(ref IDamage dmg)
+    {
+
+        dmg.TakeDamage(damage, originPosition);
+        DestroyItems();
+
+    }
+
+    void DestroyItems()
+    {
         if (damageType == DamageType.Moving)
         {
             Destroy(gameObject);
         }
-        if (damageType == DamageType.HealthPack) { 
+        if (damageType == DamageType.HealthPack)
+        {
+            Destroy(gameObject);
+        }
+        if (damageType == DamageType.GroundTrap)
+        {
             Destroy(gameObject);
         }
 
     }
 }
+

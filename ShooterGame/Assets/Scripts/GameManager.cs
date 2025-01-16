@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerDmgScreen;
     [SerializeField] GameObject playerGainHealth;
 
+    [SerializeField] TMP_Text CurrentHPText;
+    [SerializeField] GameObject lowHealthScreen;
+    [SerializeField] TMP_Text CurrentBulletsMagText;
+    [SerializeField] TMP_Text CurrentBulletsReserveText;
+    [SerializeField] TMP_Text ReloadText;
+
+    public TMP_Text PubReloadText => ReloadText;
+    public TMP_Text PubcurrentHPText => CurrentHPText; 
+    public TMP_Text pubCurrentBulletsMagText => CurrentBulletsMagText;
+    public TMP_Text pubCurrentBulletsReserveText => CurrentBulletsReserveText;
+    public GameObject PublowHealthScreen => lowHealthScreen;
+
     public Image playerHPBar;
     
     public ScoreSys scoreSys;
@@ -21,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameTimer gameTimer;
 
     public bool isPaused;
+    int maxHealth = 100;
 
     int goalCount;
     void Awake()
@@ -29,6 +43,7 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
         scoreSys = FindFirstObjectByType<ScoreSys>();
+
     }
 
     // Update is called once per frame
@@ -109,6 +124,13 @@ public class GameManager : MonoBehaviour
     {
         menuActive = playerGainHealth;
         menuActive.SetActive(true);
+    }
+
+    public void UpdatePlayerHeathUI(int currentHealth)
+    {
+        CurrentHPText.text = currentHealth.ToString();
+        
+        
     }
 
 
