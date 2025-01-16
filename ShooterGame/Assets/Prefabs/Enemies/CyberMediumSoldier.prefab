@@ -79,6 +79,18 @@ PrefabInstance:
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -185,7 +197,7 @@ MonoBehaviour:
   movementSpeed: 500
   sprintMod: 2
   agent: {fileID: 4130550149115217785}
-  health: 20
+  health: 120
   maxHealth: 20
   model: {fileID: 6493151389803643984}
   facePlayerSpeed: 300
@@ -200,6 +212,8 @@ MonoBehaviour:
   animatorController: {fileID: 6493151389807901328}
   animSpeedTrans: 1
   distanceRunTowardPlayerOnDmg: 0
+  locateWallPos: {fileID: 0}
+  searchForWall: 0
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -363,9 +377,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0.15
+  fireRate: 0.09
   shootPos: {fileID: 4747451899016110582}
-  bullet: {fileID: 5514111550016177597, guid: 259c29f2cb145d148aabdc8a0eda9a43, type: 3}
+  bullet: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
   shotsPerMagazine: 60
   reloadTime: 2.5
   isAIControlled: 1

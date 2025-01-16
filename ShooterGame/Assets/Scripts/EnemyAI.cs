@@ -76,6 +76,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     public void TakeDamage(int amount, Vector3 origin)
     {
         Vector3 playerDirection = origin - transform.position;
+
         if (isMelee)
         {
             HandleMeleeAIMoveOnDmg(ref playerDirection);
@@ -271,7 +272,9 @@ public class EnemyAI : MonoBehaviour, IDamage
         else
         {
             Debug.Log("I am running towards");
-            agent.SetDestination(playerDirection);
+            Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
+            agent.SetDestination(GameManager.instance.player.transform.position);
 
         }
     }
@@ -302,7 +305,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         Transform originalWallPos = locateWallPos;
         for (int i = 0; i < 5; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5);
+            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5f);
 
             if (Physics.Raycast(locateWallPos.position, directionForCast, out hit)) 
             if (hit.collider.gameObject.CompareTag("Wall"))
@@ -342,7 +345,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
 
         }
-        else Debug.Log("Did not find a wall");
+        else //Debug.Log("Did not find a wall");
 
         locateWallPos = originalWallPos;
 
