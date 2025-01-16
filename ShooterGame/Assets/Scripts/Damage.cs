@@ -7,7 +7,8 @@ public class Damage : MonoBehaviour
     {
         Moving,
         Stationary,
-        HealthPack
+        HealthPack,
+        GroundTrap
     }
     [SerializeField] int bulletSpeed;
     [SerializeField] int damage;
@@ -90,7 +91,11 @@ public class Damage : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        if (damageType == DamageType.GroundTrap)
+        {
+            Destroy(gameObject);
+        }
+
     }
 }
 
-//pushing fake commit to fix whoever fucked up the repo

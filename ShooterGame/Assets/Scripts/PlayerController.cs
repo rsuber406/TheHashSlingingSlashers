@@ -36,10 +36,30 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
+    // jump
 
 
+    // crouch
+    [SerializeField] float crouchHeight;
+    [SerializeField] float crouchMovementSpeed;
+    [SerializeField] float crouchSpeed;
+
+    // slide
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower number more further you go
+    [SerializeField] float slideDuration;
+    [SerializeField] float slideThreshold;
 
     private int previousHealth;
+
+ 
+
+    float origMovementSpeed;
+    float origHeight;
+    float slideTimer;
+   
+    bool isCrouching, isSliding;
+
 
 
 
@@ -57,6 +77,8 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         health = maxHealth;
         firearmScript = firearm.GetComponent<GunScripts>();
+        origHeight = controller.height;
+        origMovementSpeed = movementSpeed;
         numBulletsInMag = firearmScript.GetBulletsRemaining();
         Timesincereload = Time.time + 10000;
         GameManager.instance.UpdatePlayerHeathUI(health);
@@ -69,6 +91,8 @@ public class PlayerController : MonoBehaviour, IDamage
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
+        Crouch();
+        Slide();
         CheckWallRun();
         Shoot();
         PerformReload();
@@ -88,6 +112,11 @@ public class PlayerController : MonoBehaviour, IDamage
             playerVel = Vector3.zero;
         }
 
+        else
+            // cannot crouch while player in air
+            if (playerVel.y > 0)
+                isCrouching = false;
+
         // If wall running, handle movement against the wall
         if (isWallRunning)
         {
@@ -100,9 +129,14 @@ public class PlayerController : MonoBehaviour, IDamage
             GroundedMovement(moveDir);
         }
 
+        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
+        controller.Move(moveDir * movementSpeed * Time.deltaTime);
+
         Jump();
+
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
+        
         shootPos.transform.rotation = Camera.main.transform.rotation;
     }
 
@@ -139,15 +173,27 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Sprint()
     {
-        if (Input.GetButtonDown("Sprint") && !isSprinting)
+        if (!isSliding)
         {
-            isSprinting = true;
-            movementSpeed = movementSpeed * sprintMod;
-        }
-        else if (Input.GetButtonUp("Sprint"))
-        {
-            isSprinting = false;
-            movementSpeed = movementSpeed / sprintMod;
+            if (Input.GetButtonDown("Sprint"))
+            {
+                // toggles crouch
+                if (isCrouching)
+                {
+                    isCrouching = false;
+                    Crouch();
+                    movementSpeed = (int) origMovementSpeed;
+                }
+
+                isSprinting = true;
+                movementSpeed *= sprintMod;
+            }
+
+            if (Input.GetButtonUp("Sprint"))
+            {
+                isSprinting = false;
+                movementSpeed = (int) origMovementSpeed;
+            }
         }
     }
 
@@ -206,16 +252,20 @@ public class PlayerController : MonoBehaviour, IDamage
         if (Input.GetButtonDown("Shoot"))
         if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
-            firearmScript.PlayerShoot();
-            //count bullets set new bullet count on UI
-            numBulletsInMag--;
-            GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-            if(numBulletsReserve == 0)
-            {
-                Timesincereload = Time.time + 3;
+                if (numBulletsInMag > 0)
+                {
+                    firearmScript.PlayerShoot();
+                    //count bullets set new bullet count on UI
+                    numBulletsInMag--;
+                    GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+                    if (numBulletsReserve == 0)
+                    {
+                        Timesincereload = Time.time + 3;
+
+                    }
+                }
+                }
             }
-        }
-    }
 
     IEnumerator FlashDmgScreen()
     {
@@ -396,6 +446,95 @@ public class PlayerController : MonoBehaviour, IDamage
 
         GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
     }
+
+    void Crouch()
+    {
+        if (!isSliding)
+        {
+            if (Input.GetButtonDown("Crouch") && !isSprinting)
+                isCrouching = !isCrouching;
+
+            if (isCrouching)
+            {
+                controller.height -= crouchSpeed * Time.deltaTime;
+
+                if (controller.height <= crouchHeight)
+                {
+                    movementSpeed = (int) crouchMovementSpeed;
+                    controller.height = crouchHeight;
+                }
+            }
+
+            else if (!isCrouching && !isSliding)
+            {
+                controller.height += crouchSpeed * Time.deltaTime;
+
+                // was Supposed to stop the jitter from un crouching
+                /* if (controller.height < normalHeight)
+                    player.position += offset * Time.deltaTime;*/
+
+                if (controller.height >= origHeight)
+                {
+                    controller.height = origHeight;
+
+                    if (!isSprinting)
+                        movementSpeed = (int) origMovementSpeed;
+
+                }
+            }
+        }
+    }
+
+
+    void Slide()
+    {
+        if (isSprinting && Input.GetButtonDown("Crouch"))
+        {
+            // Start sliding
+            isSliding = true;
+            isCrouching = false;
+            isSprinting = false;
+
+            slideTimer = 0f;
+            controller.height = crouchHeight;
+
+            movementSpeed = (int)origMovementSpeed;
+            movementSpeed *= (int) slideMod;
+        }
+
+        else if (isSliding)
+        {
+            // slide cancel
+            if (Input.GetButtonDown("Crouch"))
+            {
+                isCrouching = false;
+                isSliding = false;
+                movementSpeed = (int) origMovementSpeed;
+
+            }
+
+            // Continue sliding
+            else
+            {
+                controller.Move(moveDir * slideMod * Time.deltaTime);
+
+                slideTimer += Time.deltaTime;
+                movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
+
+            }
+
+            // End slide if timer exceeds duration or player's speed drops below threshold
+            if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
+            {
+                movementSpeed = (int) origMovementSpeed;
+                isSliding = false;
+                isCrouching = true;
+
+            }
+        }
+    }
+}
+
 
     public void TakeDamage(int amount, Vector3 origin)
     {
