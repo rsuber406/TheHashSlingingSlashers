@@ -83,7 +83,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
         else
         {
-
+            if (!isShooting) 
             HandleRangedCombatOnDmg(ref playerDirection);
 
 
