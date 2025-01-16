@@ -53,6 +53,7 @@ MonoBehaviour:
   timeToDespawn: 3
   rigidBody: {fileID: 9141092300187970157}
   damageType: 0
+  sourceTag: Player
 --- !u!135 &3803267477663141802
 SphereCollider:
   m_ObjectHideFlags: 0

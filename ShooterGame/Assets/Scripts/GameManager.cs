@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text PubReloadText => ReloadText;
     public TMP_Text PubcurrentHPText => CurrentHPText; 
-    public TMP_Text PubcurrentBulletsMagText => CurrentBulletsMagText;
-    public TMP_Text PubcurrentBulletsReserveText => CurrentBulletsReserveText;
+    public TMP_Text pubCurrentBulletsMagText => CurrentBulletsMagText;
+    public TMP_Text pubCurrentBulletsReserveText => CurrentBulletsReserveText;
     public GameObject PublowHealthScreen => lowHealthScreen;
 
     public Image playerHPBar;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameTimer gameTimer;
 
     public bool isPaused;
+    int maxHealth = 100;
 
     int goalCount;
     void Awake()
@@ -123,6 +124,13 @@ public class GameManager : MonoBehaviour
     {
         menuActive = playerGainHealth;
         menuActive.SetActive(true);
+    }
+
+    public void UpdatePlayerHeathUI(int currentHealth)
+    {
+        CurrentHPText.text = currentHealth.ToString();
+        
+        
     }
 
 

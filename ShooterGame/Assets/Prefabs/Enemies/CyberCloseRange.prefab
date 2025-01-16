@@ -156,7 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireRate: 0.35
   shootPos: {fileID: 3828426492534889248}
-  bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
+  bullet: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
   shotsPerMagazine: 15
   reloadTime: 1.5
   isAIControlled: 1
@@ -176,6 +176,22 @@ PrefabInstance:
     - target: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       propertyPath: m_Name
       value: CyberCloseRange
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       propertyPath: m_LocalPosition.x
@@ -274,7 +290,7 @@ MonoBehaviour:
   movementSpeed: 500
   sprintMod: 2
   agent: {fileID: 7967720148001108979}
-  health: 3
+  health: 80
   maxHealth: 10
   model: {fileID: 8213156068011551408}
   facePlayerSpeed: 250
@@ -288,6 +304,9 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   animatorController: {fileID: 8213156068015854704}
   animSpeedTrans: 1
+  distanceRunTowardPlayerOnDmg: 0
+  locateWallPos: {fileID: 0}
+  searchForWall: 0
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0
