@@ -22,23 +22,29 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] bool isTurrent;
     [SerializeField] GameObject firearm;
     [SerializeField] GunScripts firearmScript;
+    [SerializeField] float enemyBulletSpread;
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
     [SerializeField] int distanceRunTowardPlayerOnDmg;
     [SerializeField] Transform locateWallPos;
     [SerializeField] int searchForWall;
+    [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
+    Vector3 coverTransitionVector;
+    Vector3 firstTransitionClear;
     bool isShooting;
     bool canMeleeAttack;
     bool playerInRange;
     float inSideDistance;
+    bool coverSetDirectionFinished = false;
     Color originalColor;
     void Start()
     {
+        coverTransitionVector = Vector3.zero;
         originalColor = model.material.color;
         canMeleeAttack = isMelee;
         if (firearm != null)
@@ -62,6 +68,19 @@ public class EnemyAI : MonoBehaviour, IDamage
         PlayerDetection();
         if (!isMelee)
             PerformReload();
+        if (coverSetDirectionFinished)
+        {
+            agent.ResetPath();
+            agent.SetDestination(coverTransitionVector);
+            coverSetDirectionFinished = false;
+        }
+        if(Vector3.Distance(transform.position, firstTransitionClear) <= 3f)
+        {
+            Debug.Log("Change direction");
+            agent.ResetPath();
+            coverSetDirectionFinished = true;
+        }
+
     }
     void PlayerDetection()
     {
@@ -131,11 +150,11 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement random number offsets so the AI does not laser beam the player
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
 
             }
 
-            firearmScript.AIShoot(transform.rotation, transform.position);
+            firearmScript.AIShoot(randomRotation, transform.position);
 
 
         }
@@ -145,12 +164,12 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
 
             }
             Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
             RotateToPlayer(rotateDir);
-            firearmScript.AIShoot(transform.rotation, transform.position);
+            firearmScript.AIShoot(randomRotation, transform.position);
         }
         yield return new WaitForSeconds(fireRate);
         isShooting = false;
@@ -260,14 +279,14 @@ public class EnemyAI : MonoBehaviour, IDamage
         // give back a quaternion and feed a vector
         if (inSideDistance >= distanceRunTowardPlayerOnDmg)
         {
-            Debug.Log("I am running away");
+         
             // rotate 90 degrees and run
-            Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
-            rotateCalc = rotateCalc + playerDirection;
-            Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
-            agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
-            //FindNearestWall();
+            //Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
+            //rotateCalc = rotateCalc + playerDirection;
+            //Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
+            //transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
+            //agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
+            FindNearestWall();
         }
         else
         {
@@ -296,21 +315,22 @@ public class EnemyAI : MonoBehaviour, IDamage
     void FindNearestWall()
     {
         RaycastHit hit;
-
+        Vector3 wallPoint = Vector3.zero;
         float offset = -90;
         Vector3 foundWall = Vector3.zero;
         Quaternion rotationToApply = Quaternion.Euler(1, offset, 1);
         Vector3 directionForCast = rotationToApply * locateWallPos.transform.forward;
         Transform originalWallPos = locateWallPos;
-        for (int i = 0; i < 5; i++)
+        bool isWallLocated = false;
+        for (int i = 0; i < 9; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5f);
-
-            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit)) 
-            if (hit.collider.gameObject.CompareTag("Wall"))
+            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
+            int layerMask = LayerMask.GetMask("Wall");
+            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask)) 
             {
-                Vector3 wallLocation = hit.collider.transform.position;
-
+                Debug.Log("Hit a wall");
+                Vector3 wallLocation = hit.collider.gameObject.transform.position;
+                isWallLocated = true;
                 if (i != 0)
                 {
                     float distanceFirst = Vector3.Distance(transform.position, wallLocation);
@@ -318,33 +338,34 @@ public class EnemyAI : MonoBehaviour, IDamage
                     if (distanceFirst < distanceSecond)
                     {
                         foundWall = wallLocation;
-
+                        wallPoint = hit.point;
                     }
 
                 }
                 else
                 {
                     foundWall = wallLocation;
+                    wallPoint = hit.point;
                 }
             }
 
 
             // check at 45 degree intervals 
-            offset += 45;
+            offset += 20;
             rotationToApply = Quaternion.Euler(1, offset, 1);
             directionForCast = rotationToApply * locateWallPos.transform.forward;
         }
-        if (foundWall != Vector3.zero)
+        if (isWallLocated)
         {
-            Debug.Log("Found a wall");
-            Vector3 direction = foundWall - transform.position;
-            Quaternion rotateAiToWall = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAiToWall, facePlayerSpeed * Time.deltaTime);
-            agent.SetDestination(direction);
-
-
+            Vector3 directionToPlayer = (wallPoint - GameManager.instance.player.transform.position).normalized;
+            // Replace this float with a hide distance variable if this works properly
+            Vector3 hiddenPosition = wallPoint + (directionToPlayer * 40f);
+            agent.SetDestination(hiddenPosition);
+            firstTransitionClear = hiddenPosition;
+            coverTransitionVector = wallPoint;
+            
         }
-        else //Debug.Log("Did not find a wall");
+        
 
         locateWallPos = originalWallPos;
 

@@ -950,13 +950,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5054093776783082262}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.043132115, y: -2.4192554e-10, z: -0.000000038227526, w: 0.9990694}
-  m_LocalPosition: {x: 3.792522e-12, y: 0.22500001, z: 0.015000002}
+  m_LocalRotation: {x: -0.043619405, y: 0, z: 0, w: 0.9990483}
+  m_LocalPosition: {x: -0, y: -0.024, z: 0.145}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8466279742029186789}
-  m_LocalEulerAnglesHint: {x: -4.944, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -5, y: 0, z: 0}
 --- !u!1 &5146021881989365622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1206,6 +1206,7 @@ MonoBehaviour:
   isTurrent: 0
   firearm: {fileID: 0}
   firearmScript: {fileID: 0}
+  enemyBulletSpread: 0
   animatorController: {fileID: 3700920318263449828}
   animSpeedTrans: 2
   distanceRunTowardPlayerOnDmg: 40
