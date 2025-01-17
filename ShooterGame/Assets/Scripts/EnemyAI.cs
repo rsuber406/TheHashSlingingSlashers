@@ -359,7 +359,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             Vector3 directionToPlayer = (wallPoint - GameManager.instance.player.transform.position).normalized;
             // Replace this float with a hide distance variable if this works properly
-            Vector3 hiddenPosition = wallPoint + (directionToPlayer * 40f);
+            Vector3 hiddenPosition = wallPoint + (directionToPlayer * 20f);
             agent.SetDestination(hiddenPosition);
             firstTransitionClear = hiddenPosition;
             coverTransitionVector = wallPoint;
