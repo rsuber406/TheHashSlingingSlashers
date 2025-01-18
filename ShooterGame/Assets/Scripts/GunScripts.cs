@@ -22,10 +22,10 @@ public class GunScripts : MonoBehaviour
     public void AIShoot(Quaternion rotation, Vector3 aiPosition)
     {
         if (shotsPerMagazine <= 0) return;
-        shootPos.position = transform.position;
+        
         Vector3 direction = GameManager.instance.player.transform.position - shootPos.position;
         Quaternion rotateDir = Quaternion.LookRotation(direction);
-        Instantiate(bullet, shootPos.position, rotateDir );
+        Instantiate(bullet, shootPos.position, rotateDir  * rotation);
         shotsPerMagazine--;
     }
 
