@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Ground
   - Wall
+  - DeathBox
+  - SpeedBox
   layers:
   - Default
   - TransparentFX
