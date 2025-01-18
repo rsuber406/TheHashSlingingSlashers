@@ -35,13 +35,16 @@ public class EnemyAI : MonoBehaviour, IDamage
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
     Vector3 coverTransitionVector;
-    Vector3 firstTransitionClear;
+    Vector3 firstTransitionClear, coverPointPos;
     bool isShooting;
     bool canMeleeAttack;
     bool playerInRange;
     float inSideDistance;
     bool coverSetDirectionFinished = false;
+    bool visibleToPlayer;
+    bool checkVisibilityToPlayer = false;
     Color originalColor;
+
     void Start()
     {
         coverTransitionVector = Vector3.zero;
@@ -68,17 +71,22 @@ public class EnemyAI : MonoBehaviour, IDamage
         PlayerDetection();
         if (!isMelee)
             PerformReload();
+        //if ((visibleToPlayer || checkVisibilityToPlayer) && agent.remainingDistance < 2f)
+        //{
+        //    checkVisibilityToPlayer = false;
+        //    if (AmIVisibleToPlayer())
+        //    {
+        //        visibleToPlayer = true;
+        //    }
+        //    else visibleToPlayer = false;
+        //}
         if (coverSetDirectionFinished)
         {
-            agent.ResetPath();
-            agent.SetDestination(coverTransitionVector);
-            coverSetDirectionFinished = false;
-        }
-        if(Vector3.Distance(transform.position, firstTransitionClear) <= 3f)
-        {
-            Debug.Log("Change direction");
-            agent.ResetPath();
-            coverSetDirectionFinished = true;
+            if (!agent.pathPending && agent.remainingDistance < 2f)
+            {
+                coverSetDirectionFinished = false;
+                checkVisibilityToPlayer = true;
+            }
         }
 
     }
@@ -102,8 +110,8 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
         else
         {
-            if (!isShooting) 
-            HandleRangedCombatOnDmg(playerDirection);
+            if (!isShooting)
+                HandleRangedCombatOnDmg(playerDirection);
 
 
         }
@@ -216,6 +224,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         RaycastHit hit;
         playerPreviousPosition = GameManager.instance.player.transform.position;
         playerDirection = GameManager.instance.player.transform.position - headPos.position;
+        angleOfPlayer = Vector3.Angle(playerDirection, transform.forward);
         float distance = playerDirection.magnitude;
         if (Physics.Raycast(headPos.position, playerDirection, out hit))
         {
@@ -279,7 +288,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         // give back a quaternion and feed a vector
         if (inSideDistance >= distanceRunTowardPlayerOnDmg)
         {
-         
+
             // rotate 90 degrees and run
             //Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
             //rotateCalc = rotateCalc + playerDirection;
@@ -297,7 +306,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         }
     }
-    void HandleRangedCombatOnDmg( Vector3 playerDirection)
+    void HandleRangedCombatOnDmg(Vector3 playerDirection)
     {
         Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
         transform.rotation = rotateAi;
@@ -320,16 +329,18 @@ public class EnemyAI : MonoBehaviour, IDamage
         Vector3 foundWall = Vector3.zero;
         Quaternion rotationToApply = Quaternion.Euler(1, offset, 1);
         Vector3 directionForCast = rotationToApply * locateWallPos.transform.forward;
+        Vector3 hitNorm = Vector3.zero;
+       
         Transform originalWallPos = locateWallPos;
         bool isWallLocated = false;
+        int layerMask = LayerMask.GetMask("Wall");
         for (int i = 0; i < 9; i++)
         {
             Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
-            int layerMask = LayerMask.GetMask("Wall");
-            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask)) 
+            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask))
             {
                 Debug.Log("Hit a wall");
-                Vector3 wallLocation = hit.collider.gameObject.transform.position;
+                Vector3 wallLocation = hit.collider.gameObject.transform.position.normalized;
                 isWallLocated = true;
                 if (i != 0)
                 {
@@ -339,6 +350,7 @@ public class EnemyAI : MonoBehaviour, IDamage
                     {
                         foundWall = wallLocation;
                         wallPoint = hit.point;
+                        hitNorm = hit.normal;
                     }
 
                 }
@@ -346,28 +358,59 @@ public class EnemyAI : MonoBehaviour, IDamage
                 {
                     foundWall = wallLocation;
                     wallPoint = hit.point;
+                    hitNorm = hit.normal;
                 }
             }
 
 
-            // check at 45 degree intervals 
+            // check at 20 degree intervals 
             offset += 20;
             rotationToApply = Quaternion.Euler(1, offset, 1);
             directionForCast = rotationToApply * locateWallPos.transform.forward;
         }
         if (isWallLocated)
         {
-            Vector3 directionToPlayer = (wallPoint - GameManager.instance.player.transform.position).normalized;
-            // Replace this float with a hide distance variable if this works properly
-            Vector3 hiddenPosition = wallPoint + (directionToPlayer * 20f);
-            agent.SetDestination(hiddenPosition);
-            firstTransitionClear = hiddenPosition;
-            coverTransitionVector = wallPoint;
-            
+            Vector3 directPlayerToWall = wallPoint - GameManager.instance.player.transform.position;
+            Vector3 changeXAxis = new Vector3(0, directPlayerToWall.y, directPlayerToWall.z);
+            Vector3 oppositeSide =(changeXAxis.normalized - wallPoint + hitNorm) * 10f;
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(oppositeSide, out navHit, 10f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(oppositeSide);
+                Debug.Log("Navigating to opposite wall");
+            }
+            else Debug.Log("Warning, not valid position");
+
         }
-        
+
 
         locateWallPos = originalWallPos;
 
+    }
+    bool AmIVisibleToPlayer()
+    {
+
+        Vector3 playerDirection = GameManager.instance.player.transform.position - transform.position;
+        float angleBetweenAIToPlayer = Vector3.Angle(playerDirection, transform.forward);
+        Quaternion rotateAI = Quaternion.LookRotation(playerDirection);
+        float reflectedAngle = 360 - angleBetweenAIToPlayer;
+        float redirectAngle = reflectedAngle / 1.5f;
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
+        
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, playerDirection, out hit, 10000))
+        {
+            Debug.DrawRay(transform.position, transform.forward);
+            if (hit.collider.gameObject.CompareTag("Player"))
+            {
+                Vector3 coverDirection = coverPointPos - transform.position;
+                rotateAI = Quaternion.LookRotation(coverDirection);
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
+                agent.SetDestination(coverDirection);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

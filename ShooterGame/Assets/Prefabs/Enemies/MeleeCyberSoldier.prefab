@@ -1212,6 +1212,7 @@ MonoBehaviour:
   distanceRunTowardPlayerOnDmg: 40
   locateWallPos: {fileID: 9193405878861994825}
   searchForWall: 1000
+  rb: {fileID: 0}
 --- !u!136 &-71839492652128871
 CapsuleCollider:
   m_ObjectHideFlags: 0
