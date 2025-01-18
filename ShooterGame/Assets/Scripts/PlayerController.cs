@@ -562,6 +562,7 @@ public class PlayerController : MonoBehaviour, IDamage
         yield return new WaitForSeconds(2f);
         movementSpeed = (int)origMovementSpeed;
     }
+    public int GetHealth() { return health; }
 }
 
 

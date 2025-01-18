@@ -33,8 +33,8 @@ public class Damage : MonoBehaviour
 
 
     }
-   
-   
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)
@@ -53,13 +53,19 @@ public class Damage : MonoBehaviour
 
             if (other.gameObject.CompareTag("Enemy"))
             {
+                AINetwork aiNetwork = other.GetComponent<AINetwork>();
+                if (aiNetwork != null)
+                {
+                    aiNetwork.ActivateCollider();
+                    Debug.Log("Damage.cs Help bots is called");
+                }
                 DamageAI(ref dmg);
             }
             else
             {
-               
+
                 DamagePlayer(ref dmg);
-                
+
             }
 
         }
@@ -72,7 +78,7 @@ public class Damage : MonoBehaviour
     }
     void DamagePlayer(ref IDamage dmg)
     {
-        
+
         dmg.TakeDamage(damage);
         DestroyItems();
 

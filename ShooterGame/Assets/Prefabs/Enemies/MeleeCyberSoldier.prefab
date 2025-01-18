@@ -1133,6 +1133,8 @@ GameObject:
   - component: {fileID: -71839492652128871}
   - component: {fileID: 1589965793133422394}
   - component: {fileID: -2204462272274185328}
+  - component: {fileID: -2807025000170165267}
+  - component: {fileID: 6780816611364892544}
   m_Layer: 0
   m_Name: MeleeCyberSoldier
   m_TagString: Enemy
@@ -1193,15 +1195,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 600
   sprintMod: 2
-  agent: {fileID: -2204462272274185328}
+  facePlayerSpeed: 250
+  distanceToActivateSprint: 8
+  fov: 70
+  searchForWall: 1000
+  distanceRunTowardPlayerOnDmg: 40
   health: 80
   maxHealth: 50
-  model: {fileID: 589467511998648494}
-  facePlayerSpeed: 250
   chasePlayer: 1
-  distanceToActivateSprint: 8
-  headPos: {fileID: 527936863065299303}
-  fov: 70
   isMelee: 1
   isTurrent: 0
   firearm: {fileID: 0}
@@ -1210,10 +1211,12 @@ MonoBehaviour:
   enemyBulletSpread: 0
   animatorController: {fileID: 3700920318263449828}
   animSpeedTrans: 2
-  distanceRunTowardPlayerOnDmg: 40
   locateWallPos: {fileID: 9193405878861994825}
-  searchForWall: 1000
-  rb: {fileID: 0}
+  agent: {fileID: -2204462272274185328}
+  model: {fileID: 589467511998648494}
+  headPos: {fileID: 527936863065299303}
+  playerSphere: {fileID: 1589965793133422394}
+  aiSphere: {fileID: -2807025000170165267}
 --- !u!136 &-71839492652128871
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1267,7 +1270,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 7365811365902483652}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 36
   avoidancePriority: 50
@@ -1280,6 +1283,54 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!135 &-2807025000170165267
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365811365902483652}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &6780816611364892544
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365811365902483652}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7704123279012441516
 GameObject:
   m_ObjectHideFlags: 0

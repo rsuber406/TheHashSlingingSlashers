@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour, IDamage
+public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [Header("AI Movement")]
@@ -34,17 +34,19 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Renderer model;
     [SerializeField] Transform headPos;
-
+    [SerializeField] SphereCollider playerSphere;
+    [SerializeField] SphereCollider aiSphere;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
     Vector3 coverTransitionVector;
-    Vector3 firstTransitionClear, coverPointPos;
+    Vector3 firstTransitionClear, coverPointPos, currentPos;
     bool isShooting;
     bool canMeleeAttack;
     bool playerInRange;
+    bool assistingFriend = false;
     float inSideDistance;
     bool coverSetDirectionFinished = false;
     bool visibleToPlayer;
@@ -53,6 +55,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     void Start()
     {
+
         coverTransitionVector = Vector3.zero;
         originalColor = model.material.color;
         canMeleeAttack = isMelee;
@@ -70,28 +73,28 @@ public class EnemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-
+        currentPos = transform.position;
         float characterSpeed = agent.velocity.normalized.magnitude;
         float animSpeed = animatorController.GetFloat("Speed");
         animatorController.SetFloat("Speed", Mathf.MoveTowards(animSpeed, characterSpeed, Time.deltaTime * animSpeedTrans));
         PlayerDetection();
         if (!isMelee)
             PerformReload();
-        //if ((visibleToPlayer || checkVisibilityToPlayer) && agent.remainingDistance < 2f)
-        //{
-        //    checkVisibilityToPlayer = false;
-        //    if (AmIVisibleToPlayer())
-        //    {
-        //        visibleToPlayer = true;
-        //    }
-        //    else visibleToPlayer = false;
-        //}
+        
         if (coverSetDirectionFinished)
         {
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
                 coverSetDirectionFinished = false;
-                checkVisibilityToPlayer = true;
+                
+            }
+        }
+        if (assistingFriend)
+        {
+           // StartCoroutine(Shoot());
+            if(GameManager.instance.GetPlayerHealth() <= 0)
+            {
+                assistingFriend = false;
             }
         }
 
@@ -105,12 +108,13 @@ public class EnemyAI : MonoBehaviour, IDamage
 
 
         }
+       
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
         Vector3 playerDirection = origin - transform.position;
 
-        if (isMelee)
+        if (isMelee && !playerInRange)
         {
             HandleMeleeAIMoveOnDmg(ref playerDirection);
         }
@@ -127,9 +131,25 @@ public class EnemyAI : MonoBehaviour, IDamage
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger)
+        {
+            return;
+        }
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
+
+        }
+        if (other.CompareTag("Enemy") && aiSphere.enabled)
+        {
+            Debug.Log("AI sphere is entered");
+
+            AINetwork aiNet = other.GetComponent<AINetwork>();
+            if (aiNet != null)
+            {
+                aiNet.HelpBots(currentPos);
+                aiSphere.enabled = false;
+            }
 
         }
 
@@ -275,9 +295,9 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         if (canMeleeAttack)
         {
-           
+
             StartCoroutine(WeaponAttack());
-            
+
         }
         else return;
 
@@ -289,8 +309,8 @@ public class EnemyAI : MonoBehaviour, IDamage
         canMeleeAttack = false;
         animatorController.SetTrigger("Attack");
         yield return new WaitForSeconds(0.1f);
-        
-       
+
+
         canMeleeAttack = true;
     }
     void HandleMeleeAIMoveOnDmg(ref Vector3 playerDirection)
@@ -308,7 +328,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             Debug.Log("I am running towards");
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
-           // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
+            // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
 
         }
@@ -337,7 +357,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         Quaternion rotationToApply = Quaternion.Euler(1, offset, 1);
         Vector3 directionForCast = rotationToApply * locateWallPos.transform.forward;
         Vector3 hitNorm = Vector3.zero;
-       
+
         Transform originalWallPos = locateWallPos;
         bool isWallLocated = false;
         int layerMask = LayerMask.GetMask("Wall");
@@ -346,7 +366,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
             if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask))
             {
-                Debug.Log("Hit a wall");
+
                 Vector3 wallLocation = hit.collider.gameObject.transform.position.normalized;
                 isWallLocated = true;
                 if (i != 0)
@@ -363,7 +383,7 @@ public class EnemyAI : MonoBehaviour, IDamage
                 }
                 else
                 {
-                    
+
                     foundWall = wallLocation;
                     wallPoint = hit.point;
                     hitNorm = hit.normal;
@@ -380,12 +400,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             Vector3 directPlayerToWall = wallPoint - GameManager.instance.player.transform.position;
             Vector3 changeXAxis = new Vector3(directPlayerToWall.x / 1.25f, directPlayerToWall.y, directPlayerToWall.z);
-            Vector3 oppositeSide =(changeXAxis.normalized - wallPoint + hitNorm) * 10f;
+            Vector3 oppositeSide = (changeXAxis.normalized - wallPoint + hitNorm) * 10f;
             NavMeshHit navHit;
             if (NavMesh.SamplePosition(oppositeSide, out navHit, 10f, NavMesh.AllAreas))
             {
                 agent.SetDestination(oppositeSide);
-                Debug.Log("Navigating to opposite wall");
+
             }
             else Debug.Log("Invalid position");
 
@@ -405,9 +425,9 @@ public class EnemyAI : MonoBehaviour, IDamage
         float reflectedAngle = 360 - angleBetweenAIToPlayer;
         float redirectAngle = reflectedAngle / 1.5f;
         transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
-        
+
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, playerDirection, out hit, 10000))
+        if (Physics.Raycast(transform.position, playerDirection, out hit, 10000))
         {
             Debug.DrawRay(transform.position, transform.forward);
             if (hit.collider.gameObject.CompareTag("Player"))
@@ -423,9 +443,20 @@ public class EnemyAI : MonoBehaviour, IDamage
         return false;
     }
 
-    public void HelpBots(Vector3 assistPosition)
+    public void HelpBots(Vector3 assistVector)
     {
-        agent.SetDestination(assistPosition);
+        if (assistingFriend) return;
+        Debug.Log("Help bots was called");
+        agent.SetDestination(assistVector);
+        assistingFriend = true;
+        if(!isShooting)
+        StartCoroutine(Shoot());
 
+    }
+
+    public void ActivateCollider()
+    {
+        Debug.Log("Activate collider is called");
+        aiSphere.enabled = true;
     }
 }
