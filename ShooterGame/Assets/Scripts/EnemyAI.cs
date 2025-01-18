@@ -22,6 +22,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] bool isTurrent;
     [SerializeField] GameObject firearm;
     [SerializeField] GunScripts firearmScript;
+    [SerializeField] GameObject meleeWeapon;
     [SerializeField] float enemyBulletSpread;
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
@@ -268,7 +269,9 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         if (canMeleeAttack)
         {
+           
             StartCoroutine(WeaponAttack());
+            
         }
         else return;
 
@@ -276,9 +279,12 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     IEnumerator WeaponAttack()
     {
+
         canMeleeAttack = false;
         animatorController.SetTrigger("Attack");
         yield return new WaitForSeconds(0.1f);
+        
+       
         canMeleeAttack = true;
     }
     void HandleMeleeAIMoveOnDmg(ref Vector3 playerDirection)
@@ -290,18 +296,13 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
 
             // rotate 90 degrees and run
-            //Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
-            //rotateCalc = rotateCalc + playerDirection;
-            //Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
-            //transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
-            //agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
             FindNearestWall();
         }
         else
         {
             Debug.Log("I am running towards");
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
+           // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
 
         }

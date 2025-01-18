@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damage : MonoBehaviour
@@ -17,6 +18,8 @@ public class Damage : MonoBehaviour
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
     [SerializeField] string sourceTag;
+    GameObject player;
+    bool hasGivenDmg = false;
     Vector3 originPosition;
 
     void Start()
@@ -30,8 +33,8 @@ public class Damage : MonoBehaviour
 
 
     }
-
-
+   
+   
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)
@@ -54,7 +57,9 @@ public class Damage : MonoBehaviour
             }
             else
             {
+               
                 DamagePlayer(ref dmg);
+                
             }
 
         }
@@ -67,7 +72,7 @@ public class Damage : MonoBehaviour
     }
     void DamagePlayer(ref IDamage dmg)
     {
-
+        
         dmg.TakeDamage(damage);
         DestroyItems();
 

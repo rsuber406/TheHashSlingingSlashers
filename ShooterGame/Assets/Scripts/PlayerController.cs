@@ -211,6 +211,7 @@ public class PlayerController : MonoBehaviour, IDamage
         previousHealth = health;
         
         health -= amount;
+        
         if(health > maxHealth)
         {
             health = maxHealth;
