@@ -7,29 +7,34 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour, IDamage
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("AI Movement")]
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] int facePlayerSpeed;
+    [SerializeField] float distanceToActivateSprint;
+    [SerializeField] int fov;
+    [SerializeField] int searchForWall;
+    [SerializeField] int distanceRunTowardPlayerOnDmg;
+    [Header("Health")]
     [SerializeField] int health;
     [SerializeField] int maxHealth;
-    [SerializeField] Renderer model;
-    [SerializeField] int facePlayerSpeed;
+    [Header("Enemy Type")]
     [SerializeField] bool chasePlayer;
-    [SerializeField] float distanceToActivateSprint;
-    [SerializeField] Transform headPos;
-    [SerializeField] int fov;
     [SerializeField] bool isMelee;
     [SerializeField] bool isTurrent;
+    [Header("Weapon Loadout")]
     [SerializeField] GameObject firearm;
     [SerializeField] GunScripts firearmScript;
     [SerializeField] GameObject meleeWeapon;
     [SerializeField] float enemyBulletSpread;
+    [Header("AI Configuration")]
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
-    [SerializeField] int distanceRunTowardPlayerOnDmg;
     [SerializeField] Transform locateWallPos;
-    [SerializeField] int searchForWall;
-    [SerializeField] Rigidbody rb;
+    [SerializeField] NavMeshAgent agent;
+    [SerializeField] Renderer model;
+    [SerializeField] Transform headPos;
+
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
@@ -127,6 +132,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             playerInRange = true;
 
         }
+
 
     }
     private void OnTriggerExit(Collider other)
@@ -357,6 +363,7 @@ public class EnemyAI : MonoBehaviour, IDamage
                 }
                 else
                 {
+                    
                     foundWall = wallLocation;
                     wallPoint = hit.point;
                     hitNorm = hit.normal;
@@ -380,7 +387,8 @@ public class EnemyAI : MonoBehaviour, IDamage
                 agent.SetDestination(oppositeSide);
                 Debug.Log("Navigating to opposite wall");
             }
-            
+            else Debug.Log("Invalid position");
+
 
         }
 
@@ -413,5 +421,11 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
 
         return false;
+    }
+
+    public void HelpBots(Vector3 assistPosition)
+    {
+        agent.SetDestination(assistPosition);
+
     }
 }
