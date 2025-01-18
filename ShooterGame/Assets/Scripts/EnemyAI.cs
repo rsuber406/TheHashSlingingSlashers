@@ -371,7 +371,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         if (isWallLocated)
         {
             Vector3 directPlayerToWall = wallPoint - GameManager.instance.player.transform.position;
-            Vector3 changeXAxis = new Vector3(0, directPlayerToWall.y, directPlayerToWall.z);
+            Vector3 changeXAxis = new Vector3(directPlayerToWall.x / 1.25f, directPlayerToWall.y, directPlayerToWall.z);
             Vector3 oppositeSide =(changeXAxis.normalized - wallPoint + hitNorm) * 10f;
             NavMeshHit navHit;
             if (NavMesh.SamplePosition(oppositeSide, out navHit, 10f, NavMesh.AllAreas))
@@ -379,7 +379,7 @@ public class EnemyAI : MonoBehaviour, IDamage
                 agent.SetDestination(oppositeSide);
                 Debug.Log("Navigating to opposite wall");
             }
-            else Debug.Log("Warning, not valid position");
+            
 
         }
 
