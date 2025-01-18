@@ -449,7 +449,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Debug.Log("Help bots was called");
         agent.SetDestination(assistVector);
         assistingFriend = true;
-        if(!isShooting)
+        if(!isShooting && !isMelee)
         StartCoroutine(Shoot());
 
     }
