@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
@@ -561,6 +562,29 @@ public class PlayerController : MonoBehaviour, IDamage
         numBulletsInMag = ammo;
     }
 
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "DeathBox")
+        {
+            //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
+            TakeDamage(500);
+        }
+
+        if(other.tag == "SpeedBox")
+        {
+            //This is a Speedbox Trigger. Use for speedup door/platform - A
+            StartCoroutine(Speedup());          
+        }
+    }
+
+    private IEnumerator Speedup()
+    {
+        Debug.Log("Speedup is triggered");
+        movementSpeed = movementSpeed *2;
+        yield return new WaitForSeconds(2f);
+        movementSpeed = (int)origMovementSpeed;
+    }
 }
 
 

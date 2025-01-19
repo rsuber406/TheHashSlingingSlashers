@@ -302,6 +302,7 @@ MonoBehaviour:
   isTurrent: 0
   firearm: {fileID: 8104168380762224150}
   firearmScript: {fileID: 0}
+  enemyBulletSpread: 3
   animatorController: {fileID: 8213156068015854704}
   animSpeedTrans: 1
   distanceRunTowardPlayerOnDmg: 0
