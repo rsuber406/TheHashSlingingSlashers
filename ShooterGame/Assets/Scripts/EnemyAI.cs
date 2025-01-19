@@ -343,6 +343,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         transform.rotation = rotateAi;
         agent.SetDestination(playerDirection);
         PerformReload();
+        if (isMelee) return;
         StartCoroutine(Shoot());
 
     }
