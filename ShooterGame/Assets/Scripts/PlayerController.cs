@@ -569,6 +569,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
             TakeDamage(500);
+            //why not just set the players health to zero?
         }
 
         if(other.tag == "SpeedBox")

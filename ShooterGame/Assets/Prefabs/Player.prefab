@@ -241,7 +241,6 @@ MonoBehaviour:
   slideMomentum: 0
   slideDuration: 0
   slideThreshold: 0
-  maxMagCapacity: 20
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -410,7 +409,7 @@ MonoBehaviour:
   fireRate: 0.1
   shootPos: {fileID: 7813841620199333718}
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
-  shotsPerMagazine: 20
+  shotsPerMagazine: 30
   reloadTime: 2.5
   isAIControlled: 0
 --- !u!4 &5435058418891479382 stripped
