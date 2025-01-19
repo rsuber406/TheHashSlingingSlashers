@@ -3028,6 +3028,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 6601241041881687413, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
+      propertyPath: m_margin.z
+      value: 86.082085
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10238,6 +10242,10 @@ PrefabInstance:
       propertyPath: jumpSpeed
       value: 17
       objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: maxMagCapacity
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 4125394140292719060, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_LocalPosition.x
       value: -36.2
@@ -10285,6 +10293,10 @@ PrefabInstance:
     - target: {fileID: 5457452697210768711, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: sensitivity
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5527166102024051009, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: shotsPerMagazine
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5957547874870576521, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_Name
