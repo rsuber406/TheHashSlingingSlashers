@@ -55,7 +55,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
     void Start()
     {
-
+        playerPreviousPosition = Vector3.zero;
         coverTransitionVector = Vector3.zero;
         originalColor = model.material.color;
         canMeleeAttack = isMelee;
@@ -79,7 +79,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         animatorController.SetFloat("Speed", Mathf.MoveTowards(animSpeed, characterSpeed, Time.deltaTime * animSpeedTrans));
         PlayerDetection();
         if (!isMelee)
+        {
             PerformReload();
+
+        }
         
         if (coverSetDirectionFinished)
         {
@@ -140,7 +143,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             playerInRange = true;
 
         }
-        if (other.CompareTag("Enemy") && aiSphere.enabled)
+        if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
             Debug.Log("AI sphere is entered");
 
@@ -240,6 +243,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
     void PerformReload()
     {
+        if (isMelee) return;
         if (firearmScript.GetBulletsRemaining() <= 0)
         {
             StartCoroutine(firearmScript.Reload());
