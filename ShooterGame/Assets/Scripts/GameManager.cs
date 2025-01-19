@@ -37,8 +37,10 @@ public class GameManager : MonoBehaviour
     int maxHealth = 100;
 
     int goalCount;
+    int playerCurrentHealth;
     void Awake()
     {
+
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
@@ -128,10 +130,12 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayerHeathUI(int currentHealth)
     {
+        playerCurrentHealth = currentHealth;
         CurrentHPText.text = currentHealth.ToString();
         
         
     }
+    public int GetPlayerHealth() { return playerCurrentHealth; }
 
 
 }

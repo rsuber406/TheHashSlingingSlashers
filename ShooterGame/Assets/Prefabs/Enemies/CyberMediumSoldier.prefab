@@ -1020,10 +1020,16 @@ PrefabInstance:
       addedObject: {fileID: 6772356447339329655}
     - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6971955848217395080}
+    - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4130550149115217785}
     - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6971955848217395080}
+      addedObject: {fileID: 2768251631489912935}
+    - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3280182982413767127}
   m_SourcePrefab: {fileID: 100100000, guid: cf3910b7639e12447827e45f63f60201, type: 3}
 --- !u!137 &6493151389803643984 stripped
 SkinnedMeshRenderer:
@@ -1064,25 +1070,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 500
   sprintMod: 2
-  agent: {fileID: 4130550149115217785}
+  facePlayerSpeed: 300
+  distanceToActivateSprint: 20
+  fov: 70
+  searchForWall: 0
+  distanceRunTowardPlayerOnDmg: 0
   health: 120
   maxHealth: 20
-  model: {fileID: 6493151389803643984}
-  facePlayerSpeed: 300
   chasePlayer: 1
-  distanceToActivateSprint: 20
-  headPos: {fileID: 4578084996333317927}
-  fov: 70
   isMelee: 0
   isTurrent: 0
   firearm: {fileID: 4832800152596938265}
   firearmScript: {fileID: 0}
+  meleeWeapon: {fileID: 0}
   enemyBulletSpread: 3
   animatorController: {fileID: 6493151389807901328}
   animSpeedTrans: 1
-  distanceRunTowardPlayerOnDmg: 0
   locateWallPos: {fileID: 0}
-  searchForWall: 0
+  agent: {fileID: 4130550149115217785}
+  model: {fileID: 6493151389803643984}
+  headPos: {fileID: 4578084996333317927}
+  playerSphere: {fileID: 6971955848217395080}
+  aiSphere: {fileID: 2768251631489912935}
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1106,6 +1115,27 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!135 &6971955848217395080
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6493151389815146836}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 50
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!195 &4130550149115217785
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1128,7 +1158,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &6971955848217395080
+--- !u!135 &2768251631489912935
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1145,7 +1175,34 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_Radius: 50
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &-3280182982413767127
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6493151389815146836}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -1,9 +1,8 @@
 using UnityEngine;
 
-public interface IDamage
+public interface AINetwork
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void TakeDamage(int amount);
-    void TakeDamage(int amount, Vector3 origin);
-
+    void HelpBots(Vector3 assistPosition);
+    void ActivateCollider();
 }
