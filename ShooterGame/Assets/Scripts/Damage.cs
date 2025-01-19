@@ -57,7 +57,7 @@ public class Damage : MonoBehaviour
                 if (aiNetwork != null)
                 {
                     aiNetwork.ActivateCollider();
-                    Debug.Log("Damage.cs Help bots is called");
+                  
                 }
                 DamageAI(ref dmg);
             }

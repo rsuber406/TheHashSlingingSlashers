@@ -94,7 +94,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         if (assistingFriend)
         {
-           // StartCoroutine(Shoot());
+            if(!isMelee && !isShooting)
+           StartCoroutine(Shoot());
             if(GameManager.instance.GetPlayerHealth() <= 0)
             {
                 assistingFriend = false;
@@ -105,7 +106,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     void PlayerDetection()
     {
 
-        if (playerInRange && CanSeePlayer())
+        if (playerInRange && !CanSeePlayer())
         {
 
 
@@ -145,13 +146,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
-            Debug.Log("AI sphere is entered");
+           
 
             AINetwork aiNet = other.GetComponent<AINetwork>();
             if (aiNet != null)
             {
                 aiNet.HelpBots(currentPos);
-                aiSphere.enabled = false;
+                
             }
 
         }
@@ -330,7 +331,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            Debug.Log("I am running towards");
+            
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -451,17 +452,23 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void HelpBots(Vector3 assistVector)
     {
         if (assistingFriend) return;
-        Debug.Log("Help bots was called");
+        
         agent.SetDestination(assistVector);
         assistingFriend = true;
-        if(!isShooting && !isMelee)
-        StartCoroutine(Shoot());
+        //if(!isShooting && !isMelee)
+       // StartCoroutine(Shoot());
 
     }
 
     public void ActivateCollider()
     {
-        Debug.Log("Activate collider is called");
+
+        StartCoroutine(ToggleHelpField());
+    }
+    IEnumerator ToggleHelpField()
+    {
         aiSphere.enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        aiSphere.enabled = false;
     }
 }

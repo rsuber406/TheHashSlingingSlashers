@@ -312,7 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8d632828b49a34989531c55d7d5b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0.15
+  fireRate: 0.1
   shootPos: {fileID: 6838266222083774201}
   bullet: {fileID: 7820335584167379495, guid: 75f54fd329d17b6458c9631a3b7757c0, type: 3}
   shotsPerMagazine: 60
