@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damage : MonoBehaviour
@@ -17,6 +18,8 @@ public class Damage : MonoBehaviour
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
     [SerializeField] string sourceTag;
+    GameObject player;
+    bool hasGivenDmg = false;
     Vector3 originPosition;
 
     void Start()
@@ -50,11 +53,19 @@ public class Damage : MonoBehaviour
 
             if (other.gameObject.CompareTag("Enemy"))
             {
+                AINetwork aiNetwork = other.GetComponent<AINetwork>();
+                if (aiNetwork != null)
+                {
+                    aiNetwork.ActivateCollider();
+                    Debug.Log("Damage.cs Help bots is called");
+                }
                 DamageAI(ref dmg);
             }
             else
             {
+
                 DamagePlayer(ref dmg);
+
             }
 
         }
