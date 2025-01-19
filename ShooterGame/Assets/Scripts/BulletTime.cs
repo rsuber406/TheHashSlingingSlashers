@@ -2,15 +2,44 @@ using UnityEngine;
 
 public class BulletTime : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private float slowMotionFactor = 0.2f;
+    [SerializeField] private float slowMotionDuration = 5f;
+    private float normalTimeScale = 1f;
+    private bool isBulletTimeActive = false;
+    private float bulletTimeTimer = 0f;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetButtonDown("BulletTime"))
+        {
+            ToggleBulletTime(); 
+        }
+        if (isBulletTimeActive) {
+            bulletTimeTimer += Time.unscaledDeltaTime;
+            if (bulletTimeTimer > slowMotionDuration) {
+                ToggleBulletTime();
+            }
+
+
+
+        }
+
+
+    }
+
+    private void ToggleBulletTime()
+    {
+        if (isBulletTimeActive)
+        {
+            Time.timeScale = normalTimeScale;
+            isBulletTimeActive = false;
+        }
+        else
+        {
+            Time.timeScale = slowMotionFactor;
+            isBulletTimeActive = true;
+            bulletTimeTimer = 0f;
+        }
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
     }
 }
