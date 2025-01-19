@@ -84,9 +84,7 @@ public class PlayerController : MonoBehaviour, IDamage
         origMovementSpeed = movementSpeed;
 
         //ammo
-        SetMaxAmmo(30);
-        SetMaxMagCapacity(30);
-        SetCurrentAmmo(30);
+        SetAllAmmoCount(30, 30, 30);
         numBulletsReserve = maxMagCapacity * 4;
 
         //other shit
@@ -562,7 +560,12 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         numBulletsInMag = ammo;
     }
-
+    public void SetAllAmmoCount(int maxMagCapacity, int maxAmmo, int currentAmmo)
+    {
+        this.maxMagCapacity = maxMagCapacity;
+        numBulletsReserve = maxAmmo;
+        numBulletsInMag = currentAmmo;
+    }
 
     public void OnTriggerEnter(Collider other)
     {
