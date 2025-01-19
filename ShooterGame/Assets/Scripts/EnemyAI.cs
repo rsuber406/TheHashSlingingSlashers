@@ -36,6 +36,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] Transform headPos;
     [SerializeField] SphereCollider playerSphere;
     [SerializeField] SphereCollider aiSphere;
+    [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
@@ -51,6 +52,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool coverSetDirectionFinished = false;
     bool visibleToPlayer;
     bool checkVisibilityToPlayer = false;
+    bool isAlive = true;
     Color originalColor;
 
     void Start()
@@ -73,6 +75,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive) return;
         currentPos = transform.position;
         float characterSpeed = agent.velocity.normalized.magnitude;
         float animSpeed = animatorController.GetFloat("Speed");
@@ -84,7 +87,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
         }
         
-        if (coverSetDirectionFinished)
+        if (coverSetDirectionFinished && isAlive)
         {
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
@@ -105,7 +108,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     void PlayerDetection()
     {
-
+        if (!isAlive) return;
         if (playerInRange && !CanSeePlayer())
         {
 
@@ -144,6 +147,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             playerInRange = true;
 
         }
+        // This uses the collision sphere to see which bots are nearby and call them to help
         if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
            
@@ -236,8 +240,16 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         model.material.color = originalColor;
         if (health <= 0)
         {
-            // Without the proper reference, this will cause issues and not despawn the gameobject
+            isAlive = false;
+            agent.isStopped = true;
+            movementSpeed = 0;
             GameManager.instance.scoreSys.AddFlatScore(100);
+            rb.isKinematic = true;
+            agent.velocity = Vector3.zero;
+            animatorController.SetTrigger("Death");
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            
+            yield return new WaitForSeconds(3f);
             Destroy(gameObject);
         }
     }
@@ -471,4 +483,6 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         yield return new WaitForSeconds(0.5f);
         aiSphere.enabled = false;
     }
+
+    
 }

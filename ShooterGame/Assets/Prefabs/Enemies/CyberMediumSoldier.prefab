@@ -1092,6 +1092,7 @@ MonoBehaviour:
   headPos: {fileID: 4578084996333317927}
   playerSphere: {fileID: 6971955848217395080}
   aiSphere: {fileID: 2768251631489912935}
+  rb: {fileID: -3280182982413767127}
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1187,7 +1188,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6493151389815146836}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
