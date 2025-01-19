@@ -36,6 +36,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] Transform headPos;
     [SerializeField] SphereCollider playerSphere;
     [SerializeField] SphereCollider aiSphere;
+    [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
@@ -51,6 +52,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool coverSetDirectionFinished = false;
     bool visibleToPlayer;
     bool checkVisibilityToPlayer = false;
+    bool isAlive = true;
     Color originalColor;
 
     void Start()
@@ -73,6 +75,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive) return;
         currentPos = transform.position;
         float characterSpeed = agent.velocity.normalized.magnitude;
         float animSpeed = animatorController.GetFloat("Speed");
@@ -84,7 +87,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
         }
         
-        if (coverSetDirectionFinished)
+        if (coverSetDirectionFinished && isAlive)
         {
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
@@ -94,7 +97,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         if (assistingFriend)
         {
-           // StartCoroutine(Shoot());
+            if(!isMelee && !isShooting)
+           StartCoroutine(Shoot());
             if(GameManager.instance.GetPlayerHealth() <= 0)
             {
                 assistingFriend = false;
@@ -104,8 +108,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     void PlayerDetection()
     {
-
-        if (playerInRange && CanSeePlayer())
+        if (!isAlive) return;
+        if (playerInRange && !CanSeePlayer())
         {
 
 
@@ -143,15 +147,16 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             playerInRange = true;
 
         }
+        // This uses the collision sphere to see which bots are nearby and call them to help
         if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
-            Debug.Log("AI sphere is entered");
+           
 
             AINetwork aiNet = other.GetComponent<AINetwork>();
             if (aiNet != null)
             {
                 aiNet.HelpBots(currentPos);
-                aiSphere.enabled = false;
+                
             }
 
         }
@@ -235,8 +240,16 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         model.material.color = originalColor;
         if (health <= 0)
         {
-            // Without the proper reference, this will cause issues and not despawn the gameobject
+            isAlive = false;
+            agent.isStopped = true;
+            movementSpeed = 0;
             GameManager.instance.scoreSys.AddFlatScore(100);
+            rb.isKinematic = true;
+            agent.velocity = Vector3.zero;
+            animatorController.SetTrigger("Death");
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            
+            yield return new WaitForSeconds(3f);
             Destroy(gameObject);
         }
     }
@@ -330,7 +343,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            Debug.Log("I am running towards");
+            
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -451,17 +464,25 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void HelpBots(Vector3 assistVector)
     {
         if (assistingFriend) return;
-        Debug.Log("Help bots was called");
+        
         agent.SetDestination(assistVector);
         assistingFriend = true;
-        if(!isShooting && !isMelee)
-        StartCoroutine(Shoot());
+        //if(!isShooting && !isMelee)
+       // StartCoroutine(Shoot());
 
     }
 
     public void ActivateCollider()
     {
-        Debug.Log("Activate collider is called");
-        aiSphere.enabled = true;
+
+        StartCoroutine(ToggleHelpField());
     }
+    IEnumerator ToggleHelpField()
+    {
+        aiSphere.enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        aiSphere.enabled = false;
+    }
+
+    
 }
