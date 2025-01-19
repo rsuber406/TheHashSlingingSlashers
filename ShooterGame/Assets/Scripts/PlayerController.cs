@@ -66,9 +66,10 @@ public class PlayerController : MonoBehaviour, IDamage
 
     int maxHealth = 100;
 
+    
     GunScripts firearmScript;
-
-    int numBulletsReserve = 60;
+    private int maxMagCapacity;
+    int numBulletsReserve;
     int numBulletsInMag;
 
     float Timesincereload;
@@ -76,11 +77,19 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Start()
     {
+        // w/e this shit is
         health = maxHealth;
         firearmScript = firearm.GetComponent<GunScripts>();
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
-        numBulletsInMag = firearmScript.GetBulletsRemaining();
+
+        //ammo
+        SetMaxAmmo(30);
+        SetMaxMagCapacity(30);
+        SetCurrentAmmo(30);
+        numBulletsReserve = maxMagCapacity * 4;
+
+        //other shit
         Timesincereload = Time.time + 10000;
         GameManager.instance.UpdatePlayerHeathUI(health);
     }
@@ -97,7 +106,7 @@ public class PlayerController : MonoBehaviour, IDamage
        CheckWallRun();
         Shoot();
         PerformReload();
-        
+        UpdateAmmoUI();
         if (IsDebugMode)
             DrawDebugLines();
         CheckTimeSinceReload();
@@ -414,7 +423,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             if (numBulletsReserve > 0)
             {
-               int bulletsToLoad = 15 - numBulletsInMag;
+               int bulletsToLoad = maxMagCapacity - numBulletsInMag;
 
                 bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
@@ -422,8 +431,7 @@ public class PlayerController : MonoBehaviour, IDamage
                 numBulletsReserve -= bulletsToLoad;
                 numBulletsInMag += bulletsToLoad;
 
-                GameManager.instance.pubCurrentBulletsMagText.SetText("15");
-                GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+                UpdateAmmoUI();
             }
             else
             {
@@ -431,6 +439,12 @@ public class PlayerController : MonoBehaviour, IDamage
                 GameManager.instance.PubReloadText.SetText("Out Of Ammo!");
             }
         }
+    }
+
+    void UpdateAmmoUI()
+    {
+        GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
     }
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
@@ -442,10 +456,8 @@ public class PlayerController : MonoBehaviour, IDamage
     }
     public void AddAmmo(int amount)
     {
-        int maxReserveAmount = 50;
-        numBulletsReserve = Mathf.Min(numBulletsReserve + amount, maxReserveAmount);
-
-        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+       numBulletsReserve += amount;
+        UpdateAmmoUI();
     }
 
     void Crouch()
@@ -538,6 +550,18 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
+    public void SetMaxMagCapacity(int maxMagCapacity) {
+        this.maxMagCapacity = maxMagCapacity;
+    }
+    public void SetMaxAmmo(int maxAmmo)
+    {
+        numBulletsReserve = maxAmmo;
+    }
+    public void SetCurrentAmmo(int ammo)
+    {
+        numBulletsInMag = ammo;
+    }
+
 
     public void OnTriggerEnter(Collider other)
     {
