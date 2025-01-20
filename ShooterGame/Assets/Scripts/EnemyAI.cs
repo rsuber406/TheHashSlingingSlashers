@@ -53,6 +53,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool visibleToPlayer;
     bool checkVisibilityToPlayer = false;
     bool isAlive = true;
+    float fovAsDecimal;
     Color originalColor;
 
     void Start()
@@ -70,6 +71,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         {
             fireRate = firearmScript.GetFireRate();
         }
+        fovAsDecimal = 1f - ((float)fov / 100);
     }
 
     // Update is called once per frame
@@ -86,20 +88,20 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             PerformReload();
 
         }
-        
+
         if (coverSetDirectionFinished && isAlive)
         {
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
                 coverSetDirectionFinished = false;
-                
+
             }
         }
         if (assistingFriend)
         {
-            if(!isMelee && !isShooting)
-           StartCoroutine(Shoot());
-            if(GameManager.instance.GetPlayerHealth() <= 0)
+            if (!isMelee && !isShooting)
+                StartCoroutine(Shoot());
+            if (GameManager.instance.GetPlayerHealth() <= 0)
             {
                 assistingFriend = false;
             }
@@ -109,13 +111,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     void PlayerDetection()
     {
         if (!isAlive) return;
-        if (playerInRange && !CanSeePlayer())
+        if (playerInRange && !TestCanSeePlayer())
         {
 
 
 
         }
-       
+
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
@@ -150,13 +152,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         // This uses the collision sphere to see which bots are nearby and call them to help
         if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
-           
+
 
             AINetwork aiNet = other.GetComponent<AINetwork>();
             if (aiNet != null)
             {
                 aiNet.HelpBots(currentPos);
-                
+
             }
 
         }
@@ -248,7 +250,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             agent.velocity = Vector3.zero;
             animatorController.SetTrigger("Death");
             rb.constraints = RigidbodyConstraints.FreezeAll;
-            
+            if (isMelee)
+            {
+                BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
+                weaponCollider.enabled = false;
+
+            }
+
             yield return new WaitForSeconds(3f);
             Destroy(gameObject);
         }
@@ -262,11 +270,65 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             StartCoroutine(firearmScript.Reload());
         }
     }
+    bool TestCanSeePlayer()
+    {
+        float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
 
+        if (dotProduct > 0)
+        {
+            if (dotProduct >= fovAsDecimal)
+            {
+                RaycastHit hit;
+                // This is for prediction code needed later
+                playerPreviousPosition = GameManager.instance.player.transform.position;
+                playerDirection = playerPreviousPosition - headPos.transform.position;
+                float distance = playerDirection.magnitude;
+                if (Physics.Raycast(headPos.position, playerDirection, out hit))
+                {
+                    if (hit.collider.CompareTag("Player"))
+                    {
+
+                        if (chasePlayer)
+                        {
+                            agent.SetDestination(GameManager.instance.player.transform.position);
+                            if (distance > distanceToActivateSprint)
+                            {
+                                movementSpeed *= sprintMod;
+                            }
+                            else
+                            {
+                                movementSpeed = movementSpeed / sprintMod;
+                            }
+                        }
+                        if (agent.remainingDistance < agent.stoppingDistance)
+                        {
+                            FaceTarget();
+                        }
+                        if (!isShooting && !isMelee)
+                        {
+                            StartCoroutine(Shoot());
+                        }
+
+                        else if (isMelee && distance < 5)
+                        {
+                            // Handle melee
+                            MeleeAttack();
+                        }
+                        return true;
+
+                    }
+
+                }
+
+            }
+        }
+        return false;
+    }
+    // 
     bool CanSeePlayer()
     {
         RaycastHit hit;
-        playerPreviousPosition = GameManager.instance.player.transform.position;
+
         playerDirection = GameManager.instance.player.transform.position - headPos.position;
         angleOfPlayer = Vector3.Angle(playerDirection, transform.forward);
         float distance = playerDirection.magnitude;
@@ -343,7 +405,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            
+
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -464,11 +526,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void HelpBots(Vector3 assistVector)
     {
         if (assistingFriend) return;
-        
+
         agent.SetDestination(assistVector);
         assistingFriend = true;
         //if(!isShooting && !isMelee)
-       // StartCoroutine(Shoot());
+        // StartCoroutine(Shoot());
 
     }
 
@@ -484,5 +546,5 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         aiSphere.enabled = false;
     }
 
-    
+
 }
