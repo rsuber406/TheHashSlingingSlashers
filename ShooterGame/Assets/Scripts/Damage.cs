@@ -26,8 +26,8 @@ public class Damage : MonoBehaviour
     {
         if (damageType == DamageType.Moving)
         {
-            rigidBody.linearVelocity = transform.forward * bulletSpeed;
             originPosition = rigidBody.position;
+            rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
             Destroy(gameObject, timeToDespawn);
         }
 
@@ -51,7 +51,7 @@ public class Damage : MonoBehaviour
                 return;
             }
 
-            if (other.gameObject.CompareTag("Enemy"))
+           else if (other.gameObject.CompareTag("Enemy"))
             {
                 AINetwork aiNetwork = other.GetComponent<AINetwork>();
                 if (aiNetwork != null)
@@ -69,10 +69,7 @@ public class Damage : MonoBehaviour
             }
 
         }
-        else
-        {
-            DestroyItems();
-        }
+        DestroyItems();
 
 
     }
@@ -96,15 +93,15 @@ public class Damage : MonoBehaviour
     {
         if (damageType == DamageType.Moving)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         if (damageType == DamageType.HealthPack)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         if (damageType == DamageType.GroundTrap)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
     }

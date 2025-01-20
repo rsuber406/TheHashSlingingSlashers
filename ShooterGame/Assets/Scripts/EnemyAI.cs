@@ -53,6 +53,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool visibleToPlayer;
     bool checkVisibilityToPlayer = false;
     bool isAlive = true;
+    float fovAsDecimal;
     Color originalColor;
 
     void Start()
@@ -70,6 +71,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         {
             fireRate = firearmScript.GetFireRate();
         }
+        fovAsDecimal = 1f - ((float)fov / 100);
     }
 
     // Update is called once per frame
@@ -86,20 +88,20 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             PerformReload();
 
         }
-        
+
         if (coverSetDirectionFinished && isAlive)
         {
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
                 coverSetDirectionFinished = false;
-                
+
             }
         }
         if (assistingFriend)
         {
-            if(!isMelee && !isShooting)
-           StartCoroutine(Shoot());
-            if(GameManager.instance.GetPlayerHealth() <= 0)
+            if (!isMelee && !isShooting)
+                StartCoroutine(Shoot());
+            if (GameManager.instance.GetPlayerHealth() <= 0)
             {
                 assistingFriend = false;
             }
@@ -115,7 +117,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
 
         }
-       
+
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
@@ -150,13 +152,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         // This uses the collision sphere to see which bots are nearby and call them to help
         if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
         {
-           
+
 
             AINetwork aiNet = other.GetComponent<AINetwork>();
             if (aiNet != null)
             {
                 aiNet.HelpBots(currentPos);
-                
+
             }
 
         }
@@ -182,7 +184,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
         isShooting = true;
         playerPosition = GameManager.instance.player.transform.position;
-        bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+        // This is how we should compare vectors, take a difference and then compare it against a small amount
+        bool playerStationary = (playerPosition - playerPreviousPosition).sqrMagnitude < 0.0001f;
         // This will allow us to decrease the accuracy so out player is not being laser beamed
         int applyInaccuracy = 20;
         int inaccuracyChance = Random.Range(0, 100);
@@ -210,7 +213,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                 randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
 
             }
-            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 45);
             RotateToPlayer(rotateDir);
             firearmScript.AIShoot(randomRotation, transform.position);
         }
@@ -235,8 +238,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     IEnumerator OnDeath()
     {
 
-            BulletTime bt = FindAnyObjectByType<BulletTime>();
-        
+
+        BulletTime bt = FindAnyObjectByType<BulletTime>();
+        if (bt != null) 
+        { 
             bt.IncreaseMaxSlowMotionDuration(1f);
         
             GameManager.instance.scoreSys.AddFlatScore(100);
@@ -247,12 +252,20 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             agent.velocity = Vector3.zero;
             animatorController.SetTrigger("Death");
             rb.constraints = RigidbodyConstraints.FreezeAll;
+		}
+            if (isMelee)
+            {
+                BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
+                weaponCollider.enabled = false;
+
+            }
             yield return new WaitForSeconds(3f);
             Destroy(gameObject);
     }
 
     IEnumerator RegisterHit()
     {
+        if(isAlive)
         model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
@@ -270,51 +283,62 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             StartCoroutine(firearmScript.Reload());
         }
     }
-
     bool CanSeePlayer()
     {
-        RaycastHit hit;
-        playerPreviousPosition = GameManager.instance.player.transform.position;
-        playerDirection = GameManager.instance.player.transform.position - headPos.position;
-        angleOfPlayer = Vector3.Angle(playerDirection, transform.forward);
-        float distance = playerDirection.magnitude;
-        if (Physics.Raycast(headPos.position, playerDirection, out hit))
+        float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
+
+        if (dotProduct > 0)
         {
-            if (hit.collider.CompareTag("Player") && angleOfPlayer <= fov)
+            if (dotProduct >= fovAsDecimal)
             {
-                if (chasePlayer)
+                RaycastHit hit;
+                // This is for prediction code needed later
+                playerPreviousPosition = GameManager.instance.player.transform.position;
+                playerDirection = playerPreviousPosition - headPos.transform.position;
+                float distance = playerDirection.magnitude;
+                if (Physics.Raycast(headPos.position, playerDirection, out hit))
                 {
-                    agent.SetDestination(GameManager.instance.player.transform.position);
-                    if (distance > distanceToActivateSprint)
+                    if (hit.collider.CompareTag("Player"))
                     {
-                        movementSpeed *= sprintMod;
+
+                        if (chasePlayer)
+                        {
+                            agent.SetDestination(GameManager.instance.player.transform.position);
+                            if (distance > distanceToActivateSprint)
+                            {
+                                movementSpeed *= sprintMod;
+                            }
+                            else
+                            {
+                                movementSpeed = movementSpeed / sprintMod;
+                            }
+                        }
+                        if (agent.remainingDistance < agent.stoppingDistance)
+                        {
+                            FaceTarget();
+                        }
+                        if (!isShooting && !isMelee)
+                        {
+                            StartCoroutine(Shoot());
+                        }
+
+                        else if (isMelee && distance < 5)
+                        {
+                            // Handle melee
+                            MeleeAttack();
+                        }
+                        return true;
+
                     }
-                    else
-                    {
-                        movementSpeed = movementSpeed / sprintMod;
-                    }
+
                 }
 
-                if (agent.remainingDistance < agent.stoppingDistance)
-                {
-                    FaceTarget();
-                }
-                if (!isShooting && !isMelee)
-                {
-                    StartCoroutine(Shoot());
-                }
-
-                else if (isMelee && distance < 5)
-                {
-                    // Handle melee
-                    MeleeAttack();
-                }
-                return true;
             }
-
         }
         return false;
     }
+    // 
+
 
     void MeleeAttack()
     {
@@ -351,7 +375,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            
+
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -472,11 +496,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void HelpBots(Vector3 assistVector)
     {
         if (assistingFriend) return;
-        
+
         agent.SetDestination(assistVector);
         assistingFriend = true;
         //if(!isShooting && !isMelee)
-       // StartCoroutine(Shoot());
+        // StartCoroutine(Shoot());
 
     }
 
@@ -492,5 +516,5 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         aiSphere.enabled = false;
     }
 
-    
+
 }
