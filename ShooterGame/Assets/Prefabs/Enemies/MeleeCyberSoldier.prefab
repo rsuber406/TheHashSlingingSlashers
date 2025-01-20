@@ -1197,7 +1197,7 @@ MonoBehaviour:
   sprintMod: 2
   facePlayerSpeed: 250
   distanceToActivateSprint: 8
-  fov: 70
+  fov: 80
   searchForWall: 1000
   distanceRunTowardPlayerOnDmg: 40
   health: 80
