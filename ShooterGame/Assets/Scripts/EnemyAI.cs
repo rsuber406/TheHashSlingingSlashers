@@ -53,6 +53,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool visibleToPlayer;
     bool checkVisibilityToPlayer = false;
     bool isAlive = true;
+    bool currentlyRotating = false;
+    bool decreaseNumber = false;
+    bool increaseNumber = true;
+    float lookAround = -45f;
     float fovAsDecimal;
     Color originalColor;
 
@@ -113,9 +117,15 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         if (!isAlive) return;
         if (playerInRange && !CanSeePlayer())
         {
+           
 
 
+        }
+        else
+        {
 
+            if (!currentlyRotating)
+                StartCoroutine(LookForPlayer());
         }
 
     }
@@ -513,6 +523,41 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         aiSphere.enabled = true;
         yield return new WaitForSeconds(0.5f);
         aiSphere.enabled = false;
+    }
+
+    IEnumerator LookForPlayer()
+    {
+        currentlyRotating = true;
+        Quaternion adjustment = Quaternion.Euler(1, lookAround, 1);
+        Quaternion newRotation = transform.rotation * adjustment;
+        float rotateToPlayer = facePlayerSpeed * 0.5f;
+        transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, rotateToPlayer * Time.deltaTime);
+        if (lookAround >= 45f)
+        {
+            decreaseNumber = true;
+            increaseNumber = false;
+            
+        }
+        else if (lookAround <= -45f)
+        {
+            increaseNumber = true;
+            decreaseNumber = false;
+        }
+        if (increaseNumber)
+        {
+            Debug.Log("Increase called");
+            lookAround += 5;
+
+        }
+        else if (decreaseNumber)
+        {
+            Debug.Log("Decrease called");
+            lookAround -= 5;
+        }
+
+      
+        yield return new WaitForSeconds(1f);
+        currentlyRotating = false;
     }
 
 
