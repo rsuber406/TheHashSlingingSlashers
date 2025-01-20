@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
+    private bool hasTakenDmg = false;
     // jump
 
 
@@ -229,6 +230,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             // Input healing screen
         }
+        if(!hasTakenDmg)
         StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
@@ -278,7 +280,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     IEnumerator FlashDmgScreen()
     {
-
+        hasTakenDmg = true;
         if (previousHealth > health)
         {
             GameManager.instance.FlashDamageScreenOn();
@@ -290,11 +292,13 @@ public class PlayerController : MonoBehaviour, IDamage
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
         }
+        hasTakenDmg = false;
         if(health <= 0)
 
         {
             GameManager.instance.Lose();
         }
+        
     }
 
 
