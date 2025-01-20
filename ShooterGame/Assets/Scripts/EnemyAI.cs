@@ -235,19 +235,19 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Quaternion rotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * facePlayerSpeed);
     }
-
-    IEnumerator RegisterHit()
+    IEnumerator OnDeath()
     {
-        if (isAlive)
-        model.material.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        model.material.color = originalColor;
-        if (health <= 0)
-        {
+
+
+        BulletTime bt = FindAnyObjectByType<BulletTime>();
+        if (bt != null) 
+        { 
+            bt.IncreaseMaxSlowMotionDuration(1f);
+        }
+            GameManager.instance.scoreSys.AddFlatScore(100);
             isAlive = false;
             agent.isStopped = true;
             movementSpeed = 0;
-            GameManager.instance.scoreSys.AddFlatScore(100);
             rb.isKinematic = true;
             agent.velocity = Vector3.zero;
             animatorController.SetTrigger("Death");
@@ -258,9 +258,19 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                 weaponCollider.enabled = false;
 
             }
-
             yield return new WaitForSeconds(3f);
             Destroy(gameObject);
+    }
+
+    IEnumerator RegisterHit()
+    {
+        if(isAlive)
+        model.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        model.material.color = originalColor;
+        if (health <= 0)
+        {
+            StartCoroutine(OnDeath());
         }
     }
 
