@@ -232,6 +232,25 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Quaternion rotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * facePlayerSpeed);
     }
+    IEnumerator OnDeath()
+    {
+
+            BulletTime bt = FindAnyObjectByType<BulletTime>();
+        if (bt != null) 
+        { 
+            bt.IncreaseMaxSlowMotionDuration(1f);
+        }
+            GameManager.instance.scoreSys.AddFlatScore(100);
+            isAlive = false;
+            agent.isStopped = true;
+            movementSpeed = 0;
+            rb.isKinematic = true;
+            agent.velocity = Vector3.zero;
+            animatorController.SetTrigger("Death");
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+            yield return new WaitForSeconds(3f);
+            Destroy(gameObject);
+    }
 
     IEnumerator RegisterHit()
     {
@@ -240,17 +259,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         model.material.color = originalColor;
         if (health <= 0)
         {
-            isAlive = false;
-            agent.isStopped = true;
-            movementSpeed = 0;
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            rb.isKinematic = true;
-            agent.velocity = Vector3.zero;
-            animatorController.SetTrigger("Death");
-            rb.constraints = RigidbodyConstraints.FreezeAll;
-            
-            yield return new WaitForSeconds(3f);
-            Destroy(gameObject);
+            StartCoroutine(OnDeath());
         }
     }
 

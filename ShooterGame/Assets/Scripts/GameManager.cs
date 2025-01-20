@@ -26,12 +26,14 @@ public class GameManager : MonoBehaviour
     public GameObject PublowHealthScreen => lowHealthScreen;
 
     public Image playerHPBar;
+    public Image playerBulletTimeBar;
     
     public ScoreSys scoreSys;
 
     public PlayerController playerscript;
     public GameObject player;
     public GameTimer gameTimer;
+    public BulletTime bt;
 
     public bool isPaused;
     int maxHealth = 100;
@@ -121,6 +123,13 @@ public class GameManager : MonoBehaviour
         CurrentHPText.text = currentHealth.ToString();
         
         
+    }
+    public float GetPlayerBulletTimeLeft() 
+    {
+       float bulletTimeRemaining = bt.GetBulletTimeRemaining();
+        return bulletTimeRemaining;
+       
+
     }
     public int GetPlayerHealth() { return playerCurrentHealth; }
 

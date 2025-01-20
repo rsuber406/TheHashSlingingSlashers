@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -52,13 +53,9 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float slideThreshold;
 
     private int previousHealth;
-
- 
-
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
-   
     bool isCrouching, isSliding;
 
 
@@ -66,8 +63,10 @@ public class PlayerController : MonoBehaviour, IDamage
 
     int maxHealth = 100;
 
-    
+    float bulletTimeLeft;
     GunScripts firearmScript;
+    BulletTime bt;
+    GameManager gameManager;
     private int maxMagCapacity;
     int numBulletsReserve;
     int numBulletsInMag;
@@ -96,6 +95,7 @@ public class PlayerController : MonoBehaviour, IDamage
     void Update()
     {
        
+      
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
@@ -236,6 +236,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void UpdatePlayerUI()
     {
+        float btLeft = GameManager.instance.GetPlayerBulletTimeLeft();
+
+        GameManager.instance.playerBulletTimeBar.fillAmount = btLeft;
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
         GameManager.instance.PubcurrentHPText.SetText(health.ToString());
 
@@ -582,6 +585,7 @@ public class PlayerController : MonoBehaviour, IDamage
             StartCoroutine(Speedup());          
         }
     }
+    
 
     private IEnumerator Speedup()
     {
