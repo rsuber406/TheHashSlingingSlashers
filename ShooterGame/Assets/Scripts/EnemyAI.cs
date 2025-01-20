@@ -111,7 +111,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     void PlayerDetection()
     {
         if (!isAlive) return;
-        if (playerInRange && !TestCanSeePlayer())
+        if (playerInRange && !CanSeePlayer())
         {
 
 
@@ -270,7 +270,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             StartCoroutine(firearmScript.Reload());
         }
     }
-    bool TestCanSeePlayer()
+    bool CanSeePlayer()
     {
         float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
 
@@ -325,50 +325,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         return false;
     }
     // 
-    bool CanSeePlayer()
-    {
-        RaycastHit hit;
 
-        playerDirection = GameManager.instance.player.transform.position - headPos.position;
-        angleOfPlayer = Vector3.Angle(playerDirection, transform.forward);
-        float distance = playerDirection.magnitude;
-        if (Physics.Raycast(headPos.position, playerDirection, out hit))
-        {
-            if (hit.collider.CompareTag("Player") && angleOfPlayer <= fov)
-            {
-                if (chasePlayer)
-                {
-                    agent.SetDestination(GameManager.instance.player.transform.position);
-                    if (distance > distanceToActivateSprint)
-                    {
-                        movementSpeed *= sprintMod;
-                    }
-                    else
-                    {
-                        movementSpeed = movementSpeed / sprintMod;
-                    }
-                }
-
-                if (agent.remainingDistance < agent.stoppingDistance)
-                {
-                    FaceTarget();
-                }
-                if (!isShooting && !isMelee)
-                {
-                    StartCoroutine(Shoot());
-                }
-
-                else if (isMelee && distance < 5)
-                {
-                    // Handle melee
-                    MeleeAttack();
-                }
-                return true;
-            }
-
-        }
-        return false;
-    }
 
     void MeleeAttack()
     {
