@@ -236,10 +236,9 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     {
 
             BulletTime bt = FindAnyObjectByType<BulletTime>();
-        if (bt != null) 
-        { 
+        
             bt.IncreaseMaxSlowMotionDuration(1f);
-        }
+        
             GameManager.instance.scoreSys.AddFlatScore(100);
             isAlive = false;
             agent.isStopped = true;
