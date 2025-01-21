@@ -483,7 +483,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                if(Physics.Raycast(GameManager.instance.player.transform.position, aiToWall - GameManager.instance.player.transform.position))
                 {
                     Vector3 directionFromPlayerToNewPos = aiToWall - GameManager.instance.player.transform.position;
-                    Vector3 redirectPos = (aiToWall.normalized * 5) - directionFromPlayerToNewPos ;
+                    Vector3 redirectPos = (aiToWall.normalized * 5) - (directionFromPlayerToNewPos* 0.75f);
+
                     agent.SetDestination(-redirectPos);
                 }
             }
