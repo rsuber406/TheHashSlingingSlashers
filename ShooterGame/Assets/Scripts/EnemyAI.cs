@@ -36,7 +36,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] Transform headPos;
     [SerializeField] SphereCollider playerSphere;
     [SerializeField] SphereCollider aiSphere;
-    [SerializeField] Rigidbody rb;
+    // [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
@@ -56,7 +56,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool currentlyRotating = false;
     bool decreaseNumber = false;
     bool increaseNumber = true;
-    float lookAround = -45f;
+    float lookAround = -25f;
     float fovAsDecimal;
     Color originalColor;
 
@@ -111,13 +111,14 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             }
         }
 
+
     }
     void PlayerDetection()
     {
         if (!isAlive) return;
         if (playerInRange && !CanSeePlayer())
         {
-           
+
 
 
         }
@@ -250,32 +251,32 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
 
         BulletTime bt = FindAnyObjectByType<BulletTime>();
-        if (bt != null) 
-        { 
+        if (bt != null)
+        {
             bt.IncreaseMaxSlowMotionDuration(1f);
         }
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            isAlive = false;
-            agent.isStopped = true;
-            movementSpeed = 0;
-            rb.isKinematic = true;
-            agent.velocity = Vector3.zero;
-            animatorController.SetTrigger("Death");
-            rb.constraints = RigidbodyConstraints.FreezeAll;
-            if (isMelee)
-            {
-                BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
-                weaponCollider.enabled = false;
+        GameManager.instance.scoreSys.AddFlatScore(100);
+        isAlive = false;
+        agent.isStopped = true;
+        movementSpeed = 0;
+        // rb.isKinematic = true;
+        agent.velocity = Vector3.zero;
+        animatorController.SetTrigger("Death");
+        // rb.constraints = RigidbodyConstraints.FreezeAll;
+        if (isMelee)
+        {
+            BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
+            weaponCollider.enabled = false;
 
-            }
-            yield return new WaitForSeconds(3f);
-            Destroy(gameObject);
+        }
+        yield return new WaitForSeconds(3f);
+        Destroy(gameObject);
     }
 
     IEnumerator RegisterHit()
     {
-        if(isAlive)
-        model.material.color = Color.red;
+        if (isAlive)
+            model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
         if (health <= 0)
@@ -374,7 +375,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     void HandleMeleeAIMoveOnDmg(ref Vector3 playerDirection)
     {
         inSideDistance = playerDirection.magnitude;
-        movementSpeed = movementSpeed * sprintMod;
+
         // give back a quaternion and feed a vector
         if (inSideDistance >= distanceRunTowardPlayerOnDmg)
         {
@@ -384,7 +385,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-
+            movementSpeed = movementSpeed * sprintMod;
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -428,6 +429,12 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
                 Vector3 wallLocation = hit.collider.gameObject.transform.position.normalized;
                 isWallLocated = true;
+                if(Vector3.Distance(wallPoint, Vector3.zero) <= 0)
+                {
+                    wallPoint = hit.point;
+                    hitNorm = hit.normal;
+                    
+                }
                 if (i != 0)
                 {
                     float distanceFirst = Vector3.Distance(transform.position, wallLocation);
@@ -438,6 +445,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                         wallPoint = hit.point;
                         hitNorm = hit.normal;
                     }
+
 
                 }
                 else
@@ -457,16 +465,29 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         if (isWallLocated)
         {
-            Vector3 directPlayerToWall = wallPoint - GameManager.instance.player.transform.position;
-            Vector3 changeXAxis = new Vector3(directPlayerToWall.x / 1.25f, directPlayerToWall.y, directPlayerToWall.z);
-            Vector3 oppositeSide = (changeXAxis.normalized - wallPoint + hitNorm) * 10f;
-            NavMeshHit navHit;
-            if (NavMesh.SamplePosition(oppositeSide, out navHit, 10f, NavMesh.AllAreas))
+            float dotProductToWall = Vector3.Dot(transform.forward, GameManager.instance.player.transform.position);
+            if (dotProductToWall < 0)
             {
-                agent.SetDestination(oppositeSide);
-
+                Debug.Log("Less than zero");
+                hitNorm = hitNorm * -1;
             }
-            else Debug.Log("Invalid position");
+            else if (dotProductToWall > 0)
+            {
+                Debug.Log("Greater than zero");
+            }
+            Vector3 aiToWall = (hitNorm * Vector3.Distance(transform.position, wallPoint) * 1.5f) + transform.position;
+            Debug.Log($"{aiToWall.x}, {aiToWall.y}, {aiToWall.z}");
+            float dotProductNewPosToPlayer = Vector3.Dot(aiToWall, (GameManager.instance.player.transform.forward).normalized);
+            if(dotProductNewPosToPlayer < 0)
+            {
+               if(Physics.Raycast(GameManager.instance.player.transform.position, aiToWall - GameManager.instance.player.transform.position))
+                {
+                    Vector3 directionFromPlayerToNewPos = aiToWall - GameManager.instance.player.transform.position;
+                    Vector3 redirectPos = (aiToWall.normalized * 5) - directionFromPlayerToNewPos ;
+                    agent.SetDestination(-redirectPos);
+                }
+            }
+           else agent.SetDestination(aiToWall);
 
 
         }
@@ -532,30 +553,30 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Quaternion newRotation = transform.rotation * adjustment;
         float rotateToPlayer = facePlayerSpeed * 0.5f;
         transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, rotateToPlayer * Time.deltaTime);
-        if (lookAround >= 45f)
+        if (lookAround >= 25f)
         {
             decreaseNumber = true;
             increaseNumber = false;
-            
+
         }
-        else if (lookAround <= -45f)
+        else if (lookAround <= -25f)
         {
             increaseNumber = true;
             decreaseNumber = false;
         }
         if (increaseNumber)
         {
-            Debug.Log("Increase called");
+
             lookAround += 5;
 
         }
         else if (decreaseNumber)
         {
-            Debug.Log("Decrease called");
+
             lookAround -= 5;
         }
 
-      
+
         yield return new WaitForSeconds(1f);
         currentlyRotating = false;
     }
