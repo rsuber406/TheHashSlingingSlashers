@@ -62,6 +62,10 @@ public class PlayerController : MonoBehaviour, IDamage
     int numBulletsInMag;
 
     float Timesincereload;
+
+
+    Rigidbody rb;
+
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     void Start()
@@ -73,7 +77,11 @@ public class PlayerController : MonoBehaviour, IDamage
         numBulletsInMag = firearmScript.GetBulletsRemaining();
         Timesincereload = Time.time + 10000;
         GameManager.instance.UpdatePlayerHeathUI(health);
-        
+
+
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+
     }
 
 
@@ -122,6 +130,9 @@ public class PlayerController : MonoBehaviour, IDamage
         }
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
+
+        rb.AddForce(moveDir.normalized * movementSpeed * 10f, ForceMode.Force);
+
         controller.Move(moveDir * movementSpeed * Time.deltaTime);
 
         Jump();
