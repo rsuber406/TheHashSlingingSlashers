@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damage : MonoBehaviour
@@ -17,14 +18,16 @@ public class Damage : MonoBehaviour
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
     [SerializeField] string sourceTag;
+    GameObject player;
+    bool hasGivenDmg = false;
     Vector3 originPosition;
 
     void Start()
     {
         if (damageType == DamageType.Moving)
         {
-            rigidBody.linearVelocity = transform.forward * bulletSpeed;
-            originPosition = transform.position;
+            originPosition = rigidBody.position;
+            rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
             Destroy(gameObject, timeToDespawn);
         }
 
@@ -48,20 +51,25 @@ public class Damage : MonoBehaviour
                 return;
             }
 
-            if (other.gameObject.CompareTag("Enemy"))
+           else if (other.gameObject.CompareTag("Enemy"))
             {
+                AINetwork aiNetwork = other.GetComponent<AINetwork>();
+                if (aiNetwork != null)
+                {
+                    aiNetwork.ActivateCollider();
+                  
+                }
                 DamageAI(ref dmg);
             }
             else
             {
+
                 DamagePlayer(ref dmg);
+
             }
 
         }
-        else
-        {
-            DestroyItems();
-        }
+        DestroyItems();
 
 
     }
@@ -85,15 +93,15 @@ public class Damage : MonoBehaviour
     {
         if (damageType == DamageType.Moving)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         if (damageType == DamageType.HealthPack)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         if (damageType == DamageType.GroundTrap)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
     }

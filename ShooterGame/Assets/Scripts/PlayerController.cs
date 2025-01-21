@@ -1,5 +1,7 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
@@ -46,19 +48,38 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
-    private bool isCrouching;
-    private bool isSliding;
-    private float origMovementSpeed;
-    private float origHeight;
-    private float slideTimer;
-    
+    private bool hasTakenDmg = false;
+    // jump
+
+
+    // crouch
+    [SerializeField] float crouchHeight;
+    [SerializeField] float crouchMovementSpeed;
+    [SerializeField] float crouchSpeed;
+
+    // slide
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower number more further you go
+    [SerializeField] float slideDuration;
+    [SerializeField] float slideThreshold;
+
     private int previousHealth;
+    float origMovementSpeed;
+    float origHeight;
+    float slideTimer;
+    bool isCrouching, isSliding;
+
+
+
 
     int maxHealth = 100;
 
+    float bulletTimeLeft;
     GunScripts firearmScript;
-
-    int numBulletsReserve = 60;
+    BulletTime bt;
+    GameManager gameManager;
+    private int maxMagCapacity;
+    int numBulletsReserve;
     int numBulletsInMag;
 
     float Timesincereload;
@@ -70,11 +91,17 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Start()
     {
+        // w/e this shit is
         health = maxHealth;
         firearmScript = firearm.GetComponent<GunScripts>();
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
-        numBulletsInMag = firearmScript.GetBulletsRemaining();
+
+        //ammo
+        SetAllAmmoCount(30, 30, 30);
+        numBulletsReserve = maxMagCapacity * 4;
+
+        //other shit
         Timesincereload = Time.time + 10000;
         GameManager.instance.UpdatePlayerHeathUI(health);
 
@@ -88,6 +115,7 @@ public class PlayerController : MonoBehaviour, IDamage
     void Update()
     {
        
+      
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
@@ -96,7 +124,7 @@ public class PlayerController : MonoBehaviour, IDamage
         CheckWallRun();
         Shoot();
         PerformReload();
-        
+        UpdateAmmoUI();
         if (IsDebugMode)
             DrawDebugLines();
         CheckTimeSinceReload();
@@ -214,6 +242,7 @@ public class PlayerController : MonoBehaviour, IDamage
         previousHealth = health;
         
         health -= amount;
+        
         if(health > maxHealth)
         {
             health = maxHealth;
@@ -223,6 +252,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             // Input healing screen
         }
+        if(!hasTakenDmg)
         StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
@@ -230,6 +260,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void UpdatePlayerUI()
     {
+        float btLeft = GameManager.instance.GetPlayerBulletTimeLeft();
+
+        GameManager.instance.playerBulletTimeBar.fillAmount = btLeft;
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
         GameManager.instance.PubcurrentHPText.SetText(health.ToString());
 
@@ -272,7 +305,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     IEnumerator FlashDmgScreen()
     {
-
+        hasTakenDmg = true;
         if (previousHealth > health)
         {
             GameManager.instance.FlashDamageScreenOn();
@@ -284,11 +317,13 @@ public class PlayerController : MonoBehaviour, IDamage
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
         }
+        hasTakenDmg = false;
         if(health <= 0)
 
         {
             GameManager.instance.Lose();
         }
+        
     }
 
 
@@ -416,7 +451,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             if (numBulletsReserve > 0)
             {
-               int bulletsToLoad = 15 - numBulletsInMag;
+               int bulletsToLoad = maxMagCapacity - numBulletsInMag;
 
                 bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
@@ -424,8 +459,7 @@ public class PlayerController : MonoBehaviour, IDamage
                 numBulletsReserve -= bulletsToLoad;
                 numBulletsInMag += bulletsToLoad;
 
-                GameManager.instance.pubCurrentBulletsMagText.SetText("15");
-                GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+                UpdateAmmoUI();
             }
             else
             {
@@ -433,6 +467,12 @@ public class PlayerController : MonoBehaviour, IDamage
                 GameManager.instance.PubReloadText.SetText("Out Of Ammo!");
             }
         }
+    }
+
+    void UpdateAmmoUI()
+    {
+        GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
     }
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
@@ -444,10 +484,8 @@ public class PlayerController : MonoBehaviour, IDamage
     }
     public void AddAmmo(int amount)
     {
-        int maxReserveAmount = 50;
-        numBulletsReserve = Mathf.Min(numBulletsReserve + amount, maxReserveAmount);
-
-        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+       numBulletsReserve += amount;
+        UpdateAmmoUI();
     }
 
     void Crouch()
@@ -540,6 +578,49 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
+    public void SetMaxMagCapacity(int maxMagCapacity) {
+        this.maxMagCapacity = maxMagCapacity;
+    }
+    public void SetMaxAmmo(int maxAmmo)
+    {
+        numBulletsReserve = maxAmmo;
+    }
+    public void SetCurrentAmmo(int ammo)
+    {
+        numBulletsInMag = ammo;
+    }
+    public void SetAllAmmoCount(int maxMagCapacity, int maxAmmo, int currentAmmo)
+    {
+        this.maxMagCapacity = maxMagCapacity;
+        numBulletsReserve = maxAmmo;
+        numBulletsInMag = currentAmmo;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "DeathBox")
+        {
+            //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
+            TakeDamage(500);
+            //why not just set the players health to zero?
+        }
+
+        if(other.tag == "SpeedBox")
+        {
+            //This is a Speedbox Trigger. Use for speedup door/platform - A
+            StartCoroutine(Speedup());          
+        }
+    }
+    
+
+    private IEnumerator Speedup()
+    {
+        Debug.Log("Speedup is triggered");
+        movementSpeed = movementSpeed *2;
+        yield return new WaitForSeconds(2f);
+        movementSpeed = (int)origMovementSpeed;
+    }
+    public int GetHealth() { return health; }
 }
 
 
