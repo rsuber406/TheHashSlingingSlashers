@@ -1,5 +1,7 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
@@ -38,37 +40,71 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isWallRunning;
     private int previousHealth;
     int maxHealth;
+    private bool hasTakenDmg = false;
+    // jump
 
+
+    // crouch
+    [SerializeField] float crouchHeight;
+    [SerializeField] float crouchMovementSpeed;
+    [SerializeField] float crouchSpeed;
+
+    // slide
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower number more further you go
+    [SerializeField] float slideDuration;
+    [SerializeField] float slideThreshold;
+
+    private int previousHealth;
+    float origMovementSpeed;
+    float origHeight;
+    float slideTimer;
+    bool isCrouching, isSliding;
+
+    float bulletTimeLeft;
     GunScripts firearmScript;
-
-    int numBulletsReserve = 60;
-    int numBulletsinMag;
+    BulletTime bt;
+    GameManager gameManager;
+    private int maxMagCapacity;
+    int numBulletsReserve;
+    int numBulletsInMag;
 
     float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     void Start()
     {
-        maxHealth = health;
+        // w/e this shit is
+        health = maxHealth;
         firearmScript = firearm.GetComponent<GunScripts>();
-        numBulletsinMag = firearmScript.GetBulletsRemaining();
+        origHeight = controller.height;
+        origMovementSpeed = movementSpeed;
+
+        //ammo
+        SetAllAmmoCount(30, 30, 30);
+        numBulletsReserve = maxMagCapacity * 4;
+
+        //other shit
         Timesincereload = Time.time + 10000;
+        GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
 
     void Update()
     {
-       
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
+        Crouch();
+        Slide();
         CheckWallRun();
         Shoot();
         PerformReload();
-        
-        if (isDebugMode)
+        UpdateAmmoUI();
+
+        if (IsDebugMode)
             DrawDebugLines();
-        CheckTimeSinceReload();
+            CheckTimeSinceReload();
     }
 
     void Movement()
@@ -80,6 +116,11 @@ public class PlayerController : MonoBehaviour, IDamage
             jumpCount = 0;
             playerVel = Vector3.zero;
         }
+
+        else
+            // cannot crouch while player in air
+            if (playerVel.y > 0)
+                isCrouching = false;
 
         // If wall running, handle movement against the wall
         if (isWallRunning)
@@ -93,9 +134,14 @@ public class PlayerController : MonoBehaviour, IDamage
             GroundedMovement(moveDir);
         }
 
+        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
+        controller.Move(moveDir * movementSpeed * Time.deltaTime);
+
         Jump();
+
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
+        
         shootPos.transform.rotation = Camera.main.transform.rotation;
     }
 
@@ -132,15 +178,27 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Sprint()
     {
-        if (Input.GetButtonDown("Sprint") && !isSprinting)
+        if (!isSliding)
         {
-            isSprinting = true;
-            movementSpeed = movementSpeed * sprintMod;
-        }
-        else if (Input.GetButtonUp("Sprint"))
-        {
-            isSprinting = false;
-            movementSpeed = movementSpeed / sprintMod;
+            if (Input.GetButtonDown("Sprint"))
+            {
+                // toggles crouch
+                if (isCrouching)
+                {
+                    isCrouching = false;
+                    Crouch();
+                    movementSpeed = (int) origMovementSpeed;
+                }
+
+                isSprinting = true;
+                movementSpeed *= sprintMod;
+            }
+
+            if (Input.GetButtonUp("Sprint"))
+            {
+                isSprinting = false;
+                movementSpeed = (int) origMovementSpeed;
+            }
         }
     }
 
@@ -156,12 +214,19 @@ public class PlayerController : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         previousHealth = health;
-
+        
         health -= amount;
+        
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        GameManager.instance.UpdatePlayerHeathUI(health);
         if(health > previousHealth)
         {
             // Input healing screen
         }
+        if(!hasTakenDmg)
         StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
@@ -169,6 +234,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void UpdatePlayerUI()
     {
+        float btLeft = GameManager.instance.GetPlayerBulletTimeLeft();
+
+        GameManager.instance.playerBulletTimeBar.fillAmount = btLeft;
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
         GameManager.instance.PubcurrentHPText.SetText(health.ToString());
 
@@ -192,22 +260,26 @@ public class PlayerController : MonoBehaviour, IDamage
 
          Camera camRef = Camera.main;
         if (Input.GetButtonDown("Shoot"))
-        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsinMag > 0)))
+        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
-            firearmScript.PlayerShoot();
-            //count bullets set new bullet count on UI
-            numBulletsinMag--;
-            GameManager.instance.PubcurrentBulletsMagText.SetText(numBulletsinMag.ToString());
-            if(numBulletsReserve == 0)
-            {
-                Timesincereload = Time.time + 3;
+                if (numBulletsInMag > 0)
+                {
+                    firearmScript.PlayerShoot();
+                    //count bullets set new bullet count on UI
+                    numBulletsInMag--;
+                    GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+                    if (numBulletsReserve == 0)
+                    {
+                        Timesincereload = Time.time + 3;
+
+                    }
+                }
+                }
             }
-        }
-    }
 
     IEnumerator FlashDmgScreen()
     {
-
+        hasTakenDmg = true;
         if (previousHealth > health)
         {
             GameManager.instance.FlashDamageScreenOn();
@@ -219,11 +291,13 @@ public class PlayerController : MonoBehaviour, IDamage
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
         }
+        hasTakenDmg = false;
         if(health <= 0)
 
         {
             GameManager.instance.Lose();
         }
+        
     }
 
 
@@ -346,16 +420,20 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void PerformReload()
     {
+
         if (Input.GetButtonDown("Reload"))
         {
             if (numBulletsReserve > 0)
             {
+               int bulletsToLoad = maxMagCapacity - numBulletsInMag;
+
+                bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
                 GameManager.instance.PubReloadText.enabled = false;
-                numBulletsReserve -= 15;
-                numBulletsinMag = 15;
-                GameManager.instance.PubcurrentBulletsMagText.SetText("15");
-                GameManager.instance.PubcurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+                numBulletsReserve -= bulletsToLoad;
+                numBulletsInMag += bulletsToLoad;
+
+                UpdateAmmoUI();
             }
             else
             {
@@ -365,11 +443,159 @@ public class PlayerController : MonoBehaviour, IDamage
         }
     }
 
+    void UpdateAmmoUI()
+    {
+        GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+        GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
+    }
+
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
-        if(numBulletsinMag ==0 && Timesincereload >= Time.time)
+        if(numBulletsInMag ==0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
     }
+    public void AddAmmo(int amount)
+    {
+       numBulletsReserve += amount;
+        UpdateAmmoUI();
+    }
+
+    void Crouch()
+    {
+        if (!isSliding)
+        {
+            if (Input.GetButtonDown("Crouch") && !isSprinting)
+                isCrouching = !isCrouching;
+
+            if (isCrouching)
+            {
+                controller.height -= crouchSpeed * Time.deltaTime;
+
+                if (controller.height <= crouchHeight)
+                {
+                    movementSpeed = (int) crouchMovementSpeed;
+                    controller.height = crouchHeight;
+                }
+            }
+
+            else if (!isCrouching && !isSliding)
+            {
+                controller.height += crouchSpeed * Time.deltaTime;
+
+                // was Supposed to stop the jitter from un crouching
+                /* if (controller.height < normalHeight)
+                    player.position += offset * Time.deltaTime;*/
+
+                if (controller.height >= origHeight)
+                {
+                    controller.height = origHeight;
+
+                    if (!isSprinting)
+                        movementSpeed = (int) origMovementSpeed;
+
+                }
+            }
+        }
+    }
+
+
+    void Slide()
+    {
+        if (isSprinting && Input.GetButtonDown("Crouch"))
+        {
+            // Start sliding
+            isSliding = true;
+            isCrouching = false;
+            isSprinting = false;
+
+            slideTimer = 0f;
+            controller.height = crouchHeight;
+
+            movementSpeed = (int)origMovementSpeed;
+            movementSpeed *= (int) slideMod;
+        }
+
+        else if (isSliding)
+        {
+            // slide cancel
+            if (Input.GetButtonDown("Crouch"))
+            {
+                isCrouching = false;
+                isSliding = false;
+                movementSpeed = (int) origMovementSpeed;
+
+            }
+
+            // Continue sliding
+            else
+            {
+                controller.Move(moveDir * slideMod * Time.deltaTime);
+
+                slideTimer += Time.deltaTime;
+                movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
+
+            }
+
+            // End slide if timer exceeds duration or player's speed drops below threshold
+            if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
+            {
+                movementSpeed = (int) origMovementSpeed;
+                isSliding = false;
+                isCrouching = true;
+
+            }
+        }
+    }
+    public void TakeDamage(int amount, Vector3 origin)
+    {
+        // There should be no implementation here. This is only because of the interface class and AI needing special override
+    }
+    public void SetMaxMagCapacity(int maxMagCapacity) {
+        this.maxMagCapacity = maxMagCapacity;
+    }
+    public void SetMaxAmmo(int maxAmmo)
+    {
+        numBulletsReserve = maxAmmo;
+    }
+    public void SetCurrentAmmo(int ammo)
+    {
+        numBulletsInMag = ammo;
+    }
+    public void SetAllAmmoCount(int maxMagCapacity, int maxAmmo, int currentAmmo)
+    {
+        this.maxMagCapacity = maxMagCapacity;
+        numBulletsReserve = maxAmmo;
+        numBulletsInMag = currentAmmo;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "DeathBox")
+        {
+            //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
+            TakeDamage(500);
+            //why not just set the players health to zero?
+        }
+
+        if(other.tag == "SpeedBox")
+        {
+            //This is a Speedbox Trigger. Use for speedup door/platform - A
+            StartCoroutine(Speedup());          
+        }
+    }
+    
+
+    private IEnumerator Speedup()
+    {
+        Debug.Log("Speedup is triggered");
+        movementSpeed = movementSpeed *2;
+        yield return new WaitForSeconds(2f);
+        movementSpeed = (int)origMovementSpeed;
+    }
+    public int GetHealth() { return health; }
 }
+
+
+

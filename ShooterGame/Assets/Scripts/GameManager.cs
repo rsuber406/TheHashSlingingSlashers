@@ -21,23 +21,28 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text PubReloadText => ReloadText;
     public TMP_Text PubcurrentHPText => CurrentHPText; 
-    public TMP_Text PubcurrentBulletsMagText => CurrentBulletsMagText;
-    public TMP_Text PubcurrentBulletsReserveText => CurrentBulletsReserveText;
+    public TMP_Text pubCurrentBulletsMagText => CurrentBulletsMagText;
+    public TMP_Text pubCurrentBulletsReserveText => CurrentBulletsReserveText;
     public GameObject PublowHealthScreen => lowHealthScreen;
 
     public Image playerHPBar;
+    public Image playerBulletTimeBar;
     
     public ScoreSys scoreSys;
 
     public PlayerController playerscript;
     public GameObject player;
     public GameTimer gameTimer;
+    public BulletTime bt;
 
     public bool isPaused;
+    int maxHealth = 100;
 
     int goalCount;
+    int playerCurrentHealth;
     void Awake()
     {
+
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
@@ -82,19 +87,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void updateGameGoal(int amount)
-    {
-        goalCount += amount;
-
-        if (goalCount <= 0)
-        {
-            statePause();
-            menuActive = menuWin;
-            menuActive.SetActive(true);
-        }
-
-    }
-
     public void Lose()
     {
         statePause();
@@ -124,6 +116,22 @@ public class GameManager : MonoBehaviour
         menuActive = playerGainHealth;
         menuActive.SetActive(true);
     }
+
+    public void UpdatePlayerHeathUI(int currentHealth)
+    {
+        playerCurrentHealth = currentHealth;
+        CurrentHPText.text = currentHealth.ToString();
+        
+        
+    }
+    public float GetPlayerBulletTimeLeft() 
+    {
+       float bulletTimeRemaining = bt.GetBulletTimeRemaining();
+        return bulletTimeRemaining;
+       
+
+    }
+    public int GetPlayerHealth() { return playerCurrentHealth; }
 
 
 }

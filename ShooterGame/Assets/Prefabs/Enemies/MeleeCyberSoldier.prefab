@@ -412,6 +412,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 527936863065299303}
+  - {fileID: 9193405878861994825}
   m_Father: {fileID: 6784633155977321280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1855603013382868641
@@ -925,6 +926,37 @@ Transform:
   - {fileID: 2229484577392026348}
   m_Father: {fileID: 4177160134188844948}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5054093776783082262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9193405878861994825}
+  m_Layer: 0
+  m_Name: FindWallPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9193405878861994825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5054093776783082262}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.043619405, y: 0, z: 0, w: 0.9990483}
+  m_LocalPosition: {x: -0, y: -0.024, z: 0.145}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8466279742029186789}
+  m_LocalEulerAnglesHint: {x: -5, y: 0, z: 0}
 --- !u!1 &5146021881989365622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,9 +1133,10 @@ GameObject:
   - component: {fileID: -71839492652128871}
   - component: {fileID: 1589965793133422394}
   - component: {fileID: -2204462272274185328}
+  - component: {fileID: -2807025000170165267}
   m_Layer: 0
   m_Name: MeleeCyberSoldier
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1118,7 +1151,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 621457937816382524}
@@ -1161,21 +1194,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 600
   sprintMod: 2
-  agent: {fileID: -2204462272274185328}
-  health: 50
-  maxHealth: 50
-  model: {fileID: 589467511998648494}
   facePlayerSpeed: 250
-  chasePlayer: 1
   distanceToActivateSprint: 8
-  headPos: {fileID: 527936863065299303}
-  fov: 70
+  fov: 80
+  searchForWall: 1000
+  distanceRunTowardPlayerOnDmg: 40
+  health: 80
+  maxHealth: 50
+  chasePlayer: 1
   isMelee: 1
   isTurrent: 0
   firearm: {fileID: 0}
   firearmScript: {fileID: 0}
+  meleeWeapon: {fileID: 8736694986035784163}
+  enemyBulletSpread: 0
   animatorController: {fileID: 3700920318263449828}
-  animSpeedTrans: 3
+  animSpeedTrans: 2
+  locateWallPos: {fileID: 9193405878861994825}
+  agent: {fileID: -2204462272274185328}
+  model: {fileID: 589467511998648494}
+  headPos: {fileID: 527936863065299303}
+  playerSphere: {fileID: 1589965793133422394}
+  aiSphere: {fileID: -2807025000170165267}
+  rb: {fileID: 0}
 --- !u!136 &-71839492652128871
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1196,7 +1237,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.85
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!135 &1589965793133422394
@@ -1218,7 +1259,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 25
+  m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &-2204462272274185328
 NavMeshAgent:
@@ -1229,12 +1270,12 @@ NavMeshAgent:
   m_GameObject: {fileID: 7365811365902483652}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 36
   avoidancePriority: 50
   m_AngularSpeed: 600
-  m_StoppingDistance: 4
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
@@ -1242,6 +1283,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!135 &-2807025000170165267
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365811365902483652}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7704123279012441516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,13 +1490,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8736694986035784163}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.060969558, y: -0.16661845, z: 0.69551414, w: 0.69626236}
+  m_LocalPosition: {x: -0.001, y: 0.029, z: 0.033}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1934260421469302612}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 18.462, y: -8.928, z: 88.485}
 --- !u!33 &8736694986036917731
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1507,7 +1569,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3911797, y: 1.302745, z: 0.14509305}
+  m_Size: {x: 0.2, y: 1.3, z: 0.07}
   m_Center: {x: -0.00022500432, y: 0.44038758, z: -0.00000018093306}
 --- !u!114 &6781321041183919076
 MonoBehaviour:

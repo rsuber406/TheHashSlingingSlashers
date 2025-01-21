@@ -7,11 +7,13 @@ TagManager:
   - Enemy
   - Ground
   - Wall
+  - DeathBox
+  - SpeedBox
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - Player
