@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
@@ -11,8 +10,9 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
+    [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
     [SerializeField] int jumpMax;
-    [SerializeField] float gravity;
+    [SerializeField] float gravity; // Negative value indicating downward force
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
@@ -20,11 +20,22 @@ public class PlayerController : MonoBehaviour, IDamage
     
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject firearm;
-    [SerializeField] float wallRunSpeed = 20f;
-    [SerializeField] float wallRunMod = 0.3f;
-    [SerializeField] float wallRunDuration = 5f;
+    [SerializeField] float wallRunSpeed;
+    [SerializeField] float wallRunDuration;
     [SerializeField] float wallRunGroundCheckDistance = 2f;
-    [SerializeField] float groundCheckRay = 1.2f;
+    [SerializeField] float groundCheckRay;
+    
+    
+    // crouch
+    [SerializeField] float crouchHeight;
+    [SerializeField] float crouchMovementSpeed;
+    [SerializeField] float crouchSpeed;
+
+    // slide
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower number more further you go
+    [SerializeField] float slideDuration;
+    [SerializeField] float slideThreshold;
     
     // Private fields
     private CollisionInfo collisionInfo;
@@ -36,20 +47,8 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isWallRunning;
     private int previousHealth;
     private int maxHealth;
-    private bool hasTakenDmg = false;
-    // jump
-
-
-    // crouch
-    [SerializeField] float crouchHeight;
-    [SerializeField] float crouchMovementSpeed;
-    [SerializeField] float crouchSpeed;
-
-    // slide
-    [SerializeField] float slideMod;
-    [SerializeField] float slideMomentum;   // lower number more further you go
-    [SerializeField] float slideDuration;
-    [SerializeField] float slideThreshold;
+    private bool hasTakenDmg;
+    
 
     float origMovementSpeed;
     float origHeight;
@@ -66,6 +65,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
+    private float GRAVITY_CORRECTION = -2.0f;
     
     public int GetHealth() { return health; }
 
@@ -115,7 +115,10 @@ public class PlayerController : MonoBehaviour, IDamage
         if (isGrounded && playerVel.y < 0)
         {
             jumpCount = 0;
-            playerVel.y = -2f;
+            playerVel = Vector3.zero;
+            // The player might appear to "float" briefly after landing because gravity isn't pulling them back down.
+            // We make the player slightly stick to the floor
+            playerVel.y = GRAVITY_CORRECTION;
         }
         else if (playerVel.y > 0)
         {
@@ -206,11 +209,16 @@ public class PlayerController : MonoBehaviour, IDamage
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-            playerVel.y = jumpSpeed;
 
             if (isWallRunning)
             {
-                
+                Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
+                playerVel = jumpDirection.normalized * jumpSpeed;
+                playerVel.y = jumpSpeed;
+            }
+            else
+            {
+                playerVel.y = jumpSpeed;
             }
         }
     }
