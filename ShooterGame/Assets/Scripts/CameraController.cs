@@ -3,7 +3,6 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] int sensitivity;
-    [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invYAxis;
     [SerializeField] int leftLean;
     [SerializeField] int rightLean;
@@ -91,13 +90,14 @@ public class CameraController : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+
         if (invYAxis)
         {
             rotX += mouseY;
         }
         else rotX -= mouseY;
 
-        rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
+        rotX = Mathf.Clamp(rotX, -90, 90);
         transform.localRotation = Quaternion.Euler(rotX, 0, rotZ);
         transform.parent.Rotate(Vector3.up * mouseX);
     }

@@ -1375,7 +1375,7 @@ GameObject:
   - component: {fileID: 226090341}
   m_Layer: 0
   m_Name: Upperground1 (4)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1589,7 +1589,7 @@ GameObject:
   - component: {fileID: 251432250}
   m_Layer: 0
   m_Name: Upperground1
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2058,7 +2058,7 @@ GameObject:
   - component: {fileID: 324657956}
   m_Layer: 0
   m_Name: Upperground1 (3)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3441,7 +3441,7 @@ GameObject:
   - component: {fileID: 624102963}
   m_Layer: 0
   m_Name: Upperground1 (9)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3788,7 +3788,7 @@ PrefabInstance:
     - target: {fileID: 5440754179277999109, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: playerGainHealth
       value: 
-      objectReference: {fileID: 1198506944}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4320,7 +4320,7 @@ GameObject:
   - component: {fileID: 805701757}
   m_Layer: 0
   m_Name: Upperground1 (7)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4533,7 +4533,7 @@ GameObject:
   - component: {fileID: 887612070}
   m_Layer: 0
   m_Name: Upperground1 (2)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5097,7 +5097,7 @@ GameObject:
   - component: {fileID: 943669130}
   m_Layer: 0
   m_Name: Upperground1 (11)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6221,11 +6221,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
---- !u!1 &1198506944 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4756601860196656015, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
-  m_PrefabInstance: {fileID: 648897677}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1204861913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6684,7 +6679,7 @@ GameObject:
   - component: {fileID: 1294844733}
   m_Layer: 0
   m_Name: Upperground1 (6)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7646,7 +7641,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: slideMomentum
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: slideThreshold
@@ -7732,7 +7727,7 @@ GameObject:
   - component: {fileID: 1544108572}
   m_Layer: 0
   m_Name: Plane (1)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8017,7 +8012,7 @@ GameObject:
   - component: {fileID: 1680981570}
   m_Layer: 0
   m_Name: Upperground1 (1)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8126,7 +8121,7 @@ GameObject:
   - component: {fileID: 1683205145}
   m_Layer: 0
   m_Name: Upperground1 (8)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9207,7 +9202,7 @@ GameObject:
   - component: {fileID: 1868670196}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9395,7 +9390,7 @@ GameObject:
   - component: {fileID: 1912439697}
   m_Layer: 0
   m_Name: Upperground1 (10)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9947,7 +9942,7 @@ GameObject:
   - component: {fileID: 2033166664}
   m_Layer: 0
   m_Name: Upperground1 (5)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -27,6 +27,16 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float wallRunGroundCheckThreshhold = 3f;
     [SerializeField] float groundCheckRay = 1.2f;
     
+    // crouch
+    [SerializeField] float crouchHeight = 1f;
+    [SerializeField] float crouchMovementSpeed = 4f;
+    [SerializeField] float crouchSpeed = 8f;
+
+    // slide
+    [SerializeField] float slideMod = 3f;
+    [SerializeField] float slideMomentum = 8f;   // lower the number further you travel
+    [SerializeField] float slideDuration = 0.75f;
+    [SerializeField] float slideThreshold = 1f;
     
     // Private fields
     private CollisionInfo collisionInfo;
@@ -36,32 +46,13 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
-    // jump
-
-
-    // crouch
-    [SerializeField] float crouchHeight;
-    [SerializeField] float crouchMovementSpeed;
-    [SerializeField] float crouchSpeed;
-
-    // slide
-    [SerializeField] float slideMod;
-    [SerializeField] float slideMomentum;   // lower number more further you go
-    [SerializeField] float slideDuration;
-    [SerializeField] float slideThreshold;
-
+    private bool isCrouching;
+    private bool isSliding;
+    private float origMovementSpeed;
+    private float origHeight;
+    private float slideTimer;
+    
     private int previousHealth;
-
- 
-
-    float origMovementSpeed;
-    float origHeight;
-    float slideTimer;
-   
-    bool isCrouching, isSliding;
-
-
-
 
     int maxHealth = 100;
 
@@ -82,6 +73,7 @@ public class PlayerController : MonoBehaviour, IDamage
         numBulletsInMag = firearmScript.GetBulletsRemaining();
         Timesincereload = Time.time + 10000;
         GameManager.instance.UpdatePlayerHeathUI(health);
+        
     }
 
 
@@ -93,7 +85,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Sprint();
         Crouch();
         Slide();
-       CheckWallRun();
+        CheckWallRun();
         Shoot();
         PerformReload();
         
@@ -146,7 +138,7 @@ public class PlayerController : MonoBehaviour, IDamage
     /// <returns>book</returns>
     private bool IsGrounded()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay))
         {
             if (hit.collider.CompareTag("Ground")) return true;
         }
