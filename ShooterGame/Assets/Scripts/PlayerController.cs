@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
     [SerializeField] int jumpMax;
-    [SerializeField] int gravity;
+    [SerializeField] float gravity;
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
@@ -21,10 +21,10 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject firearm;
     [SerializeField] float wallRunSpeed = 20f;
+    [SerializeField] float wallRunMod = 0.3f;
     [SerializeField] float wallRunDuration = 5f;
-    [SerializeField] float wallRunGroundCheckThreshhold = 3f;
+    [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay = 1.2f;
-    
     
     // Private fields
     private CollisionInfo collisionInfo;
@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isGrounded;
     private bool isWallRunning;
     private int previousHealth;
-    int maxHealth;
+    private int maxHealth;
     private bool hasTakenDmg = false;
     // jump
 
@@ -64,16 +64,19 @@ public class PlayerController : MonoBehaviour, IDamage
     int numBulletsReserve;
     int numBulletsInMag;
 
-    float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
+    float Timesincereload;
     
     public int GetHealth() { return health; }
 
+    void Awake() {
+        firearmScript = firearm.GetComponent<GunScripts>();
+    }
+    
     void Start()
     {
         // w/e this shit is
         health = maxHealth;
-        firearmScript = firearm.GetComponent<GunScripts>();
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
 
@@ -109,10 +112,10 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         isGrounded = IsGrounded();
         
-        if (isGrounded)
+        if (isGrounded && playerVel.y < 0)
         {
             jumpCount = 0;
-            playerVel = Vector3.zero;
+            playerVel.y = -2f;
         }
         else if (playerVel.y > 0)
         {
@@ -131,14 +134,12 @@ public class PlayerController : MonoBehaviour, IDamage
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
             GroundedMovement(moveDir);
         }
-
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * (movementSpeed * Time.deltaTime));
-
+        
         Jump();
-
+        
+        // Apply player gravity, the order matters!
+        playerVel.y += gravity * Time.deltaTime;
         controller.Move(playerVel * Time.deltaTime);
-        playerVel.y -= gravity * Time.deltaTime;
         
         shootPos.transform.rotation = Camera.main.transform.rotation;
     }
@@ -163,7 +164,7 @@ public class PlayerController : MonoBehaviour, IDamage
     /// <returns>bool</returns>
     private bool HasGroundClearance()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckThreshhold ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance ))
         {
             if (hit.collider.CompareTag("Ground"))
             {
@@ -206,6 +207,11 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             jumpCount++;
             playerVel.y = jumpSpeed;
+
+            if (isWallRunning)
+            {
+                
+            }
         }
     }
 
@@ -268,7 +274,6 @@ public class PlayerController : MonoBehaviour, IDamage
                 if (numBulletsReserve == 0)
                 {
                     Timesincereload = Time.time + 3;
-
                 }
             }
         }
@@ -366,13 +371,7 @@ public class PlayerController : MonoBehaviour, IDamage
         if (!isWallRunning)
         {
             isWallRunning = true;
-
-            // Lock the player's rotation to the wall, slerp makes the transition smoother
-            // Dissabling this because some snaping happens that maked this unbearable
-            // Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up);
-            // Quaternion targetRotation = Quaternion.LookRotation(wallDirection);
-            // controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, Time.deltaTime * 10f);
-
+            jumpCount = 0;
             StartCoroutine(EndWallRun_Internal());
         }
     }
@@ -385,6 +384,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void EndWallRun()
     {
+        if (!isWallRunning) return;
         isWallRunning = false;
     }
 
@@ -523,7 +523,6 @@ public class PlayerController : MonoBehaviour, IDamage
                 isCrouching = false;
                 isSliding = false;
                 movementSpeed = (int) origMovementSpeed;
-
             }
 
             // Continue sliding
@@ -533,7 +532,6 @@ public class PlayerController : MonoBehaviour, IDamage
 
                 slideTimer += Time.deltaTime;
                 movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
-
             }
 
             // End slide if timer exceeds duration or player's speed drops below threshold
@@ -542,7 +540,6 @@ public class PlayerController : MonoBehaviour, IDamage
                 movementSpeed = (int) origMovementSpeed;
                 isSliding = false;
                 isCrouching = true;
-
             }
         }
     }
@@ -588,7 +585,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private IEnumerator Speedup()
     {
         Debug.Log("Speedup is triggered");
-        movementSpeed = movementSpeed *2;
+        movementSpeed = movementSpeed * 2;
         yield return new WaitForSeconds(2f);
         movementSpeed = (int)origMovementSpeed;
     }
