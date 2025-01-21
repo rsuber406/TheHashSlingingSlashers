@@ -121,6 +121,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
+        if (health <= 0) return;
         Vector3 playerDirection = origin - transform.position;
 
         if (isMelee && !playerInRange)
@@ -240,18 +241,16 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
 
         BulletTime bt = FindAnyObjectByType<BulletTime>();
-        if (bt != null) 
+        if (bt != null && isAlive == false) 
         { 
             bt.IncreaseMaxSlowMotionDuration(1f);
-        
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            isAlive = false;
             agent.isStopped = true;
             movementSpeed = 0;
             rb.isKinematic = true;
             agent.velocity = Vector3.zero;
             animatorController.SetTrigger("Death");
             rb.constraints = RigidbodyConstraints.FreezeAll;
+            GameManager.instance.scoreSys.AddFlatScore(100);
 		}
             if (isMelee)
             {
@@ -271,6 +270,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         model.material.color = originalColor;
         if (health <= 0)
         {
+            isAlive = false;
             StartCoroutine(OnDeath());
         }
     }
@@ -395,7 +395,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
     public void TakeDamage(int amount)
     {
-
+       
     }
 
     void FindNearestWall()

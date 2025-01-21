@@ -34,8 +34,24 @@ public class GunScripts : MonoBehaviour
     public void PlayerShoot()
     {
         if (shotsPerMagazine <= 0) return;
-        shootPos.rotation = Camera.main.transform.rotation;
-        Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // ray going thru middle of screen
+        RaycastHit hit;
+        Vector3 targetPoint = Vector3.zero;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+           
+                targetPoint = hit.point;
+        } else
+        {
+            targetPoint = ray.GetPoint(1000);
+        }
+
+        Vector3 direction = (targetPoint - shootPos.transform.position).normalized;
+
+        var _bullet = Instantiate(bullet, shootPos.transform.position, Quaternion.LookRotation(direction));
+
+
         shotsPerMagazine--;
     }
 
