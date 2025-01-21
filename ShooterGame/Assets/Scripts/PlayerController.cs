@@ -313,9 +313,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (!isGrounded && IsAgainstWall())
         {
-            // Maybe dont need this after the refactor
-            Vector3 wallNormal = GetWallNormal();
-            StartWallRun(wallNormal);
+            StartWallRun();
         }
         else
         {
@@ -361,20 +359,18 @@ public class PlayerController : MonoBehaviour, IDamage
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
 
         // Raycast to the left
-        RaycastHit leftHit;
-        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out leftHit, 1f);
+        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHit, 1f);
         Debug.DrawRay(transform.position, -transform.right, isCollidingOnLeftWall ? Color.red : Color.green);
 
         // Raycast to the right
-        RaycastHit rightHit;
-        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out rightHit, 1f);
+        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHit, 1f);
         Debug.DrawRay(transform.position, transform.right, isCollidingOnRightWall ? Color.red : Color.green);
 
         // Draw a raycast to the ground
         Debug.DrawRay(transform.position, Vector3.down * groundCheckRay, Color.blue);
     }
     
-    public void StartWallRun(Vector3 wallNormal)
+    public void StartWallRun()
     {
         if (!isWallRunning)
         {
@@ -399,7 +395,8 @@ public class PlayerController : MonoBehaviour, IDamage
     void WallRunMovement(Vector3 direction)
     {
         Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
-        playerVel.y = 0;
+        playerVel.y = 0; // This enables us to override player velocity
+                         // while running to prevent immediate gravity pull down
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
     
@@ -536,7 +533,7 @@ public class PlayerController : MonoBehaviour, IDamage
             // Continue sliding
             else
             {
-                controller.Move(moveDir * slideMod * Time.deltaTime);
+                controller.Move(moveDir * (slideMod * Time.deltaTime));
 
                 slideTimer += Time.deltaTime;
                 movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
