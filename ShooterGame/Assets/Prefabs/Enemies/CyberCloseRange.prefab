@@ -259,6 +259,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4466891987503962245}
+    - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 541795978197902545}
+    - targetCorrespondingSourceObject: {fileID: 100004, guid: cf3910b7639e12447827e45f63f60201, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4229582943413033700}
   m_SourcePrefab: {fileID: 100100000, guid: cf3910b7639e12447827e45f63f60201, type: 3}
 --- !u!4 &8213156068008344458 stripped
 Transform:
@@ -289,24 +295,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 500
   sprintMod: 2
-  agent: {fileID: 7967720148001108979}
+  facePlayerSpeed: 250
+  distanceToActivateSprint: 15
+  fov: 70
+  searchForWall: 0
+  distanceRunTowardPlayerOnDmg: 0
   health: 80
   maxHealth: 10
-  model: {fileID: 8213156068011551408}
-  facePlayerSpeed: 250
   chasePlayer: 1
-  distanceToActivateSprint: 15
-  headPos: {fileID: 1850963566805270568}
-  fov: 70
   isMelee: 0
   isTurrent: 0
   firearm: {fileID: 8104168380762224150}
   firearmScript: {fileID: 0}
+  meleeWeapon: {fileID: 0}
+  enemyBulletSpread: 3
   animatorController: {fileID: 8213156068015854704}
   animSpeedTrans: 1
-  distanceRunTowardPlayerOnDmg: 0
   locateWallPos: {fileID: 0}
-  searchForWall: 0
+  agent: {fileID: 7967720148001108979}
+  model: {fileID: 8213156068011551408}
+  headPos: {fileID: 1850963566805270568}
+  playerSphere: {fileID: 4710849409950025327}
+  aiSphere: {fileID: 541795978197902545}
+  rb: {fileID: 4229582943413033700}
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -370,9 +381,57 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.6
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!135 &541795978197902545
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8213156068008437684}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &4229582943413033700
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8213156068008437684}
+  serializedVersion: 4
+  m_Mass: 1000
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!137 &8213156068011551408 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 13700000, guid: cf3910b7639e12447827e45f63f60201, type: 3}

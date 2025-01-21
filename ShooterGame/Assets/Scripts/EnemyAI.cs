@@ -4,41 +4,66 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour, IDamage
+public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("AI Movement")]
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] int facePlayerSpeed;
+    [SerializeField] float distanceToActivateSprint;
+    [SerializeField] int fov;
+    [SerializeField] int searchForWall;
+    [SerializeField] int distanceRunTowardPlayerOnDmg;
+    [Header("Health")]
     [SerializeField] int health;
     [SerializeField] int maxHealth;
-    [SerializeField] Renderer model;
-    [SerializeField] int facePlayerSpeed;
+    [Header("Enemy Type")]
     [SerializeField] bool chasePlayer;
-    [SerializeField] float distanceToActivateSprint;
-    [SerializeField] Transform headPos;
-    [SerializeField] int fov;
     [SerializeField] bool isMelee;
     [SerializeField] bool isTurrent;
+    [Header("Weapon Loadout")]
     [SerializeField] GameObject firearm;
     [SerializeField] GunScripts firearmScript;
+    [SerializeField] GameObject meleeWeapon;
+    [SerializeField] float enemyBulletSpread;
+    [Header("AI Configuration")]
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
-    [SerializeField] int distanceRunTowardPlayerOnDmg;
     [SerializeField] Transform locateWallPos;
-    [SerializeField] int searchForWall;
+    [SerializeField] NavMeshAgent agent;
+    [SerializeField] Renderer model;
+    [SerializeField] Transform headPos;
+    [SerializeField] SphereCollider playerSphere;
+    [SerializeField] SphereCollider aiSphere;
+    // [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
     Vector3 playerPosition;
     Vector3 playerPreviousPosition;
+    Vector3 coverTransitionVector;
+    Vector3 firstTransitionClear, coverPointPos, currentPos;
     bool isShooting;
     bool canMeleeAttack;
     bool playerInRange;
+    bool assistingFriend = false;
     float inSideDistance;
+    bool coverSetDirectionFinished = false;
+    bool visibleToPlayer;
+    bool checkVisibilityToPlayer = false;
+    bool isAlive = true;
+    bool currentlyRotating = false;
+    bool decreaseNumber = false;
+    bool increaseNumber = true;
+    float lookAround = -25f;
+    float fovAsDecimal;
     Color originalColor;
+
     void Start()
     {
+        playerPreviousPosition = Vector3.zero;
+        coverTransitionVector = Vector3.zero;
         originalColor = model.material.color;
         canMeleeAttack = isMelee;
         if (firearm != null)
@@ -50,41 +75,73 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             fireRate = firearmScript.GetFireRate();
         }
+        fovAsDecimal = 1f - ((float)fov / 100);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (!isAlive) return;
+        currentPos = transform.position;
         float characterSpeed = agent.velocity.normalized.magnitude;
         float animSpeed = animatorController.GetFloat("Speed");
         animatorController.SetFloat("Speed", Mathf.MoveTowards(animSpeed, characterSpeed, Time.deltaTime * animSpeedTrans));
         PlayerDetection();
         if (!isMelee)
+        {
             PerformReload();
+
+        }
+
+        if (coverSetDirectionFinished && isAlive)
+        {
+            if (!agent.pathPending && agent.remainingDistance < 2f)
+            {
+                coverSetDirectionFinished = false;
+
+            }
+        }
+        if (assistingFriend)
+        {
+            if (!isMelee && !isShooting)
+                StartCoroutine(Shoot());
+            if (GameManager.instance.GetPlayerHealth() <= 0)
+            {
+                assistingFriend = false;
+            }
+        }
+
+
     }
     void PlayerDetection()
     {
-
-        if (playerInRange && CanSeePlayer())
+        if (!isAlive) return;
+        if (playerInRange && !CanSeePlayer())
         {
 
 
 
         }
+        else
+        {
+
+            if (!currentlyRotating)
+                StartCoroutine(LookForPlayer());
+        }
+
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
         Vector3 playerDirection = origin - transform.position;
 
-        if (isMelee)
+        if (isMelee && !playerInRange)
         {
             HandleMeleeAIMoveOnDmg(ref playerDirection);
         }
         else
         {
-            if (!isShooting) 
-            HandleRangedCombatOnDmg(ref playerDirection);
+            if (!isShooting)
+                HandleRangedCombatOnDmg(playerDirection);
 
 
         }
@@ -94,11 +151,29 @@ public class EnemyAI : MonoBehaviour, IDamage
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger)
+        {
+            return;
+        }
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
 
         }
+        // This uses the collision sphere to see which bots are nearby and call them to help
+        if (other.CompareTag("Enemy") && aiSphere.enabled && !playerInRange)
+        {
+
+
+            AINetwork aiNet = other.GetComponent<AINetwork>();
+            if (aiNet != null)
+            {
+                aiNet.HelpBots(currentPos);
+
+            }
+
+        }
+
 
     }
     private void OnTriggerExit(Collider other)
@@ -120,7 +195,8 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         isShooting = true;
         playerPosition = GameManager.instance.player.transform.position;
-        bool playerStationary = playerPosition == playerPreviousPosition ? true : false;
+        // This is how we should compare vectors, take a difference and then compare it against a small amount
+        bool playerStationary = (playerPosition - playerPreviousPosition).sqrMagnitude < 0.0001f;
         // This will allow us to decrease the accuracy so out player is not being laser beamed
         int applyInaccuracy = 20;
         int inaccuracyChance = Random.Range(0, 100);
@@ -131,11 +207,11 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement random number offsets so the AI does not laser beam the player
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
 
             }
 
-            firearmScript.AIShoot(transform.rotation * randomRotation);
+            firearmScript.AIShoot(randomRotation, transform.position);
 
 
         }
@@ -145,12 +221,12 @@ public class EnemyAI : MonoBehaviour, IDamage
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
 
             }
-            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 150);
+            Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 45);
             RotateToPlayer(rotateDir);
-            firearmScript.AIShoot(transform.rotation * randomRotation);
+            firearmScript.AIShoot(randomRotation, transform.position);
         }
         yield return new WaitForSeconds(fireRate);
         isShooting = false;
@@ -170,77 +246,117 @@ public class EnemyAI : MonoBehaviour, IDamage
         Quaternion rotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * facePlayerSpeed);
     }
+    IEnumerator OnDeath()
+    {
+
+
+        BulletTime bt = FindAnyObjectByType<BulletTime>();
+        if (bt != null)
+        {
+            bt.IncreaseMaxSlowMotionDuration(1f);
+        }
+        GameManager.instance.scoreSys.AddFlatScore(100);
+        isAlive = false;
+        agent.isStopped = true;
+        movementSpeed = 0;
+        // rb.isKinematic = true;
+        agent.velocity = Vector3.zero;
+        animatorController.SetTrigger("Death");
+        // rb.constraints = RigidbodyConstraints.FreezeAll;
+        if (isMelee)
+        {
+            BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
+            weaponCollider.enabled = false;
+
+        }
+        yield return new WaitForSeconds(3f);
+        Destroy(gameObject);
+    }
 
     IEnumerator RegisterHit()
     {
-        model.material.color = Color.red;
+        if (isAlive)
+            model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
         if (health <= 0)
         {
-            // Without the proper reference, this will cause issues and not despawn the gameobject
-            GameManager.instance.scoreSys.AddFlatScore(100);
-            Destroy(gameObject);
+            StartCoroutine(OnDeath());
         }
     }
 
     void PerformReload()
     {
+        if (isMelee) return;
         if (firearmScript.GetBulletsRemaining() <= 0)
         {
             StartCoroutine(firearmScript.Reload());
         }
     }
-
     bool CanSeePlayer()
     {
-        RaycastHit hit;
-        playerPreviousPosition = GameManager.instance.player.transform.position;
-        playerDirection = GameManager.instance.player.transform.position - headPos.position;
-        float distance = playerDirection.magnitude;
-        if (Physics.Raycast(headPos.position, playerDirection, out hit))
+        float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
+
+        if (dotProduct > 0)
         {
-            if (hit.collider.CompareTag("Player") && angleOfPlayer <= fov)
+            if (dotProduct >= fovAsDecimal)
             {
-                if (chasePlayer)
+                RaycastHit hit;
+                // This is for prediction code needed later
+                playerPreviousPosition = GameManager.instance.player.transform.position;
+                playerDirection = playerPreviousPosition - headPos.transform.position;
+                float distance = playerDirection.magnitude;
+                if (Physics.Raycast(headPos.position, playerDirection, out hit))
                 {
-                    agent.SetDestination(GameManager.instance.player.transform.position);
-                    if (distance > distanceToActivateSprint)
+                    if (hit.collider.CompareTag("Player"))
                     {
-                        movementSpeed *= sprintMod;
+
+                        if (chasePlayer)
+                        {
+                            agent.SetDestination(GameManager.instance.player.transform.position);
+                            if (distance > distanceToActivateSprint)
+                            {
+                                movementSpeed *= sprintMod;
+                            }
+                            else
+                            {
+                                movementSpeed = movementSpeed / sprintMod;
+                            }
+                        }
+                        if (agent.remainingDistance < agent.stoppingDistance)
+                        {
+                            FaceTarget();
+                        }
+                        if (!isShooting && !isMelee)
+                        {
+                            StartCoroutine(Shoot());
+                        }
+
+                        else if (isMelee && distance < 5)
+                        {
+                            // Handle melee
+                            MeleeAttack();
+                        }
+                        return true;
+
                     }
-                    else
-                    {
-                        movementSpeed = movementSpeed / sprintMod;
-                    }
+
                 }
 
-                if (agent.remainingDistance < agent.stoppingDistance)
-                {
-                    FaceTarget();
-                }
-                if (!isShooting && !isMelee)
-                {
-                    StartCoroutine(Shoot());
-                }
-
-                else if (isMelee && distance < 5)
-                {
-                    // Handle melee
-                    MeleeAttack();
-                }
-                return true;
             }
-
         }
         return false;
     }
+    // 
+
 
     void MeleeAttack()
     {
         if (canMeleeAttack)
         {
+
             StartCoroutine(WeaponAttack());
+
         }
         else return;
 
@@ -248,43 +364,41 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     IEnumerator WeaponAttack()
     {
+
         canMeleeAttack = false;
         animatorController.SetTrigger("Attack");
         yield return new WaitForSeconds(0.1f);
+
+
         canMeleeAttack = true;
     }
     void HandleMeleeAIMoveOnDmg(ref Vector3 playerDirection)
     {
         inSideDistance = playerDirection.magnitude;
-        movementSpeed = movementSpeed * sprintMod;
+
         // give back a quaternion and feed a vector
         if (inSideDistance >= distanceRunTowardPlayerOnDmg)
         {
-            Debug.Log("I am running away");
+
             // rotate 90 degrees and run
-            Vector3 rotateCalc = new Vector3(playerDirection.x, -45, playerDirection.z);
-            rotateCalc = rotateCalc + playerDirection;
-            Quaternion rotatePlayer = Quaternion.LookRotation(rotateCalc);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotatePlayer, facePlayerSpeed * Time.deltaTime);
-            agent.SetDestination(new Vector3(-1 * playerDirection.x, transform.position.y, -1 * playerDirection.z));
-            //FindNearestWall();
+            FindNearestWall();
         }
         else
         {
-            Debug.Log("I am running towards");
+            movementSpeed = movementSpeed * sprintMod;
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
+            // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
 
         }
     }
-    void HandleRangedCombatOnDmg(ref Vector3 playerDirection)
+    void HandleRangedCombatOnDmg(Vector3 playerDirection)
     {
-        Debug.Log("Hit ranged enemy");
-        Quaternion lookRotation = Quaternion.LookRotation(playerDirection);
-        transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, facePlayerSpeed * Time.deltaTime);
+        Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
+        transform.rotation = rotateAi;
         agent.SetDestination(playerDirection);
         PerformReload();
+        if (isMelee) return;
         StartCoroutine(Shoot());
 
     }
@@ -297,21 +411,30 @@ public class EnemyAI : MonoBehaviour, IDamage
     void FindNearestWall()
     {
         RaycastHit hit;
-
+        Vector3 wallPoint = Vector3.zero;
         float offset = -90;
         Vector3 foundWall = Vector3.zero;
         Quaternion rotationToApply = Quaternion.Euler(1, offset, 1);
         Vector3 directionForCast = rotationToApply * locateWallPos.transform.forward;
+        Vector3 hitNorm = Vector3.zero;
+
         Transform originalWallPos = locateWallPos;
-        for (int i = 0; i < 5; i++)
+        bool isWallLocated = false;
+        int layerMask = LayerMask.GetMask("Wall");
+        for (int i = 0; i < 9; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, searchForWall * 5f);
-
-            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit)) 
-            if (hit.collider.gameObject.CompareTag("Wall"))
+            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
+            if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask))
             {
-                Vector3 wallLocation = hit.collider.transform.position;
 
+                Vector3 wallLocation = hit.collider.gameObject.transform.position.normalized;
+                isWallLocated = true;
+                if(Vector3.Distance(wallPoint, Vector3.zero) <= 0)
+                {
+                    wallPoint = hit.point;
+                    hitNorm = hit.normal;
+                    
+                }
                 if (i != 0)
                 {
                     float distanceFirst = Vector3.Distance(transform.position, wallLocation);
@@ -319,35 +442,145 @@ public class EnemyAI : MonoBehaviour, IDamage
                     if (distanceFirst < distanceSecond)
                     {
                         foundWall = wallLocation;
-
+                        wallPoint = hit.point;
+                        hitNorm = hit.normal;
                     }
+
 
                 }
                 else
                 {
+
                     foundWall = wallLocation;
+                    wallPoint = hit.point;
+                    hitNorm = hit.normal;
                 }
             }
 
 
-            // check at 45 degree intervals 
-            offset += 45;
+            // check at 20 degree intervals 
+            offset += 20;
             rotationToApply = Quaternion.Euler(1, offset, 1);
             directionForCast = rotationToApply * locateWallPos.transform.forward;
         }
-        if (foundWall != Vector3.zero)
+        if (isWallLocated)
         {
-            Debug.Log("Found a wall");
-            Vector3 direction = foundWall - transform.position;
-            Quaternion rotateAiToWall = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotateAiToWall, facePlayerSpeed * Time.deltaTime);
-            agent.SetDestination(direction);
+            float dotProductToWall = Vector3.Dot(transform.forward, GameManager.instance.player.transform.position);
+            if (dotProductToWall < 0)
+            {
+                Debug.Log("Less than zero");
+                hitNorm = hitNorm * -1;
+            }
+            else if (dotProductToWall > 0)
+            {
+                Debug.Log("Greater than zero");
+            }
+            Vector3 aiToWall = (hitNorm * Vector3.Distance(transform.position, wallPoint) * 1.5f) + transform.position;
+            Debug.Log($"{aiToWall.x}, {aiToWall.y}, {aiToWall.z}");
+            float dotProductNewPosToPlayer = Vector3.Dot(aiToWall, (GameManager.instance.player.transform.forward).normalized);
+            if(dotProductNewPosToPlayer < 0)
+            {
+               if(Physics.Raycast(GameManager.instance.player.transform.position, aiToWall - GameManager.instance.player.transform.position))
+                {
+                    Vector3 directionFromPlayerToNewPos = aiToWall - GameManager.instance.player.transform.position;
+                    Vector3 redirectPos = (aiToWall.normalized * 5) - (directionFromPlayerToNewPos* 0.75f);
+
+                    agent.SetDestination(-redirectPos);
+                }
+            }
+           else agent.SetDestination(aiToWall);
 
 
         }
-        else //Debug.Log("Did not find a wall");
+
 
         locateWallPos = originalWallPos;
 
     }
+    bool AmIVisibleToPlayer()
+    {
+
+        Vector3 playerDirection = GameManager.instance.player.transform.position - transform.position;
+        float angleBetweenAIToPlayer = Vector3.Angle(playerDirection, transform.forward);
+        Quaternion rotateAI = Quaternion.LookRotation(playerDirection);
+        float reflectedAngle = 360 - angleBetweenAIToPlayer;
+        float redirectAngle = reflectedAngle / 1.5f;
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, playerDirection, out hit, 10000))
+        {
+            Debug.DrawRay(transform.position, transform.forward);
+            if (hit.collider.gameObject.CompareTag("Player"))
+            {
+                Vector3 coverDirection = coverPointPos - transform.position;
+                rotateAI = Quaternion.LookRotation(coverDirection);
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
+                agent.SetDestination(coverDirection);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void HelpBots(Vector3 assistVector)
+    {
+        if (assistingFriend) return;
+
+        agent.SetDestination(assistVector);
+        assistingFriend = true;
+        //if(!isShooting && !isMelee)
+        // StartCoroutine(Shoot());
+
+    }
+
+    public void ActivateCollider()
+    {
+
+        StartCoroutine(ToggleHelpField());
+    }
+    IEnumerator ToggleHelpField()
+    {
+        aiSphere.enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        aiSphere.enabled = false;
+    }
+
+    IEnumerator LookForPlayer()
+    {
+        currentlyRotating = true;
+        Quaternion adjustment = Quaternion.Euler(1, lookAround, 1);
+        Quaternion newRotation = transform.rotation * adjustment;
+        float rotateToPlayer = facePlayerSpeed * 0.5f;
+        transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, rotateToPlayer * Time.deltaTime);
+        if (lookAround >= 25f)
+        {
+            decreaseNumber = true;
+            increaseNumber = false;
+
+        }
+        else if (lookAround <= -25f)
+        {
+            increaseNumber = true;
+            decreaseNumber = false;
+        }
+        if (increaseNumber)
+        {
+
+            lookAround += 5;
+
+        }
+        else if (decreaseNumber)
+        {
+
+            lookAround -= 5;
+        }
+
+
+        yield return new WaitForSeconds(1f);
+        currentlyRotating = false;
+    }
+
+
 }
