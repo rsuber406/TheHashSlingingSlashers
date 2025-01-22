@@ -128,6 +128,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
+
+        if (health <= 0) return;
+        Vector3 playerDirection = origin - transform.position;
+
+
         playerDirection = origin - transform.position;
         if (roamCo != null)
         {
@@ -262,7 +267,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         GameManager.instance.scoreSys.AddFlatScore(100);
         isAlive = false;
         agent.isStopped = true;
-       
+   
        
         agent.velocity = Vector3.zero;
         animatorController.SetTrigger("Death");
@@ -285,6 +290,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         model.material.color = originalColor;
         if (health <= 0)
         {
+            isAlive = false;
             StartCoroutine(OnDeath());
         }
     }
@@ -410,7 +416,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
     public void TakeDamage(int amount)
     {
-
+       
     }
 
     void FindNearestWall()

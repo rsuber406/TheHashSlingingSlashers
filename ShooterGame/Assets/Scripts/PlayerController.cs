@@ -225,6 +225,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void TakeDamage(int amount)
     {
+        if (health <= 0) return;
         previousHealth = health;
         
         health -= amount;
@@ -239,6 +240,7 @@ public class PlayerController : MonoBehaviour, IDamage
             // Input healing screen
         }
         
+
         if(!hasTakenDmg) 
             StartCoroutine(FlashDmgScreen());
 
@@ -553,17 +555,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
-    public void SetMaxMagCapacity(int maxMagCapacity) {
-        this.maxMagCapacity = maxMagCapacity;
-    }
-    public void SetMaxAmmo(int maxAmmo)
-    {
-        numBulletsReserve = maxAmmo;
-    }
-    public void SetCurrentAmmo(int ammo)
-    {
-        numBulletsInMag = ammo;
-    }
+
     public void SetAllAmmoCount(int maxMagCapacity, int maxAmmo, int currentAmmo)
     {
         this.maxMagCapacity = maxMagCapacity;
