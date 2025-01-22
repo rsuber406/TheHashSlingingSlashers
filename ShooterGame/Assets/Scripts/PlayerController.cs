@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Jump();
         
         // Apply player gravity, the order matters!
-        playerVel.y += gravity * Time.deltaTime;
+        playerVel.y -= gravity * Time.deltaTime;
         controller.Move(playerVel * Time.deltaTime);
         
         shootPos.transform.rotation = Camera.main.transform.rotation;
