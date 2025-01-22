@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] GameObject firearm;
     [SerializeField] float wallRunSpeed;
     [SerializeField] float wallRunDuration;
-    [SerializeField] float wallRunGroundCheckDistance; // Must be at least twice the size of the ground check ray 
+    [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay;
     
     
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour, IDamage
         PerformReload();
         UpdateAmmoUI();
         CheckTimeSinceReload();
-        
+
         if (isDebugMode)
         {
             DrawDebugLines();
@@ -311,8 +311,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckWallRun()
     {
-        // Ensures the player is grounded and has enough distance below the player to enter wall run
-        if (!isGrounded && IsAgainstWall() && HasGroundClearance())
+        if (!isGrounded && IsAgainstWall())
         {
             StartWallRun();
         }
