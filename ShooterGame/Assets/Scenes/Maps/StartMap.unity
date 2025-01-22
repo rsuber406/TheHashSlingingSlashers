@@ -466,6 +466,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fe5993a35529134d9dfca5923ba31db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+
+
+  slowMotionFactor: 0.2
+  maxSlowMotionDuration: 7
+
 --- !u!114 &179993155 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5430685285324889793, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
@@ -2495,6 +2500,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4466891987503962245, guid: f2aee532e040d64449fc2ee2a9e37c8e, type: 3}
+      propertyPath: m_Height
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4466891987503962245, guid: f2aee532e040d64449fc2ee2a9e37c8e, type: 3}
+      propertyPath: m_Direction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4710849409950025327, guid: f2aee532e040d64449fc2ee2a9e37c8e, type: 3}
       propertyPath: m_Radius
       value: 10

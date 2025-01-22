@@ -8,7 +8,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [Header("AI Movement")]
-    [SerializeField] int movementSpeed;
+   
     [SerializeField] int sprintMod;
     [SerializeField] int facePlayerSpeed;
     [SerializeField] float distanceToActivateSprint;
@@ -36,32 +36,34 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] Transform headPos;
     [SerializeField] SphereCollider playerSphere;
     [SerializeField] SphereCollider aiSphere;
-    [SerializeField] Rigidbody rb;
+    [SerializeField] int roamDistance;
+    [SerializeField] int roamPauseTime;
+    // [SerializeField] Rigidbody rb;
     float fireRate;
     float angleOfPlayer;
     Vector3 playerDirection;
-    Vector3 playerPosition;
     Vector3 playerPreviousPosition;
-    Vector3 coverTransitionVector;
-    Vector3 firstTransitionClear, coverPointPos, currentPos;
+    Vector3  currentPos;
+    Vector3 startingPos;
     bool isShooting;
     bool canMeleeAttack;
     bool playerInRange;
     bool assistingFriend = false;
-    float inSideDistance;
     bool coverSetDirectionFinished = false;
-    bool visibleToPlayer;
-    bool checkVisibilityToPlayer = false;
+    bool isRoaming = false;
     bool isAlive = true;
     float fovAsDecimal;
+    float stoppingDistance;
     Color originalColor;
+    Coroutine roamCo;
 
     void Start()
     {
         playerPreviousPosition = Vector3.zero;
-        coverTransitionVector = Vector3.zero;
+        startingPos = this.transform.position;
         originalColor = model.material.color;
         canMeleeAttack = isMelee;
+        stoppingDistance = agent.stoppingDistance;
         if (firearm != null)
         {
             firearmScript = firearm.GetComponent<GunScripts>();
@@ -89,14 +91,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
         }
 
-        if (coverSetDirectionFinished && isAlive)
-        {
-            if (!agent.pathPending && agent.remainingDistance < 2f)
-            {
-                coverSetDirectionFinished = false;
 
-            }
-        }
         if (assistingFriend)
         {
             if (!isMelee && !isShooting)
@@ -107,23 +102,45 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             }
         }
 
+
     }
     void PlayerDetection()
     {
         if (!isAlive) return;
-        if (playerInRange && !CanSeePlayer())
+        if ((playerInRange && !CanSeePlayer()))
         {
+            if (!isRoaming && agent.remainingDistance < 0.01f)
+            {
+               
+                roamCo = StartCoroutine(Roam());
+            }
 
-
-
+        }
+        else if (!playerInRange)
+        {
+            if (!isRoaming && agent.remainingDistance < 0.01f)
+            {
+                
+                roamCo = StartCoroutine(Roam());
+            }
         }
 
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
+
         if (health <= 0) return;
         Vector3 playerDirection = origin - transform.position;
 
+
+        playerDirection = origin - transform.position;
+        if (roamCo != null)
+        {
+            StopCoroutine(roamCo);
+            isRoaming = false;
+        }
+        
+        agent.stoppingDistance = stoppingDistance;
         if (isMelee && !playerInRange)
         {
             HandleMeleeAIMoveOnDmg(ref playerDirection);
@@ -166,11 +183,13 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
 
     }
+   
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
+            agent.stoppingDistance = 0;
         }
     }
 
@@ -184,7 +203,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     {
 
         isShooting = true;
-        playerPosition = GameManager.instance.player.transform.position;
+       Vector3 playerPosition = GameManager.instance.player.transform.position;
         // This is how we should compare vectors, take a difference and then compare it against a small amount
         bool playerStationary = (playerPosition - playerPreviousPosition).sqrMagnitude < 0.0001f;
         // This will allow us to decrease the accuracy so out player is not being laser beamed
@@ -241,31 +260,32 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
 
         BulletTime bt = FindAnyObjectByType<BulletTime>();
-        if (bt != null && isAlive == false) 
-        { 
+        if (bt != null)
+        {
             bt.IncreaseMaxSlowMotionDuration(1f);
-            agent.isStopped = true;
-            movementSpeed = 0;
-            rb.isKinematic = true;
-            agent.velocity = Vector3.zero;
-            animatorController.SetTrigger("Death");
-            rb.constraints = RigidbodyConstraints.FreezeAll;
-            GameManager.instance.scoreSys.AddFlatScore(100);
-		}
-            if (isMelee)
-            {
-                BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
-                weaponCollider.enabled = false;
+        }
+        GameManager.instance.scoreSys.AddFlatScore(100);
+        isAlive = false;
+        agent.isStopped = true;
+   
+       
+        agent.velocity = Vector3.zero;
+        animatorController.SetTrigger("Death");
+    
+        if (isMelee)
+        {
+            BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
+            weaponCollider.enabled = false;
 
-            }
-            yield return new WaitForSeconds(3f);
-            Destroy(gameObject);
+        }
+        yield return new WaitForSeconds(3f);
+        Destroy(gameObject);
     }
 
     IEnumerator RegisterHit()
     {
-        if(isAlive)
-        model.material.color = Color.red;
+        if (isAlive)
+            model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = originalColor;
         if (health <= 0)
@@ -300,17 +320,18 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                 {
                     if (hit.collider.CompareTag("Player"))
                     {
-
+                        agent.stoppingDistance = stoppingDistance;
                         if (chasePlayer)
                         {
                             agent.SetDestination(GameManager.instance.player.transform.position);
                             if (distance > distanceToActivateSprint)
                             {
-                                movementSpeed *= sprintMod;
+                               
                             }
                             else
                             {
-                                movementSpeed = movementSpeed / sprintMod;
+                               
+
                             }
                         }
                         if (agent.remainingDistance < agent.stoppingDistance)
@@ -364,8 +385,8 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     void HandleMeleeAIMoveOnDmg(ref Vector3 playerDirection)
     {
-        inSideDistance = playerDirection.magnitude;
-        movementSpeed = movementSpeed * sprintMod;
+        float inSideDistance = playerDirection.magnitude;
+
         // give back a quaternion and feed a vector
         if (inSideDistance >= distanceRunTowardPlayerOnDmg)
         {
@@ -375,7 +396,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-
+            
             Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
             // transform.rotation = Quaternion.Lerp(transform.rotation, rotateAi, facePlayerSpeed * Time.deltaTime);
             agent.SetDestination(GameManager.instance.player.transform.position);
@@ -419,6 +440,12 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
                 Vector3 wallLocation = hit.collider.gameObject.transform.position.normalized;
                 isWallLocated = true;
+                if(Vector3.Distance(wallPoint, Vector3.zero) <= 0)
+                {
+                    wallPoint = hit.point;
+                    hitNorm = hit.normal;
+                    
+                }
                 if (i != 0)
                 {
                     float distanceFirst = Vector3.Distance(transform.position, wallLocation);
@@ -429,6 +456,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
                         wallPoint = hit.point;
                         hitNorm = hit.normal;
                     }
+
 
                 }
                 else
@@ -448,16 +476,30 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         if (isWallLocated)
         {
-            Vector3 directPlayerToWall = wallPoint - GameManager.instance.player.transform.position;
-            Vector3 changeXAxis = new Vector3(directPlayerToWall.x / 1.25f, directPlayerToWall.y, directPlayerToWall.z);
-            Vector3 oppositeSide = (changeXAxis.normalized - wallPoint + hitNorm) * 10f;
-            NavMeshHit navHit;
-            if (NavMesh.SamplePosition(oppositeSide, out navHit, 10f, NavMesh.AllAreas))
+            float dotProductToWall = Vector3.Dot(transform.forward, GameManager.instance.player.transform.position);
+            if (dotProductToWall < 0)
             {
-                agent.SetDestination(oppositeSide);
-
+                Debug.Log("Less than zero");
+                hitNorm = hitNorm * -1;
             }
-            else Debug.Log("Invalid position");
+            else if (dotProductToWall > 0)
+            {
+                Debug.Log("Greater than zero");
+            }
+            Vector3 aiToWall = (hitNorm * Vector3.Distance(transform.position, wallPoint) * 1.5f) + transform.position;
+            Debug.Log($"{aiToWall.x}, {aiToWall.y}, {aiToWall.z}");
+            float dotProductNewPosToPlayer = Vector3.Dot(aiToWall, (GameManager.instance.player.transform.forward).normalized);
+            if(dotProductNewPosToPlayer < 0)
+            {
+               if(Physics.Raycast(GameManager.instance.player.transform.position, aiToWall - GameManager.instance.player.transform.position))
+                {
+                    Vector3 directionFromPlayerToNewPos = aiToWall - GameManager.instance.player.transform.position;
+                    Vector3 redirectPos = (aiToWall.normalized * 5) - (directionFromPlayerToNewPos* 0.75f);
+
+                    agent.SetDestination(-redirectPos);
+                }
+            }
+           else agent.SetDestination(aiToWall);
 
 
         }
@@ -466,32 +508,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         locateWallPos = originalWallPos;
 
     }
-    bool AmIVisibleToPlayer()
-    {
 
-        Vector3 playerDirection = GameManager.instance.player.transform.position - transform.position;
-        float angleBetweenAIToPlayer = Vector3.Angle(playerDirection, transform.forward);
-        Quaternion rotateAI = Quaternion.LookRotation(playerDirection);
-        float reflectedAngle = 360 - angleBetweenAIToPlayer;
-        float redirectAngle = reflectedAngle / 1.5f;
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
-
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, playerDirection, out hit, 10000))
-        {
-            Debug.DrawRay(transform.position, transform.forward);
-            if (hit.collider.gameObject.CompareTag("Player"))
-            {
-                Vector3 coverDirection = coverPointPos - transform.position;
-                rotateAI = Quaternion.LookRotation(coverDirection);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotateAI, facePlayerSpeed * Time.deltaTime);
-                agent.SetDestination(coverDirection);
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public void HelpBots(Vector3 assistVector)
     {
@@ -499,8 +516,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
         agent.SetDestination(assistVector);
         assistingFriend = true;
-        //if(!isShooting && !isMelee)
-        // StartCoroutine(Shoot());
+     
 
     }
 
@@ -515,6 +531,22 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         yield return new WaitForSeconds(0.5f);
         aiSphere.enabled = false;
     }
+
+    IEnumerator Roam()
+    {
+        isRoaming = true;
+        yield return new WaitForSeconds(roamPauseTime);
+        agent.stoppingDistance = 0;
+        Vector3 randomPosition = Random.insideUnitSphere * roamDistance;
+        randomPosition += startingPos;
+        NavMeshHit hit;
+        NavMesh.SamplePosition(randomPosition, out hit, roamDistance,1);
+        agent.SetDestination(hit.position);
+        isRoaming = false;
+
+    }
+
+   
 
 
 }
