@@ -20,8 +20,8 @@ public class FinishLine : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             finishPlane = true;
-          int finalScore = GameManager.instance.scoreSys.GetScore();
-          GameManager.instance.scoreSys.AddFinalScore(finalScore);
+            int finalScore = GameManager.instance.scoreSys.GetScore();
+            GameManager.instance.scoreSys.AddFinalScore(finalScore);
             SceneChanger.instance.StageManager(finalScore);
         }
     }

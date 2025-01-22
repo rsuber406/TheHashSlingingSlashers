@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 211120619}
   - component: {fileID: 211120618}
   - component: {fileID: 211120621}
-  - component: {fileID: 211120622}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -245,21 +244,6 @@ MonoBehaviour:
   curScore: {fileID: 1992037050}
   timeToComplete: {fileID: 1841325413}
   enemiesKilled: {fileID: 768494510}
---- !u!114 &211120622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 211120616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7eb20a9ad0987dd44b7a94c21a462293, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreHandler: {fileID: 0}
-  activeScene: 0
-  numMaps: 0
 --- !u!1 &252823262
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,12 +324,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252823262}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.5692, y: 6.08, z: -8.109392}
-  m_LocalScale: {x: 5.8045077, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.15830499, y: 0.32398152, z: -1}
+  m_LocalScale: {x: 0.32247266, y: 0.100001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1041794132}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &262896878
 GameObject:
@@ -506,8 +490,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1107,6 +1091,55 @@ Transform:
   m_LocalPosition: {x: -0.71971035, y: 2.840217, z: -7.1093926}
   m_LocalScale: {x: 18, y: 9.9999, z: 1}
   m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 252823264}
+  - {fileID: 1433711351}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1424375566
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1424375568}
+  - component: {fileID: 1424375567}
+  m_Layer: 0
+  m_Name: SceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1424375567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424375566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb20a9ad0987dd44b7a94c21a462293, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreHandler: {fileID: 0}
+  activeScene: 1
+  numMaps: 2
+--- !u!4 &1424375568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424375566}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 40.431435, y: 145.38673, z: -109.290794}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1190,12 +1223,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433711349}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.5692, y: 6.08, z: -8.109392}
-  m_LocalScale: {x: 6.4778543, y: 1.3078, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.15830499, y: 0.32398152, z: -1}
+  m_LocalScale: {x: 0.3598808, y: 0.13078131, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1041794132}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1699849893
 GameObject:
@@ -1602,9 +1635,8 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1424375568}
   - {fileID: 917926110}
   - {fileID: 1699849895}
   - {fileID: 1041794132}
   - {fileID: 924926606}
-  - {fileID: 252823264}
-  - {fileID: 1433711351}

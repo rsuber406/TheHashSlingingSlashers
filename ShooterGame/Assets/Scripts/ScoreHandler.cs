@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ScoreHandler : MonoBehaviour
 {
+    public static ScoreHandler SHinstance;
     [SerializeField] TMP_Text LevelCompleteText;
     [SerializeField] TMP_Text topScore;
     [SerializeField] TMP_Text curScore;
     [SerializeField] TMP_Text timeToComplete;
     [SerializeField] TMP_Text enemiesKilled;
-
     public void CalculateScore(int completedlvl, int ScoreIn)
     {
         StartCoroutine(DisplayScores(completedlvl, ScoreIn));

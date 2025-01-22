@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class SceneChanger : MonoBehaviour
 {
     public static SceneChanger instance {  get; private set; }
-    public ScoreHandler scoreHandler;
 
     public int activeScene;
     public int numMaps = 2;
@@ -25,17 +24,10 @@ public class SceneChanger : MonoBehaviour
 
     public void StageManager(int ScoreIn)
     {
-        if (scoreHandler != null)
-        {
-            SceneManager.LoadScene("ScoreScene");
-            scoreHandler.CalculateScore(activeScene, ScoreIn);
-
-        }//Safety Step for if there is no SceneChanger in the scene
-        else
-        {
-            Debug.LogWarning("SceneChanger reference is null. Skipping score calculation.");
-        }
-
+        ScoreHandler scoreHandler = new ScoreHandler();
+        SceneManager.LoadScene("ScoreScene");
+        scoreHandler.CalculateScore(activeScene, ScoreIn);
+        activeScene++;
         if (activeScene < numMaps)
         {
             SceneManager.LoadScene(activeScene + 1);
