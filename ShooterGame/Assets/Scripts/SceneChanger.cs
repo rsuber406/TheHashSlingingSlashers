@@ -1,26 +1,57 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void StartGame()
+    public static SceneChanger instance {  get; private set; }
+    public ScoreHandler scoreHandler;
+
+    public int activeScene;
+    public int numMaps = 2;
+    public void Awake()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-
-    /*public void BackToMenu()
+    public void StageManager(int ScoreIn)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().);
-    }*/
+        if (scoreHandler != null)
+        {
+            SceneManager.LoadScene("ScoreScene");
+            scoreHandler.CalculateScore(activeScene, ScoreIn);
 
-    public void Quitgame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-    Application.Quit();
-#endif
+        }//Safety Step for if there is no SceneChanger in the scene
+        else
+        {
+            Debug.LogWarning("SceneChanger reference is null. Skipping score calculation.");
+        }
+
+        if (activeScene < numMaps)
+        {
+            SceneManager.LoadScene(activeScene + 1);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            SceneManager.LoadScene("Main Menu");
+        }
     }
 }
