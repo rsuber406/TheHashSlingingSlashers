@@ -227,11 +227,11 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 64
-  health: 100000
+  health: 150
   bullet: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
   shootPos: {fileID: 7813841620199333718}
   firearm: {fileID: 4622633277716792300}
-  wallRunSpeed: 20
+  wallRunSpeed: 21
   wallRunDuration: 5
   wallRunGroundCheckThreshhold: 3
   groundCheckRay: 1.2
