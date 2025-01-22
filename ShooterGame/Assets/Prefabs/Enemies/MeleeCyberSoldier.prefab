@@ -1134,7 +1134,6 @@ GameObject:
   - component: {fileID: 1589965793133422394}
   - component: {fileID: -2204462272274185328}
   - component: {fileID: -2807025000170165267}
-  - component: {fileID: 6780816611364892544}
   m_Layer: 0
   m_Name: MeleeCyberSoldier
   m_TagString: Enemy
@@ -1217,7 +1216,7 @@ MonoBehaviour:
   headPos: {fileID: 527936863065299303}
   playerSphere: {fileID: 1589965793133422394}
   aiSphere: {fileID: -2807025000170165267}
-  rb: {fileID: 6780816611364892544}
+  rb: {fileID: 0}
 --- !u!136 &-71839492652128871
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1238,7 +1237,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.85
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!135 &1589965793133422394
@@ -1305,33 +1304,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 15
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &6780816611364892544
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7365811365902483652}
-  serializedVersion: 4
-  m_Mass: 10000
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &7704123279012441516
 GameObject:
   m_ObjectHideFlags: 0
