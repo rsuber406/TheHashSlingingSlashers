@@ -222,7 +222,7 @@ MonoBehaviour:
   jumpSpeed: 17
   forwardJumpBoost: 1
   jumpMax: 2
-  gravity: -40
+  gravity: 40
   controller: {fileID: 2320961185408548562}
   ignoreLayer:
     serializedVersion: 2
