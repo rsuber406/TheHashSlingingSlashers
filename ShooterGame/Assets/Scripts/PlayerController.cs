@@ -1,47 +1,31 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
-
     // Public Variables
-    public bool IsDebugMode;
-    
+    public bool isDebugMode;
     
     // Serialized fields
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
+    [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
     [SerializeField] int jumpMax;
-    [SerializeField] int gravity;
+    [SerializeField] float gravity; // Negative value indicating downward force
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
     [SerializeField] GameObject bullet;
-
-
+    
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject firearm;
-    [SerializeField] float wallRunSpeed = 20f;
-    [SerializeField] float wallRunDuration = 5f;
-    [SerializeField] float wallRunGroundCheckThreshhold = 3f;
-    [SerializeField] float groundCheckRay = 1.2f;
+    [SerializeField] float wallRunSpeed;
+    [SerializeField] float wallRunDuration;
+    [SerializeField] float wallRunGroundCheckDistance; // Must be at least twice the size of the ground check ray 
+    [SerializeField] float groundCheckRay;
     
     
-    // Private fields
-    private CollisionInfo collisionInfo;
-    private Vector3 playerVel;
-    private Vector3 moveDir;
-    private int jumpCount;
-    private bool isSprinting;
-    private bool isGrounded;
-    private bool isWallRunning;
-    private bool hasTakenDmg = false;
-    // jump
-
-
     // crouch
     [SerializeField] float crouchHeight;
     [SerializeField] float crouchMovementSpeed;
@@ -52,17 +36,24 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float slideMomentum;   // lower number more further you go
     [SerializeField] float slideDuration;
     [SerializeField] float slideThreshold;
-
+    
+    // Private fields
+    private CollisionInfo collisionInfo;
+    private Vector3 playerVel;
+    private Vector3 moveDir;
+    private int jumpCount;
+    private bool isSprinting;
+    private bool isGrounded;
+    private bool isWallRunning;
     private int previousHealth;
+    private int maxHealth;
+    private bool hasTakenDmg;
+    
+
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
     bool isCrouching, isSliding;
-
-
-
-
-    int maxHealth = 100;
 
     float bulletTimeLeft;
     GunScripts firearmScript;
@@ -72,14 +63,20 @@ public class PlayerController : MonoBehaviour, IDamage
     int numBulletsReserve;
     int numBulletsInMag;
 
-    float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
+    float Timesincereload;
+    private float GRAVITY_CORRECTION = -2.0f;
+    
+    public int GetHealth() { return health; }
 
+    void Awake() {
+        firearmScript = firearm.GetComponent<GunScripts>();
+    }
+    
     void Start()
     {
         // w/e this shit is
         health = maxHealth;
-        firearmScript = firearm.GetComponent<GunScripts>();
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
 
@@ -95,37 +92,40 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Update()
     {
-       
-      
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
         Crouch();
         Slide();
-       CheckWallRun();
+        CheckWallRun();
         Shoot();
         PerformReload();
         UpdateAmmoUI();
-        if (IsDebugMode)
-            DrawDebugLines();
         CheckTimeSinceReload();
+        
+        if (isDebugMode)
+        {
+            DrawDebugLines();
+        }
     }
 
     void Movement()
     {
         isGrounded = IsGrounded();
         
-        if (isGrounded)
+        if (isGrounded && playerVel.y < 0)
         {
             jumpCount = 0;
             playerVel = Vector3.zero;
+            // The player might appear to "float" briefly after landing because gravity isn't pulling them back down.
+            // We make the player slightly stick to the floor
+            playerVel.y = GRAVITY_CORRECTION;
         }
-
-        else
+        else if (playerVel.y > 0)
+        {
             // cannot crouch while player in air
-            if (playerVel.y > 0)
-                isCrouching = false;
-
+            isCrouching = false;
+        }
+        
         // If wall running, handle movement against the wall
         if (isWallRunning)
         {
@@ -137,14 +137,12 @@ public class PlayerController : MonoBehaviour, IDamage
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
             GroundedMovement(moveDir);
         }
-
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * movementSpeed * Time.deltaTime);
-
+        
         Jump();
-
+        
+        // Apply player gravity, the order matters!
+        playerVel.y += gravity * Time.deltaTime;
         controller.Move(playerVel * Time.deltaTime);
-        playerVel.y -= gravity * Time.deltaTime;
         
         shootPos.transform.rotation = Camera.main.transform.rotation;
     }
@@ -152,7 +150,7 @@ public class PlayerController : MonoBehaviour, IDamage
     /// <summary>
     /// Evaluates if a player is touching the ground using a raycast and is colliding with a surface with the "Ground" Tag
     /// </summary>
-    /// <returns>book</returns>
+    /// <returns>bool</returns>
     private bool IsGrounded()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay ))
@@ -169,7 +167,7 @@ public class PlayerController : MonoBehaviour, IDamage
     /// <returns>bool</returns>
     private bool HasGroundClearance()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckThreshhold ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance ))
         {
             if (hit.collider.CompareTag("Ground"))
             {
@@ -211,7 +209,17 @@ public class PlayerController : MonoBehaviour, IDamage
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-            playerVel.y = jumpSpeed;
+
+            if (isWallRunning)
+            {
+                Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
+                playerVel = jumpDirection.normalized * jumpSpeed;
+                playerVel.y = jumpSpeed;
+            }
+            else
+            {
+                playerVel.y = jumpSpeed;
+            }
         }
     }
 
@@ -232,8 +240,9 @@ public class PlayerController : MonoBehaviour, IDamage
             // Input healing screen
         }
         
-        if(!hasTakenDmg)
-        StartCoroutine(FlashDmgScreen());
+
+        if(!hasTakenDmg) 
+            StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
     }
@@ -256,32 +265,29 @@ public class PlayerController : MonoBehaviour, IDamage
             GameManager.instance.PublowHealthScreen.SetActive(true);
         }
         else
+        {
             GameManager.instance.PublowHealthScreen.SetActive(false);
-
+        }
     }
 
     void Shoot()
     {
-
-
-         Camera camRef = Camera.main;
-        if (Input.GetButtonDown("Shoot"))
+        Camera camRef = Camera.main;
         if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
-                if (numBulletsInMag > 0)
+            if (numBulletsInMag > 0)
+            {
+                firearmScript.PlayerShoot();
+                //count bullets set new bullet count on UI
+                numBulletsInMag--;
+                GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+                if (numBulletsReserve == 0)
                 {
-                    firearmScript.PlayerShoot();
-                    //count bullets set new bullet count on UI
-                    numBulletsInMag--;
-                    GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-                    if (numBulletsReserve == 0)
-                    {
-                        Timesincereload = Time.time + 3;
-
-                    }
-                }
+                    Timesincereload = Time.time + 3;
                 }
             }
+        }
+    }
 
     IEnumerator FlashDmgScreen()
     {
@@ -298,22 +304,19 @@ public class PlayerController : MonoBehaviour, IDamage
             GameManager.instance.FlashDamageScreenOff();
         }
         hasTakenDmg = false;
-        if(health <= 0)
-
+        if (health <= 0)
         {
             GameManager.instance.Lose();
         }
-        
     }
 
 
     void CheckWallRun()
     {
-        if (!isGrounded && IsAgainstWall())
+        // Ensures the player is grounded and has enough distance below the player to enter wall run
+        if (!isGrounded && IsAgainstWall() && HasGroundClearance())
         {
-            // Maybe dont need this after the refactor
-            Vector3 wallNormal = GetWallNormal();
-            StartWallRun(wallNormal);
+            StartWallRun();
         }
         else
         {
@@ -355,32 +358,27 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void DrawDebugLines()
     {
+        // Forward
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
+
         // Raycast to the left
-        RaycastHit leftHit;
-        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out leftHit, 1f);
+        bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHit, 1f);
         Debug.DrawRay(transform.position, -transform.right, isCollidingOnLeftWall ? Color.red : Color.green);
 
         // Raycast to the right
-        RaycastHit rightHit;
-        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out rightHit, 1f);
+        bool isCollidingOnRightWall = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHit, 1f);
         Debug.DrawRay(transform.position, transform.right, isCollidingOnRightWall ? Color.red : Color.green);
 
         // Draw a raycast to the ground
         Debug.DrawRay(transform.position, Vector3.down * groundCheckRay, Color.blue);
     }
     
-    public void StartWallRun(Vector3 wallNormal)
+    public void StartWallRun()
     {
         if (!isWallRunning)
         {
             isWallRunning = true;
-
-            // Lock the player's rotation to the wall, slerp makes the transition smoother
-            // Dissabling this because some snaping happens that maked this unbearable
-            // Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up);
-            // Quaternion targetRotation = Quaternion.LookRotation(wallDirection);
-            // controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, Time.deltaTime * 10f);
-
+            jumpCount = 0;
             StartCoroutine(EndWallRun_Internal());
         }
     }
@@ -393,13 +391,15 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void EndWallRun()
     {
+        if (!isWallRunning) return;
         isWallRunning = false;
     }
 
     void WallRunMovement(Vector3 direction)
     {
         Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
-        playerVel.y = 0;
+        playerVel.y = 0; // This enables us to override player velocity
+                         // while running to prevent immediate gravity pull down
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
     
@@ -531,17 +531,15 @@ public class PlayerController : MonoBehaviour, IDamage
                 isCrouching = false;
                 isSliding = false;
                 movementSpeed = (int) origMovementSpeed;
-
             }
 
             // Continue sliding
             else
             {
-                controller.Move(moveDir * slideMod * Time.deltaTime);
+                controller.Move(moveDir * (slideMod * Time.deltaTime));
 
                 slideTimer += Time.deltaTime;
                 movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
-
             }
 
             // End slide if timer exceeds duration or player's speed drops below threshold
@@ -550,7 +548,6 @@ public class PlayerController : MonoBehaviour, IDamage
                 movementSpeed = (int) origMovementSpeed;
                 isSliding = false;
                 isCrouching = true;
-
             }
         }
     }
@@ -586,11 +583,10 @@ public class PlayerController : MonoBehaviour, IDamage
     private IEnumerator Speedup()
     {
         Debug.Log("Speedup is triggered");
-        movementSpeed = movementSpeed *2;
+        movementSpeed = movementSpeed * 2;
         yield return new WaitForSeconds(2f);
         movementSpeed = (int)origMovementSpeed;
     }
-    public int GetHealth() { return health; }
 }
 
 
