@@ -293,7 +293,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69d01f788504a4dbd5253a33dfda18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 500
   sprintMod: 2
   facePlayerSpeed: 250
   distanceToActivateSprint: 15
@@ -317,7 +316,8 @@ MonoBehaviour:
   headPos: {fileID: 1850963566805270568}
   playerSphere: {fileID: 4710849409950025327}
   aiSphere: {fileID: 541795978197902545}
-  rb: {fileID: 4229582943413033700}
+  roamDistance: 10
+  roamPauseTime: 2
 --- !u!195 &7967720148001108979
 NavMeshAgent:
   m_ObjectHideFlags: 0
