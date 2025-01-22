@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool isGrounded;
     private bool isWallRunning;
     private int previousHealth;
-    private int maxHealth;
+    private int maxHealth = 100;
     private bool hasTakenDmg;
     
 
