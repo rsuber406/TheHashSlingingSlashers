@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour, IDamage
+public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
     public bool isDebugMode;
-    
+
     // Serialized fields
     [SerializeField] int movementSpeed;
     [SerializeField] int sprintMod;
@@ -16,16 +17,20 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
-    [SerializeField] GameObject bullet;
-    
-    [SerializeField] Transform shootPos;
-    [SerializeField] GameObject firearm;
+
+
     [SerializeField] float wallRunSpeed;
     [SerializeField] float wallRunDuration;
     [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay;
-    
-    
+    [SerializeField] int projectileDmg;
+    [SerializeField] int projectileDistance;
+    [SerializeField] float fireRate;
+    [SerializeField] GameObject gunModel;
+
+    [SerializeField] GunScripts firearmScript;
+    [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
+
     // crouch
     [SerializeField] float crouchHeight;
     [SerializeField] float crouchMovementSpeed;
@@ -36,8 +41,10 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float slideMomentum;   // lower number more further you go
     [SerializeField] float slideDuration;
     [SerializeField] float slideThreshold;
-    
+
     // Private fields
+
+
     private CollisionInfo collisionInfo;
     private Vector3 playerVel;
     private Vector3 moveDir;
@@ -48,7 +55,7 @@ public class PlayerController : MonoBehaviour, IDamage
     private int previousHealth;
     private int maxHealth = 100;
     private bool hasTakenDmg;
-    
+    int gunListPosition = 0;
 
     float origMovementSpeed;
     float origHeight;
@@ -56,7 +63,7 @@ public class PlayerController : MonoBehaviour, IDamage
     bool isCrouching, isSliding;
 
     float bulletTimeLeft;
-    GunScripts firearmScript;
+
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;
@@ -66,21 +73,20 @@ public class PlayerController : MonoBehaviour, IDamage
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
     private float GRAVITY_CORRECTION = -2.0f;
-    
+
     public int GetHealth() { return health; }
     
     void Start()
     {
        
-        firearmScript = firearm.GetComponent<GunScripts>();
+       
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
 
         //ammo
-        SetAllAmmoCount(30, 30, 30);
-        numBulletsReserve = maxMagCapacity * 4;
+
 
         //other shit
         Timesincereload = Time.time + 10000;
@@ -102,7 +108,7 @@ public class PlayerController : MonoBehaviour, IDamage
         PerformReload();
         UpdateAmmoUI();
         CheckTimeSinceReload();
-
+        SelectGun();
         if (isDebugMode)
         {
             DrawDebugLines();
@@ -112,7 +118,7 @@ public class PlayerController : MonoBehaviour, IDamage
     void Movement()
     {
         isGrounded = IsGrounded();
-        
+
         if (isGrounded && playerVel.y < 0)
         {
             jumpCount = 0;
@@ -126,7 +132,7 @@ public class PlayerController : MonoBehaviour, IDamage
             // cannot crouch while player in air
             isCrouching = false;
         }
-        
+
         // If wall running, handle movement against the wall
         if (isWallRunning)
         {
@@ -138,14 +144,14 @@ public class PlayerController : MonoBehaviour, IDamage
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
             GroundedMovement(moveDir);
         }
-        
+
         Jump();
-        
+
         // Apply player gravity, the order matters!
         playerVel.y -= gravity * Time.deltaTime;
         controller.Move(playerVel * Time.deltaTime);
-        
-        shootPos.transform.rotation = Camera.main.transform.rotation;
+
+        //shootPos.transform.rotation = Camera.main.transform.rotation;
     }
 
     /// <summary>
@@ -154,21 +160,21 @@ public class PlayerController : MonoBehaviour, IDamage
     /// <returns>bool</returns>
     private bool IsGrounded()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, groundCheckRay))
         {
             if (hit.collider.CompareTag("Ground")) return true;
         }
 
         return false;
     }
-    
+
     /// <summary>
     /// Check If a player is far enough off the ground to start wall running
     /// </summary>
     /// <returns>bool</returns>
     private bool HasGroundClearance()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance))
         {
             if (hit.collider.CompareTag("Ground"))
             {
@@ -190,7 +196,7 @@ public class PlayerController : MonoBehaviour, IDamage
                 {
                     isCrouching = false;
                     Crouch();
-                    movementSpeed = (int) origMovementSpeed;
+                    movementSpeed = (int)origMovementSpeed;
                 }
 
                 isSprinting = true;
@@ -200,7 +206,7 @@ public class PlayerController : MonoBehaviour, IDamage
             if (Input.GetButtonUp("Sprint"))
             {
                 isSprinting = false;
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
             }
         }
     }
@@ -227,20 +233,20 @@ public class PlayerController : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         previousHealth = health;
-        
+
         health -= amount;
-        
-        if(health > maxHealth)
+
+        if (health > maxHealth)
         {
             health = maxHealth;
         }
         GameManager.instance.UpdatePlayerHeathUI(health);
-        if(health > previousHealth)
+        if (health > previousHealth)
         {
             // Input healing screen
         }
-        
-        if(!hasTakenDmg) 
+
+        if (!hasTakenDmg)
             StartCoroutine(FlashDmgScreen());
 
         UpdatePlayerUI();
@@ -269,19 +275,28 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Shoot()
     {
-        Camera camRef = Camera.main;
-        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
+        // All of this needs changed
+        //Camera camRef = Camera.main;
+        //if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
+        //{
+        //    if (numBulletsInMag > 0)
+        //    {
+        //        firearmScript.PlayerShoot();
+        //        //count bullets set new bullet count on UI
+        //        numBulletsInMag--;
+        //        GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
+        //        if (numBulletsReserve == 0)
+        //        {
+        //            Timesincereload = Time.time + 3;
+        //        }
+        //    }
+        //}
+        if (Input.GetButtonDown("Shoot"))
         {
             if (numBulletsInMag > 0)
             {
-                firearmScript.PlayerShoot();
-                //count bullets set new bullet count on UI
                 numBulletsInMag--;
-                GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-                if (numBulletsReserve == 0)
-                {
-                    Timesincereload = Time.time + 3;
-                }
+                firearmScript.PlayerShoot(projectileDmg);
             }
         }
     }
@@ -294,7 +309,8 @@ public class PlayerController : MonoBehaviour, IDamage
             GameManager.instance.FlashDamageScreenOn();
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
-        } else
+        }
+        else
         {
             GameManager.instance.FlashHealthScreenOn();
             yield return new WaitForSeconds(0.1f);
@@ -368,7 +384,7 @@ public class PlayerController : MonoBehaviour, IDamage
         // Draw a raycast to the ground
         Debug.DrawRay(transform.position, Vector3.down * groundCheckRay, Color.blue);
     }
-    
+
     public void StartWallRun()
     {
         if (!isWallRunning)
@@ -398,13 +414,13 @@ public class PlayerController : MonoBehaviour, IDamage
                          // while running to prevent immediate gravity pull down
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
-    
+
     void GroundedMovement(Vector3 direction)
     {
         controller.Move(direction * (movementSpeed * Time.deltaTime));
     }
 
-    
+
     // Expand this to store character collision data in all directions and adata about what is being collided with.
     public struct CollisionInfo
     {
@@ -418,7 +434,7 @@ public class PlayerController : MonoBehaviour, IDamage
             left = right = false;
             backward = forward = false;
         }
-     }
+    }
 
     void PerformReload()
     {
@@ -427,7 +443,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             if (numBulletsReserve > 0)
             {
-               int bulletsToLoad = maxMagCapacity - numBulletsInMag;
+                int bulletsToLoad = maxMagCapacity - numBulletsInMag;
 
                 bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
@@ -453,14 +469,14 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
-        if(numBulletsInMag ==0 && Timesincereload >= Time.time)
+        if (numBulletsInMag == 0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
     }
     public void AddAmmo(int amount)
     {
-       numBulletsReserve += amount;
+        numBulletsReserve += amount;
         UpdateAmmoUI();
     }
 
@@ -477,7 +493,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
                 if (controller.height <= crouchHeight)
                 {
-                    movementSpeed = (int) crouchMovementSpeed;
+                    movementSpeed = (int)crouchMovementSpeed;
                     controller.height = crouchHeight;
                 }
             }
@@ -495,7 +511,7 @@ public class PlayerController : MonoBehaviour, IDamage
                     controller.height = origHeight;
 
                     if (!isSprinting)
-                        movementSpeed = (int) origMovementSpeed;
+                        movementSpeed = (int)origMovementSpeed;
 
                 }
             }
@@ -516,7 +532,7 @@ public class PlayerController : MonoBehaviour, IDamage
             controller.height = crouchHeight;
 
             movementSpeed = (int)origMovementSpeed;
-            movementSpeed *= (int) slideMod;
+            movementSpeed *= (int)slideMod;
         }
 
         else if (isSliding)
@@ -526,7 +542,7 @@ public class PlayerController : MonoBehaviour, IDamage
             {
                 isCrouching = false;
                 isSliding = false;
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
             }
 
             // Continue sliding
@@ -535,13 +551,13 @@ public class PlayerController : MonoBehaviour, IDamage
                 controller.Move(moveDir * (slideMod * Time.deltaTime));
 
                 slideTimer += Time.deltaTime;
-                movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
+                movementSpeed -= (int)slideMod * (int)slideMomentum * (int)Time.deltaTime;
             }
 
             // End slide if timer exceeds duration or player's speed drops below threshold
             if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
             {
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
                 isSliding = false;
                 isCrouching = true;
             }
@@ -551,7 +567,8 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
-    public void SetMaxMagCapacity(int maxMagCapacity) {
+    public void SetMaxMagCapacity(int maxMagCapacity)
+    {
         this.maxMagCapacity = maxMagCapacity;
     }
     public void SetMaxAmmo(int maxAmmo)
@@ -579,13 +596,13 @@ public class PlayerController : MonoBehaviour, IDamage
             //why not just set the players health to zero?
         }
 
-        if(other.tag == "SpeedBox")
+        if (other.tag == "SpeedBox")
         {
             //This is a Speedbox Trigger. Use for speedup door/platform - A
-            StartCoroutine(Speedup());          
+            StartCoroutine(Speedup());
         }
     }
-    
+
 
     private IEnumerator Speedup()
     {
@@ -593,6 +610,41 @@ public class PlayerController : MonoBehaviour, IDamage
         movementSpeed = movementSpeed * 2;
         yield return new WaitForSeconds(2f);
         movementSpeed = (int)origMovementSpeed;
+    }
+
+    public void GrabGun(FirearmScriptable gun, Transform shootPos)
+    {
+        gunList.Add(gun);
+
+
+        ChangeGun();
+    }
+
+    void SelectGun()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPosition < gunList.Count - 1)
+        {
+
+            gunListPosition++;
+            ChangeGun();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && gunListPosition > 0)
+        {
+            gunListPosition--;
+            ChangeGun();
+        }
+
+    }
+    void ChangeGun()
+    {
+        FirearmScriptable gun = gunList[gunListPosition];
+        projectileDistance = gun.range;
+        fireRate = gun.fireRate;
+        projectileDmg = gun.damage;
+        gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+        SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
+        numBulletsReserve = gun.ammoMax;
     }
 }
 
