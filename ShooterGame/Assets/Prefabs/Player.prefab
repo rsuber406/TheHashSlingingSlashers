@@ -239,7 +239,6 @@ MonoBehaviour:
   slideMomentum: 8
   slideDuration: 0.75
   slideThreshold: 1
-  rb: {fileID: 0}
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0

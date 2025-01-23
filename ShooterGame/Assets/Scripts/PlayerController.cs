@@ -30,15 +30,15 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] float groundCheckRay = 1.2f;
     
     // crouch
-    [SerializeField] float crouchHeight = 1f;
-    [SerializeField] float crouchMovementSpeed = 4f;
-    [SerializeField] float crouchSpeed = 8f;
+    [SerializeField] float crouchHeight;
+    [SerializeField] float crouchMovementSpeed;
+    [SerializeField] float crouchSpeed;
 
     // slide
-    [SerializeField] float slideMod = 3f;
-    [SerializeField] float slideMomentum = 8f;   // lower the number further you travel
-    [SerializeField] float slideDuration = 0.75f;
-    [SerializeField] float slideThreshold = 1f;
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower the number further you travel
+    [SerializeField] float slideDuration;
+    [SerializeField] float slideThreshold;
     
     // Private fields
     private CollisionInfo collisionInfo;
@@ -51,17 +51,6 @@ public class PlayerController : MonoBehaviour, IDamage
     private bool hasTakenDmg = false;
     // jump
 
-
-    // crouch
-    [SerializeField] float crouchHeight;
-    [SerializeField] float crouchMovementSpeed;
-    [SerializeField] float crouchSpeed;
-
-    // slide
-    [SerializeField] float slideMod;
-    [SerializeField] float slideMomentum;   // lower number more further you go
-    [SerializeField] float slideDuration;
-    [SerializeField] float slideThreshold;
 
     private int previousHealth;
     float origMovementSpeed;
@@ -85,7 +74,7 @@ public class PlayerController : MonoBehaviour, IDamage
     float Timesincereload;
 
 
-    Rigidbody rb;
+    //[SerializeField] Transform orientation;
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
@@ -106,8 +95,6 @@ public class PlayerController : MonoBehaviour, IDamage
         GameManager.instance.UpdatePlayerHeathUI(health);
 
 
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
 
     }
 
@@ -117,10 +104,9 @@ public class PlayerController : MonoBehaviour, IDamage
        
       
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
-        Movement();
-        Sprint();
-        Crouch();
-        Slide();
+
+        PlayerMovement();
+
         CheckWallRun();
         Shoot();
         PerformReload();
@@ -128,6 +114,14 @@ public class PlayerController : MonoBehaviour, IDamage
         if (IsDebugMode)
             DrawDebugLines();
         CheckTimeSinceReload();
+    }
+
+    void PlayerMovement()
+    {
+        Movement();
+        Sprint();
+        Crouch();
+        Slide();
     }
 
     void Movement()
@@ -140,8 +134,8 @@ public class PlayerController : MonoBehaviour, IDamage
             playerVel = Vector3.zero;
         }
 
+        // cannot crouch while player in air
         else
-            // cannot crouch while player in air
             if (playerVel.y > 0)
                 isCrouching = false;
 
@@ -157,11 +151,8 @@ public class PlayerController : MonoBehaviour, IDamage
             GroundedMovement(moveDir);
         }
 
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
 
-        rb.AddForce(moveDir.normalized * movementSpeed * 10f, ForceMode.Force);
-
-        controller.Move(moveDir * movementSpeed * Time.deltaTime);
+        //rb.AddForce(moveDir.normalized * movementSpeed * 10f, ForceMode.Force);
 
         Jump();
 

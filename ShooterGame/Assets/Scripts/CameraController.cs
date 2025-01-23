@@ -8,12 +8,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] int rightLean;
     [SerializeField] int leanSpeed;
     [SerializeField] int leftCameraLeanMovement;
-    
+
+    //[SerializeField] Transform orientation;
 
     private Quaternion initialAngle;
     private Vector3 cameraInitPos;
     float rotX;
+    float rotY;
     float rotZ;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -98,7 +102,10 @@ public class CameraController : MonoBehaviour
         else rotX -= mouseY;
 
         rotX = Mathf.Clamp(rotX, -90, 90);
-        transform.localRotation = Quaternion.Euler(rotX, 0, rotZ);
+
+
         transform.parent.Rotate(Vector3.up * mouseX);
+        transform.localRotation = Quaternion.Euler(rotX, 0, rotZ);
+        
     }
 }
