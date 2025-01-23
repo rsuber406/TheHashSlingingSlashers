@@ -24,6 +24,7 @@ public class Damage : MonoBehaviour
 
     void Start()
     {
+
         if (damageType == DamageType.Moving)
         {
             originPosition = rigidBody.position;
@@ -31,33 +32,30 @@ public class Damage : MonoBehaviour
             Destroy(gameObject, timeToDespawn);
         }
 
-
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.isTrigger)
-        {
-            return;
-        }
+        
 
 
-        IDamage dmg = other.GetComponent<IDamage>();
+        IDamage dmg = collision.gameObject.GetComponent<IDamage>();
         if (dmg != null)
         {
-            if (other.CompareTag(sourceTag))
+            if (collision.gameObject.CompareTag(sourceTag))
             {
                 return;
             }
 
-           else if (other.gameObject.CompareTag("Enemy"))
+            else if (collision.gameObject.CompareTag("Enemy"))
             {
-                AINetwork aiNetwork = other.GetComponent<AINetwork>();
+                Debug.Log("Enemy hit");
+                AINetwork aiNetwork = collision.gameObject.GetComponent<AINetwork>();
                 if (aiNetwork != null)
                 {
                     aiNetwork.ActivateCollider();
-                  
+
                 }
                 DamageAI(ref dmg);
             }
@@ -70,9 +68,46 @@ public class Damage : MonoBehaviour
 
         }
         DestroyItems();
-
-
     }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.isTrigger)
+    //    {
+    //        return;
+    //    }
+
+
+    //    IDamage dmg = other.GetComponent<IDamage>();
+    //    if (dmg != null)
+    //    {
+    //        if (other.CompareTag(sourceTag))
+    //        {
+    //            return;
+    //        }
+
+    //       else if (other.gameObject.CompareTag("Enemy"))
+    //        {
+    //            Debug.Log("Enemy hit");
+    //            AINetwork aiNetwork = other.GetComponent<AINetwork>();
+    //            if (aiNetwork != null)
+    //            {
+    //                aiNetwork.ActivateCollider();
+                  
+    //            }
+    //            DamageAI(ref dmg);
+    //        }
+    //        else
+    //        {
+
+    //            DamagePlayer(ref dmg);
+
+    //        }
+
+    //    }
+    //    DestroyItems();
+
+
+    //}
     void DamagePlayer(ref IDamage dmg)
     {
 

@@ -298,17 +298,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             if (numBulletsInMag > 0)
             {
                 numBulletsInMag--;
-                RaycastHit hit;
                 firearmScript.PlayerShoot();
-                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, projectileDistance))
-                {
-                    IDamage dmg = hit.collider.GetComponent<IDamage>();
-                    if (dmg != null)
-                    {
-                        dmg.TakeDamage(projectileDmg, transform.position);
-
-                    }
-                }
             }
         }
     }

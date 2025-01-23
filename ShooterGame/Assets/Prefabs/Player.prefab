@@ -285,6 +285,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   health: 100
+  playerCam: {fileID: 9099559038996362664}
   wallRunSpeed: 20
   wallRunDuration: 3
   wallRunGroundCheckDistance: 2
