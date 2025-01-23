@@ -128,6 +128,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     }
     public void TakeDamage(int amount, Vector3 origin)
     {
+        if (health <= 0) return;
         playerDirection = origin - transform.position;
         if (roamCo != null)
         {
