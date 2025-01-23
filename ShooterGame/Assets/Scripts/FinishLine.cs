@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FinishLine : MonoBehaviour
 {
@@ -15,17 +16,14 @@ public class FinishLine : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
             finishPlane = true;
-          int finalScore = GameManager.instance.scoreSys.GetScore();
-          GameManager.instance.scoreSys.AddFinalScore(finalScore);
-            GameManager.instance.statePause();
-            GameManager.instance.Win();
-        }
+            int finalScore = GameManager.instance.scoreSys.GetScore();
+            GameManager.instance.scoreSys.AddFinalScore(finalScore);
 
-        
+            SceneChanger.instance.StageManager(finalScore);
+        }
     }
 
 }
