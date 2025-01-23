@@ -48,24 +48,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e34aaa831fa6fb44b587fe4851a002a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerHUD: {fileID: 5048007670263222277}
   menuActive: {fileID: 0}
   menuPause: {fileID: 5138996274218270351}
   menuWin: {fileID: 749478330730839912}
   menuLose: {fileID: 6108856010584727029}
   playerDmgScreen: {fileID: 6503075276398383793}
   playerGainHealth: {fileID: 2651955513082552087}
-  CurrentHPText: {fileID: 1604409034670049385}
   lowHealthScreen: {fileID: 1117674869456718332}
   CurrentBulletsMagText: {fileID: 999249529927655753}
   CurrentBulletsReserveText: {fileID: 6601241041881687413}
   ReloadText: {fileID: 3670208562541560853}
+  LevelCompleteText: {fileID: 0}
+  topScore: {fileID: 0}
+  curScore: {fileID: 0}
+  timeToComplete: {fileID: 0}
+  enemiesKilled: {fileID: 0}
   playerHPBar: {fileID: 1068316192508778464}
   playerBulletTimeBar: {fileID: 8074609030435083266}
-  scoreSys: {fileID: 0}
-  playerscript: {fileID: 0}
-  player: {fileID: 0}
-  gameTimer: {fileID: 0}
-  bt: {fileID: 0}
+  scoreSys: {fileID: 5430685285324889793, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+  playerscript: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+  player: {fileID: 5957547874870576521, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+  gameTimer: {fileID: 5125041522626363649, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+  bt: {fileID: -6493490633546217453, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
   isPaused: 0
 --- !u!1 &283845150583729086
 GameObject:
@@ -1853,87 +1858,12 @@ GameObject:
   - component: {fileID: 2596986634335826766}
   - component: {fileID: 9025846478600732617}
   m_Layer: 5
-
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2237656067992089625
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3460282436815376607}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2630910797374587742}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &977407987292814247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3460282436815376607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e34aaa831fa6fb44b587fe4851a002a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerHUD: {fileID: 3980106613239110375}
-  menuActive: {fileID: 0}
-  menuPause: {fileID: 9100112500609996447}
-  menuWin: {fileID: 2745153111166586474}
-  menuLose: {fileID: 2745159806670184897}
-  playerDmgScreen: {fileID: 6235415507330301836}
-  playerGainHealth: {fileID: 1614071314946254110}
-  lowHealthScreen: {fileID: 6177614176679160382}
-  CurrentBulletsMagText: {fileID: 1470446057597818624}
-  CurrentBulletsReserveText: {fileID: 8552391419702847702}
-  ReloadText: {fileID: 4851130676308480425}
-  LevelCompleteText: {fileID: 1041729771794924543}
-  topScore: {fileID: 3810130629812054409}
-  curScore: {fileID: 2790280123537150203}
-  timeToComplete: {fileID: 4032681729263319454}
-  enemiesKilled: {fileID: 7038462500208199765}
-  playerHPBar: {fileID: 4882207176828492872}
-  playerBulletTimeBar: {fileID: 863880322727780791}
-  scoreSys: {fileID: 5430685285324889793, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  playerscript: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  player: {fileID: 5957547874870576521, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  gameTimer: {fileID: 5125041522626363649, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  bt: {fileID: 0}
-  isPaused: 0
---- !u!1 &3495638397670608386
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 611141514166516209}
-  - component: {fileID: 3696590903272901346}
-  - component: {fileID: 288407805590387743}
-  - component: {fileID: 6222932110436931963}
-  m_Layer: 8
-  m_Name: Restart Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7423906359883441818
 RectTransform:
   m_ObjectHideFlags: 0
