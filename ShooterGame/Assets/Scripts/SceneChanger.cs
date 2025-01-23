@@ -1,26 +1,51 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void StartGame()
+    public static SceneChanger instance {  get; private set; }
+    public int activeScene;
+    public int numMaps = 3;
+    public void Awake()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    public void StageManager(int ScoreIn)
+    {
+        SceneManager.LoadScene("ScoreScene");
+        GameManager.instance.disablePlayerHUD();
+        GameManager.instance.DisplayScores(activeScene, ScoreIn);
     }
 
-
-    /*public void BackToMenu()
+    public void loadNewScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().);
-    }*/
-
-    public void Quitgame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-    Application.Quit();
-#endif
+        if (activeScene < numMaps)
+        {
+            GameManager.instance.enablePlayerHUD();
+            SceneManager.LoadScene(activeScene + 1);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            SceneManager.LoadScene("Main Menu");
+        }
     }
 }

@@ -214,10 +214,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b5b859e92947b948997c39dd8470dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsDebugMode: 0
+  isDebugMode: 1
   movementSpeed: 5
   sprintMod: 2
   jumpSpeed: 17
+  forwardJumpBoost: 1
   jumpMax: 2
   gravity: 40
   controller: {fileID: 2320961185408548562}
@@ -229,8 +230,8 @@ MonoBehaviour:
   shootPos: {fileID: 7813841620199333718}
   firearm: {fileID: 4622633277716792300}
   wallRunSpeed: 20
-  wallRunDuration: 5
-  wallRunGroundCheckThreshhold: 3
+  wallRunDuration: 3
+  wallRunGroundCheckDistance: 2
   groundCheckRay: 1.2
   crouchHeight: 1
   crouchMovementSpeed: 4
