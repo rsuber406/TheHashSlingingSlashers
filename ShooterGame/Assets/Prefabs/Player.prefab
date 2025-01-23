@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 2320961185408548562}
   - component: {fileID: 5430685285324889793}
   - component: {fileID: 3447812434844131785}
+  - component: {fileID: -6493490633546217453}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -285,7 +286,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   health: 100
-  playerCam: {fileID: 9099559038996362664}
   wallRunSpeed: 20
   wallRunDuration: 3
   wallRunGroundCheckDistance: 2
@@ -406,6 +406,20 @@ MonoBehaviour:
   shotsPerMagazine: 0
   reloadTime: 0
   isAIControlled: 0
+--- !u!114 &-6493490633546217453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5957547874870576521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe5993a35529134d9dfca5923ba31db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMotionFactor: 0.2
+  maxSlowMotionDuration: 7
 --- !u!1 &8035683094517475335
 GameObject:
   m_ObjectHideFlags: 0

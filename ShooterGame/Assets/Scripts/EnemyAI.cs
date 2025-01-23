@@ -267,7 +267,9 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
        
         agent.velocity = Vector3.zero;
         animatorController.SetTrigger("Death");
-    
+
+        CapsuleCollider disableCollider = this.GetComponent<CapsuleCollider>();
+        disableCollider.enabled = false;
         if (isMelee)
         {
             BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();

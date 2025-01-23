@@ -23,8 +23,7 @@ public class SceneChanger : MonoBehaviour
     public void StageManager(int ScoreIn)
     {
         SceneManager.LoadScene("ScoreScene");
-        GameManager.instance.disablePlayerHUD();
-        GameManager.instance.DisplayScores(activeScene, ScoreIn);
+        GameManager.instance.CalculateScore(activeScene, ScoreIn);
     }
 
     public void loadNewScene()
