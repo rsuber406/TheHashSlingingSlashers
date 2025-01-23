@@ -25,7 +25,7 @@ public class Damage : MonoBehaviour
 
     void Start()
     {
-        startPosition = transform.position;
+
         if (damageType == DamageType.Moving)
         {
             originPosition = rigidBody.position;
@@ -34,17 +34,6 @@ public class Damage : MonoBehaviour
         }
         Destroy(gameObject, timeToDespawn);
 
-    }
-
-    private void Update()
-    {
-        if (damageType == DamageType.Moving)
-        {
-            if (Vector3.Distance(startPosition, transform.position) > travelDistance)
-            {
-                Destroy(gameObject);
-            }
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -60,28 +49,24 @@ public class Damage : MonoBehaviour
             }
         }
 
-        // Destroy bullet on any collision
-        Destroy(gameObject);
-    }
-    private void OnTriggerEnter(Collider other)
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.isTrigger)
-        {
-            return;
-        }
+        
 
 
-        IDamage dmg = other.GetComponent<IDamage>();
+        IDamage dmg = collision.gameObject.GetComponent<IDamage>();
         if (dmg != null)
         {
-            if (other.CompareTag(sourceTag))
+            if (collision.gameObject.CompareTag(sourceTag))
             {
                 return;
             }
 
-            else if (other.gameObject.CompareTag("Enemy"))
+            else if (collision.gameObject.CompareTag("Enemy"))
             {
-                AINetwork aiNetwork = other.GetComponent<AINetwork>();
+                Debug.Log("Enemy hit");
+                AINetwork aiNetwork = collision.gameObject.GetComponent<AINetwork>();
                 if (aiNetwork != null)
                 {
                     aiNetwork.ActivateCollider();
@@ -98,9 +83,46 @@ public class Damage : MonoBehaviour
 
         }
         DestroyItems();
-
-
     }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.isTrigger)
+    //    {
+    //        return;
+    //    }
+
+
+    //    IDamage dmg = other.GetComponent<IDamage>();
+    //    if (dmg != null)
+    //    {
+    //        if (other.CompareTag(sourceTag))
+    //        {
+    //            return;
+    //        }
+
+    //       else if (other.gameObject.CompareTag("Enemy"))
+    //        {
+    //            Debug.Log("Enemy hit");
+    //            AINetwork aiNetwork = other.GetComponent<AINetwork>();
+    //            if (aiNetwork != null)
+    //            {
+    //                aiNetwork.ActivateCollider();
+                  
+    //            }
+    //            DamageAI(ref dmg);
+    //        }
+    //        else
+    //        {
+
+    //            DamagePlayer(ref dmg);
+
+    //        }
+
+    //    }
+    //    DestroyItems();
+
+
+    //}
     void DamagePlayer(ref IDamage dmg)
     {
 
@@ -111,7 +133,7 @@ public class Damage : MonoBehaviour
 
     void DamageAI(ref IDamage dmg)
     {
-
+        
         dmg.TakeDamage(damage, originPosition);
         DestroyItems();
 
