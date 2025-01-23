@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 5000
+  bulletSpeed: 45000
   damage: 20
   travelDistance: 20
   timeToDespawn: 3

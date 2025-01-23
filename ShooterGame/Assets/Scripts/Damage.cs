@@ -35,24 +35,15 @@ public class Damage : MonoBehaviour
         Destroy(gameObject, timeToDespawn);
 
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        // Assuming "Player" and "Enemy" are tags on your player and enemy GameObjects
-        if (collision.gameObject.CompareTag("Enemy") && !collision.gameObject.CompareTag(sourceTag))
-        {
-            // Get enemy health component and apply damage
-            IDamage enemyHealth = collision.gameObject.GetComponent<IDamage>();
-            if (enemyHealth != null)
-            {
-                enemyHealth.TakeDamage(damage, originPosition);
-            }
-        }
-
-
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+
 
 
         IDamage dmg = collision.gameObject.GetComponent<IDamage>();
@@ -107,7 +98,7 @@ public class Damage : MonoBehaviour
     //            if (aiNetwork != null)
     //            {
     //                aiNetwork.ActivateCollider();
-                  
+
     //            }
     //            DamageAI(ref dmg);
     //        }
@@ -133,7 +124,7 @@ public class Damage : MonoBehaviour
 
     void DamageAI(ref IDamage dmg)
     {
-        
+
         dmg.TakeDamage(damage, originPosition);
         DestroyItems();
 
@@ -156,3 +147,4 @@ public class Damage : MonoBehaviour
 
     }
 }
+

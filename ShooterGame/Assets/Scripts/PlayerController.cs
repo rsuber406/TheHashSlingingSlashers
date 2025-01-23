@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     void Start()
     {
        
-        firearmScript = firearm.GetComponent<GunScripts>();
+       
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
