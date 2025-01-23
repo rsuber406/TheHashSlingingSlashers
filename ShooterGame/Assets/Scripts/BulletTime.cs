@@ -10,6 +10,11 @@ public class BulletTime : MonoBehaviour
     private float bulletTimeTimer = 0f;
     private float currentSlowMotionDuration;
 
+
+    private void Start()
+    {
+        currentSlowMotionDuration = maxSlowMotionDuration;
+    }
     void Update()
     {
         if (Input.GetButtonDown("BulletTime") && currentSlowMotionDuration > 0)
