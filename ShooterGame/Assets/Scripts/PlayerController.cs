@@ -68,13 +68,11 @@ public class PlayerController : MonoBehaviour, IDamage
     private float GRAVITY_CORRECTION = -2.0f;
     
     public int GetHealth() { return health; }
-
-    void Awake() {
-        firearmScript = firearm.GetComponent<GunScripts>();
-    }
     
     void Start()
     {
+       
+        firearmScript = firearm.GetComponent<GunScripts>();
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
