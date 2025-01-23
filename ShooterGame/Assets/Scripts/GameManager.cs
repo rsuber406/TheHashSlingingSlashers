@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     public bool isPaused;
     int maxHealth = 100;
 
+    float scoreTimer;
     int goalCount;
     int playerCurrentHealth;
     void Start()
@@ -141,7 +142,7 @@ public class GameManager : MonoBehaviour
     public void disablePlayerHUD()
     {
         PlayerHUD.SetActive(false);
-        
+
     }
 
     public void enablePlayerHUD()
@@ -153,28 +154,31 @@ public class GameManager : MonoBehaviour
     public void CalculateScore(int completedlvl, int ScoreIn)
     {
 
-        //StartCoroutine(DisplayScores(completedlvl, ScoreIn));
+        StartCoroutine(DisplayScores(completedlvl, ScoreIn));
         //TODO: Add time and Enemies Killed to the score screen as parameters
     }
-    public void DisplayScores(int completedlvl, int ScoreIn)
+    IEnumerator DisplayScores(int completedlvl, int ScoreIn)
     {
-        //yield return new WaitForSeconds(0.1f);
-        playerscript = player.GetComponent<PlayerController>();
+        Time.timeScale = 1;
+        disablePlayerHUD();
         LevelCompleteText.text = "Level " + completedlvl + " Completed!";
-        LevelCompleteText.enabled = true;
-        //yield return new WaitForSeconds(1f);
         timeToComplete.text = "Time: To be Determined";
-        timeToComplete.enabled = true;
-        //yield return new WaitForSeconds(1f);
         enemiesKilled.text = "Enemies Killed: To be Determined";
-        enemiesKilled.enabled = true;
-        //yield return new WaitForSeconds(1f);
         curScore.text = "Total Score: " + curScore;
-        curScore.enabled = true;
-        //yield return new WaitForSeconds(1f);
         topScore.text = "Top Score: " + curScore; //TODO: need code to read from a txt file.
+
+
+        LevelCompleteText.enabled = true;
+        yield return new WaitForSeconds(1f);
+        timeToComplete.enabled = true;
+        yield return new WaitForSeconds(1f);
+        enemiesKilled.enabled = true;
+        yield return new WaitForSeconds(1f);
+        curScore.enabled = true;
+        yield return new WaitForSeconds(1f);
         topScore.enabled = true;
-        //yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
+
 
         //Then turn them all off again
         LevelCompleteText.enabled = false;
@@ -182,6 +186,7 @@ public class GameManager : MonoBehaviour
         enemiesKilled.enabled = false;
         curScore.enabled = false;
         topScore.enabled = false;
+        scoreTimer = 0;
         SceneChanger.instance.loadNewScene();
     }
 
