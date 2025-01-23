@@ -19,7 +19,6 @@ public class PotentialRewardDisplay : MonoBehaviour
 
     private void UpdateRewardUI()
     {
-
         float potentialReward = scoreSys.CalculatePotentialReward();
         rewardText.text = "Potential Reward: " + potentialReward.ToString() + "X Multiplier";
     }

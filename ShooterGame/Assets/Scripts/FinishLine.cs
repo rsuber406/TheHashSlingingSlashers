@@ -16,12 +16,12 @@ public class FinishLine : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
             finishPlane = true;
             int finalScore = GameManager.instance.scoreSys.GetScore();
             GameManager.instance.scoreSys.AddFinalScore(finalScore);
+
             SceneChanger.instance.StageManager(finalScore);
         }
     }

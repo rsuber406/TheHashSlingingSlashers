@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour, IDamage
     float Timesincereload;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
-    void Start()
+    void Awake()
     {
         // w/e this shit is
         health = maxHealth;
@@ -89,14 +89,14 @@ public class PlayerController : MonoBehaviour, IDamage
 
         //other shit
         Timesincereload = Time.time + 10000;
-        GameManager.instance.UpdatePlayerHeathUI(health);
+       // GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
 
     void Update()
     {
-       
-      
+
+        GameManager.instance.UpdatePlayerHeathUI(health);
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
@@ -242,11 +242,9 @@ public class PlayerController : MonoBehaviour, IDamage
 
         GameManager.instance.playerBulletTimeBar.fillAmount = btLeft;
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
-        GameManager.instance.PubcurrentHPText.SetText(health.ToString());
 
         if (health < 0)
         {
-            GameManager.instance.PubcurrentHPText.SetText("0");
             GameManager.instance.PublowHealthScreen.SetActive(false);
         }
         else if (health < 50)
@@ -576,6 +574,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     public void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger) return;
         if(other.tag == "DeathBox")
         {
             //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
