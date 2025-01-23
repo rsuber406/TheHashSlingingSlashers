@@ -33,10 +33,11 @@ public class GunScripts : MonoBehaviour
 
     public void PlayerShoot()
     {
-        if (shotsPerMagazine <= 0) return;
+     
         shootPos.rotation = Camera.main.transform.rotation;
+
         Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
-        shotsPerMagazine--;
+   
     }
 
     public IEnumerator Reload()
