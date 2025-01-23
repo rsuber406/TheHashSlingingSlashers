@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     [SerializeField] float wallRunSpeed;
     [SerializeField] float wallRunDuration;
-    [SerializeField] float wallRunGroundCheckDistance; // Must be at least twice the size of the ground check ray 
+    [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay;
     [SerializeField] int projectileDmg;
     [SerializeField] int projectileDistance;
@@ -75,14 +75,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private float GRAVITY_CORRECTION = -2.0f;
 
     public int GetHealth() { return health; }
-
-    void Awake()
-    {
-
-    }
-
+    
     void Start()
     {
+       
+        firearmScript = firearm.GetComponent<GunScripts>();
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
@@ -93,12 +90,15 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
         //other shit
         Timesincereload = Time.time + 10000;
-        GameManager.instance.UpdatePlayerHeathUI(health);
+       // GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
 
     void Update()
     {
+
+        GameManager.instance.UpdatePlayerHeathUI(health);
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
         Movement();
         Sprint();
         Crouch();
@@ -258,11 +258,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
         GameManager.instance.playerBulletTimeBar.fillAmount = btLeft;
         GameManager.instance.playerHPBar.fillAmount = (float)health / maxHealth;
-        GameManager.instance.PubcurrentHPText.SetText(health.ToString());
 
         if (health < 0)
         {
-            GameManager.instance.PubcurrentHPText.SetText("0");
             GameManager.instance.PublowHealthScreen.SetActive(false);
         }
         else if (health < 50)
@@ -328,8 +326,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void CheckWallRun()
     {
-        // Ensures the player is grounded and has enough distance below the player to enter wall run
-        if (!isGrounded && IsAgainstWall() && HasGroundClearance())
+        if (!isGrounded && IsAgainstWall())
         {
             StartWallRun();
         }
@@ -591,7 +588,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "DeathBox")
+        if (other.isTrigger) return;
+        if(other.tag == "DeathBox")
         {
             //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
             TakeDamage(500);

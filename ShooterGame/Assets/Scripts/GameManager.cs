@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    [SerializeField] GameObject PlayerHUD;
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
@@ -13,21 +15,26 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerDmgScreen;
     [SerializeField] GameObject playerGainHealth;
 
-    [SerializeField] TMP_Text CurrentHPText;
     [SerializeField] GameObject lowHealthScreen;
     [SerializeField] TMP_Text CurrentBulletsMagText;
     [SerializeField] TMP_Text CurrentBulletsReserveText;
     [SerializeField] TMP_Text ReloadText;
 
+    //Score Stuff. This is badly done, but whatever, its still UI technically.
+    [SerializeField] TMP_Text LevelCompleteText;
+    [SerializeField] TMP_Text topScore;
+    [SerializeField] TMP_Text curScore;
+    [SerializeField] TMP_Text timeToComplete;
+    [SerializeField] TMP_Text enemiesKilled;
+
     public TMP_Text PubReloadText => ReloadText;
-    public TMP_Text PubcurrentHPText => CurrentHPText; 
     public TMP_Text pubCurrentBulletsMagText => CurrentBulletsMagText;
     public TMP_Text pubCurrentBulletsReserveText => CurrentBulletsReserveText;
     public GameObject PublowHealthScreen => lowHealthScreen;
 
     public Image playerHPBar;
     public Image playerBulletTimeBar;
-    
+
     public ScoreSys scoreSys;
 
     public PlayerController playerscript;
@@ -40,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     int goalCount;
     int playerCurrentHealth;
-    void Awake()
+    void Start()
     {
 
         instance = this;
@@ -66,7 +73,6 @@ public class GameManager : MonoBehaviour
                 stateUnpause();
             }
         }
-
     }
 
     public void statePause()
@@ -93,7 +99,7 @@ public class GameManager : MonoBehaviour
         menuActive = menuLose;
         menuActive.SetActive(true);
     }
-    
+
     public void Win()
     {
         statePause();
@@ -120,19 +126,64 @@ public class GameManager : MonoBehaviour
     public void UpdatePlayerHeathUI(int currentHealth)
     {
         playerCurrentHealth = currentHealth;
-        CurrentHPText.text = currentHealth.ToString();
-        
-        
+
     }
-    public float GetPlayerBulletTimeLeft() 
+    public float GetPlayerBulletTimeLeft()
     {
-       float bulletTimeRemaining = bt.GetBulletTimeRemaining();
+        float bulletTimeRemaining = bt.GetBulletTimeRemaining();
         return bulletTimeRemaining;
-       
+
 
     }
     public int GetPlayerHealth() { return playerCurrentHealth; }
 
+
+    public void disablePlayerHUD()
+    {
+        PlayerHUD.SetActive(false);
+        
+    }
+
+    public void enablePlayerHUD()
+    {
+        PlayerHUD.SetActive(true);
+    }
+
+
+    public void CalculateScore(int completedlvl, int ScoreIn)
+    {
+
+        //StartCoroutine(DisplayScores(completedlvl, ScoreIn));
+        //TODO: Add time and Enemies Killed to the score screen as parameters
+    }
+    public void DisplayScores(int completedlvl, int ScoreIn)
+    {
+        //yield return new WaitForSeconds(0.1f);
+        playerscript = player.GetComponent<PlayerController>();
+        LevelCompleteText.text = "Level " + completedlvl + " Completed!";
+        LevelCompleteText.enabled = true;
+        //yield return new WaitForSeconds(1f);
+        timeToComplete.text = "Time: To be Determined";
+        timeToComplete.enabled = true;
+        //yield return new WaitForSeconds(1f);
+        enemiesKilled.text = "Enemies Killed: To be Determined";
+        enemiesKilled.enabled = true;
+        //yield return new WaitForSeconds(1f);
+        curScore.text = "Total Score: " + curScore;
+        curScore.enabled = true;
+        //yield return new WaitForSeconds(1f);
+        topScore.text = "Top Score: " + curScore; //TODO: need code to read from a txt file.
+        topScore.enabled = true;
+        //yield return new WaitForSeconds(1f);
+
+        //Then turn them all off again
+        LevelCompleteText.enabled = false;
+        timeToComplete.enabled = false;
+        enemiesKilled.enabled = false;
+        curScore.enabled = false;
+        topScore.enabled = false;
+        SceneChanger.instance.loadNewScene();
+    }
 
 }
 

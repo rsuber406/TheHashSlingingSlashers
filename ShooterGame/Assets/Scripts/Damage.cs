@@ -21,6 +21,7 @@ public class Damage : MonoBehaviour
     GameObject player;
     bool hasGivenDmg = false;
     Vector3 originPosition;
+    Vector3 startPosition;
 
     void Start()
     {
@@ -29,10 +30,24 @@ public class Damage : MonoBehaviour
         {
             originPosition = rigidBody.position;
             rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
-            Destroy(gameObject, timeToDespawn);
+
         }
+        Destroy(gameObject, timeToDespawn);
 
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Assuming "Player" and "Enemy" are tags on your player and enemy GameObjects
+        if (collision.gameObject.CompareTag("Enemy") && !collision.gameObject.CompareTag(sourceTag))
+        {
+            // Get enemy health component and apply damage
+            IDamage enemyHealth = collision.gameObject.GetComponent<IDamage>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(damage, originPosition);
+            }
+        }
 
 
     private void OnCollisionEnter(Collision collision)
@@ -141,4 +156,3 @@ public class Damage : MonoBehaviour
 
     }
 }
-

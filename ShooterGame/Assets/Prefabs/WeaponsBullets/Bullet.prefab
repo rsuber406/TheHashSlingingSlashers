@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 45000
+  bulletSpeed: 5000
   damage: 20
   travelDistance: 20
   timeToDespawn: 3
@@ -70,7 +70,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
