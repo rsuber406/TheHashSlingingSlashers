@@ -646,7 +646,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
         SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
-        numBulletsReserve = maxMagCapacity * 4;
+        numBulletsReserve = gun.ammoMax;
     }
 }
 

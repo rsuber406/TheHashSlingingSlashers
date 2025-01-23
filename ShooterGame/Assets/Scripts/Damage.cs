@@ -118,7 +118,7 @@ public class Damage : MonoBehaviour
 
     void DamageAI(ref IDamage dmg)
     {
-
+        
         dmg.TakeDamage(damage, originPosition);
         DestroyItems();
 
