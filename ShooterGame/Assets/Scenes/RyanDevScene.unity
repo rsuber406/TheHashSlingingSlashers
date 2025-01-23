@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &56024095 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7813841620199333718, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  m_PrefabInstance: {fileID: 666462916063626564}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &330252240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6503075276398383793, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
@@ -444,6 +439,120 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
+--- !u!1001 &1691005229
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4089658237201747782, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_Name
+      value: GunPickup-Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 33.112053
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.69779533
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13.016229
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174548756572650134, guid: e491e917984e7554ebe05b774963658f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e491e917984e7554ebe05b774963658f, type: 3}
+--- !u!1001 &1724695817
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 36.474243
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5533062
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12.609548
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 869306442394552503, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8723712987669929174, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
+      propertyPath: m_Name
+      value: GunPickup-Pistol
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 145ab595906b78d419e3bc12ef0eae1b, type: 3}
 --- !u!1 &2084697720
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +730,7 @@ PrefabInstance:
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: shootPos
       value: 
-      objectReference: {fileID: 56024095}
+      objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: jumpSpeed
       value: 20
@@ -789,3 +898,5 @@ SceneRoots:
   - {fileID: 434894237}
   - {fileID: 1633324499}
   - {fileID: 2139029690}
+  - {fileID: 1691005229}
+  - {fileID: 1724695817}
