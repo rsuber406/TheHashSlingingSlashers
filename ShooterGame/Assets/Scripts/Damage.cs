@@ -12,12 +12,12 @@ public class Damage : MonoBehaviour
         GroundTrap
     }
     [SerializeField] int bulletSpeed;
-    [SerializeField] int damage;
     [SerializeField] int travelDistance;
     [SerializeField] int timeToDespawn;
     [SerializeField] Rigidbody rigidBody;
     [SerializeField] DamageType damageType;
     [SerializeField] string sourceTag;
+    public int damage;
     GameObject player;
     bool hasGivenDmg = false;
     Vector3 originPosition;

@@ -31,7 +31,7 @@ public class GunScripts : MonoBehaviour
 
     public float GetFireRate() { return fireRate; }
 
-    public void PlayerShoot()
+    public void PlayerShoot(int damageRef)
     {
         Ray cameraRay = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         Vector3 targetPoint;

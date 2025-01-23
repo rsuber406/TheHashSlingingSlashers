@@ -296,7 +296,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             if (numBulletsInMag > 0)
             {
                 numBulletsInMag--;
-                firearmScript.PlayerShoot();
+                firearmScript.PlayerShoot(projectileDmg);
             }
         }
     }
