@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     public BulletTime bt;
 
     public bool isPaused;
-    int maxHealth = 100;
+    
 
     float scoreTimer;
     int goalCount;
@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
         scoreSys = FindFirstObjectByType<ScoreSys>();
-
+        
     }
 
     // Update is called once per frame
@@ -151,43 +151,57 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CalculateScore(int completedlvl, int ScoreIn)
+    public IEnumerator CalculateScore(int completedlvl, int ScoreIn)
     {
-
+        float timePassed = 0f;
         StartCoroutine(DisplayScores(completedlvl, ScoreIn));
+        float timeToWait = 8f;
+        while (timePassed < timeToWait)
+        {
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+       // DisableScoreDetails();
+        SceneChanger.instance.loadNewScene();
+      
         //TODO: Add time and Enemies Killed to the score screen as parameters
     }
     IEnumerator DisplayScores(int completedlvl, int ScoreIn)
     {
         Time.timeScale = 1;
         disablePlayerHUD();
-        LevelCompleteText.text = "Level " + completedlvl + " Completed!";
-        timeToComplete.text = "Time: To be Determined";
-        enemiesKilled.text = "Enemies Killed: To be Determined";
-        curScore.text = "Total Score: " + curScore;
-        topScore.text = "Top Score: " + curScore; //TODO: need code to read from a txt file.
+           LevelCompleteText.text = "F0 Level " + completedlvl + " Completed!";
+           timeToComplete.text = "F0 Time: To be Determined";
+          enemiesKilled.text = "F0 Enemies Killed: To be Determined";
+          curScore.text = "F0 Total Score: " + curScore;
+           topScore.text = "F0 Top Score: " + curScore; //TODO: need code to read from a txt file.
 
 
-        LevelCompleteText.enabled = true;
-        yield return new WaitForSeconds(1f);
-        timeToComplete.enabled = true;
-        yield return new WaitForSeconds(1f);
-        enemiesKilled.enabled = true;
-        yield return new WaitForSeconds(1f);
-        curScore.enabled = true;
-        yield return new WaitForSeconds(1f);
-        topScore.enabled = true;
-        yield return new WaitForSeconds(2f);
+          LevelCompleteText.enabled = true;
+         // yield return new WaitForSeconds(1f);
+          timeToComplete.enabled = true;
+         // yield return new WaitForSeconds(1f);
+          enemiesKilled.enabled = true;
+         // yield return new WaitForSeconds(1f);
+          curScore.enabled = true;
+         // yield return new WaitForSeconds(1f);
+          topScore.enabled = true;
+          yield return new WaitForSeconds(2f);
 
 
         //Then turn them all off again
+
+
+    }
+
+    void DisableScoreDetails()
+    {
         LevelCompleteText.enabled = false;
         timeToComplete.enabled = false;
         enemiesKilled.enabled = false;
         curScore.enabled = false;
         topScore.enabled = false;
         scoreTimer = 0;
-        SceneChanger.instance.loadNewScene();
     }
 
 }

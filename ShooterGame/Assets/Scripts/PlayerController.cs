@@ -241,10 +241,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             health = maxHealth;
         }
         GameManager.instance.UpdatePlayerHeathUI(health);
-        if (health > previousHealth)
-        {
-            // Input healing screen
-        }
 
         if (!hasTakenDmg)
             StartCoroutine(FlashDmgScreen());
@@ -275,22 +271,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void Shoot()
     {
-        // All of this needs changed
-        //Camera camRef = Camera.main;
-        //if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
-        //{
-        //    if (numBulletsInMag > 0)
-        //    {
-        //        firearmScript.PlayerShoot();
-        //        //count bullets set new bullet count on UI
-        //        numBulletsInMag--;
-        //        GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-        //        if (numBulletsReserve == 0)
-        //        {
-        //            Timesincereload = Time.time + 3;
-        //        }
-        //    }
-        //}
+       
         if (Input.GetButtonDown("Shoot"))
         {
             if (numBulletsInMag > 0)

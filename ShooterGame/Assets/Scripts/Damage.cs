@@ -19,7 +19,6 @@ public class Damage : MonoBehaviour
     [SerializeField] string sourceTag;
     public int damage;
     GameObject player;
-    bool hasGivenDmg = false;
     Vector3 originPosition;
     Vector3 startPosition;
 
