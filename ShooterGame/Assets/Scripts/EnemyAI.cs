@@ -49,7 +49,6 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool canMeleeAttack;
     bool playerInRange;
     bool assistingFriend = false;
-    bool coverSetDirectionFinished = false;
     bool isRoaming = false;
     bool isAlive = true;
     float fovAsDecimal;

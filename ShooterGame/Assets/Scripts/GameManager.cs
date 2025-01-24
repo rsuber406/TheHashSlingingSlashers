@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     public BulletTime bt;
 
     public bool isPaused;
-    int maxHealth = 100;
+    
 
     float scoreTimer;
     int goalCount;
