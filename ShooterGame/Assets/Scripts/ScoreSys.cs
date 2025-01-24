@@ -19,7 +19,7 @@ public class ScoreSys : MonoBehaviour
         };
 
 
-    void Start()
+    void Awake()
     {
        currGameTime = FindFirstObjectByType<GameTimer>();
         startTime = Time.time;

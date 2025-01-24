@@ -23,7 +23,8 @@ public class SceneChanger : MonoBehaviour
     public void StageManager(int ScoreIn)
     {
         SceneManager.LoadScene("ScoreScene");
-        GameManager.instance.CalculateScore(activeScene, ScoreIn);
+        StartCoroutine(GameManager.instance.CalculateScore(activeScene, ScoreIn));
+        
     }
 
     public void loadNewScene()
