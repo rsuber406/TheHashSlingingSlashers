@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] GameObject firearm;
     [SerializeField] float wallRunSpeed;
     [SerializeField] float wallRunDuration;
+    [SerializeField] float wallRunDetachForce;
     [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay;
     
@@ -49,7 +50,6 @@ public class PlayerController : MonoBehaviour, IDamage
     private int maxHealth = 100;
     private bool hasTakenDmg;
     
-
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
-    private float GRAVITY_CORRECTION = -2.0f;
+    private readonly float GRAVITY_CORRECTION = -2.0f;
     
     public int GetHealth() { return health; }
     
@@ -266,10 +266,9 @@ public class PlayerController : MonoBehaviour, IDamage
             GameManager.instance.PublowHealthScreen.SetActive(false);
         }
     }
-
+    
     void Shoot()
     {
-        Camera camRef = Camera.main;
         if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
         {
             if (numBulletsInMag > 0)
@@ -282,6 +281,15 @@ public class PlayerController : MonoBehaviour, IDamage
                 {
                     Timesincereload = Time.time + 3;
                 }
+            }
+        }
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            if (Physics.Raycast(transform.position, Vector3.forward, out var hit, 100 ))
+            {
+                Vector3 direction = (hit.transform.position - transform.position).normalized;
+                // Grapple logic comming here
             }
         }
     }
@@ -310,7 +318,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckWallRun()
     {
-        if (!isGrounded && IsAgainstWall())
+        if (!isGrounded && IsAgainstWall() && HasGroundClearance())
         {
             StartWallRun();
         }
@@ -382,6 +390,10 @@ public class PlayerController : MonoBehaviour, IDamage
     private IEnumerator EndWallRun_Internal()
     {
         yield return new WaitForSeconds(wallRunDuration);
+        
+        Vector3 jumpDirection = GetWallNormal();
+        playerVel = jumpDirection.normalized * wallRunDetachForce;
+        
         EndWallRun();
     }
 
@@ -408,15 +420,11 @@ public class PlayerController : MonoBehaviour, IDamage
     // Expand this to store character collision data in all directions and adata about what is being collided with.
     public struct CollisionInfo
     {
-        public bool above, below;
         public bool left, right;
-        public bool backward, forward;
 
         public void Reset()
         {
-            above = below = false;
             left = right = false;
-            backward = forward = false;
         }
      }
 
@@ -453,14 +461,14 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
-        if(numBulletsInMag ==0 && Timesincereload >= Time.time)
+        if(numBulletsInMag == 0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
     }
     public void AddAmmo(int amount)
     {
-       numBulletsReserve += amount;
+        numBulletsReserve += amount;
         UpdateAmmoUI();
     }
 

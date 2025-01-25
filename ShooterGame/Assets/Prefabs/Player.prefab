@@ -232,7 +232,8 @@ MonoBehaviour:
   shootPos: {fileID: 7813841620199333718}
   firearm: {fileID: 4622633277716792300}
   wallRunSpeed: 20
-  wallRunDuration: 3
+  wallRunDuration: 1.5
+  wallRunDetachForce: 6
   wallRunGroundCheckDistance: 2
   groundCheckRay: 1.2
   crouchHeight: 0
