@@ -291,12 +291,10 @@ MonoBehaviour:
   wallRunDetachForce: 5
   wallRunGroundCheckDistance: 2
   groundCheckRay: 1.2
-  projectileDmg: 0
-  projectileDistance: 0
-  fireRate: 0
-  gunModel: {fileID: 2490695818542592302}
-  firearmScript: {fileID: 3447812434844131785}
-  gunList: []
+  grappleCheckRay: 200
+  forwardGrappleForce: 50
+  upwardGrappleArkForce: 20
+  minGrappleDistance: 5
   crouchHeight: 1
   crouchMovementSpeed: 4
   crouchSpeed: 8
@@ -304,6 +302,12 @@ MonoBehaviour:
   slideMomentum: 8
   slideDuration: 0.75
   slideThreshold: 1
+  projectileDmg: 0
+  projectileDistance: 0
+  fireRate: 0
+  gunModel: {fileID: 2490695818542592302}
+  firearmScript: {fileID: 3447812434844131785}
+  gunList: []
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0
