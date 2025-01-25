@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     [SerializeField] float wallRunSpeed;
     [SerializeField] float wallRunDuration;
+    [SerializeField] float wallRunDetachForce;
     [SerializeField] float wallRunGroundCheckDistance = 2f;
     [SerializeField] float groundCheckRay;
     [SerializeField] int projectileDmg;
@@ -72,7 +73,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
-    private float GRAVITY_CORRECTION = -2.0f;
+    private readonly float GRAVITY_CORRECTION = -2.0f;
 
     public int GetHealth() { return health; }
     
@@ -379,6 +380,10 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private IEnumerator EndWallRun_Internal()
     {
         yield return new WaitForSeconds(wallRunDuration);
+
+        Vector3 jumpDirection = GetWallNormal();
+        playerVel = jumpDirection.normalized * wallRunDetachForce;
+
         EndWallRun();
     }
 
@@ -405,15 +410,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     // Expand this to store character collision data in all directions and adata about what is being collided with.
     public struct CollisionInfo
     {
-        public bool above, below;
         public bool left, right;
-        public bool backward, forward;
 
         public void Reset()
         {
-            above = below = false;
             left = right = false;
-            backward = forward = false;
         }
     }
 
