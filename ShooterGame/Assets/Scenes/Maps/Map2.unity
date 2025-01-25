@@ -1662,6 +1662,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3514171809721943086, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
+      propertyPath: m_Name
+      value: reticle(3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514171809721943086, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3986547786841233704, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: m_Name
       value: UI
@@ -3242,8 +3250,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1930523440}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: healthRegen
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: movementSpeed
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: healthRegenDelay
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: gunList.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4125394140292719060, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_LocalPosition.x
