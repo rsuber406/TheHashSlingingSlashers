@@ -47,13 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ccf7a625f6af340ac3658428456704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 45000
-  damage: 20
+  bulletSpeed: 20000
   travelDistance: 20
   timeToDespawn: 3
   rigidBody: {fileID: 7274241320571105035}
   damageType: 0
   sourceTag: Enemy
+  damage: 20
 --- !u!54 &7274241320571105035
 Rigidbody:
   m_ObjectHideFlags: 0

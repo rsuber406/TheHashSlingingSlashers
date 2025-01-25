@@ -4,16 +4,20 @@ public class BulletTime : MonoBehaviour
 {
     [SerializeField] private float slowMotionFactor = 0.2f;
     [SerializeField] private float maxSlowMotionDuration = 7f;
+    [SerializeField] private PlayerController playerController;
     private float rechargeRate = 0.5f;
     private float normalTimeScale = 1f;
     private bool isBulletTimeActive = false;
     private float bulletTimeTimer = 0f;
     private float currentSlowMotionDuration;
+    private float originalPlayerSpeed;
+    
 
 
     private void Start()
     {
         currentSlowMotionDuration = maxSlowMotionDuration;
+        originalPlayerSpeed = playerController.movementSpeed;
     }
     void Update()
     {
@@ -36,7 +40,7 @@ public class BulletTime : MonoBehaviour
         {
             RechargeBulletTime();
         }
-
+       
         UpdateBulletTimerUI();
     }
     private void RechargeBulletTime()
@@ -54,12 +58,16 @@ public class BulletTime : MonoBehaviour
         {
             Time.timeScale = normalTimeScale;
             isBulletTimeActive = false;
+            playerController.movementSpeed = originalPlayerSpeed;
         }
         else
         {
+            originalPlayerSpeed = playerController.movementSpeed;
+            playerController.movementSpeed *= 5f;
             Time.timeScale = slowMotionFactor;
             isBulletTimeActive = true;
             bulletTimeTimer = 0f;
+            Debug.Log("Current Movement Speed: " + playerController.movementSpeed);
         }
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
     }

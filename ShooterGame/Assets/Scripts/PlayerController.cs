@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public bool isDebugMode;
 
     // Serialized fields
-    [SerializeField] int movementSpeed;
+    [SerializeField] public float movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
     [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
