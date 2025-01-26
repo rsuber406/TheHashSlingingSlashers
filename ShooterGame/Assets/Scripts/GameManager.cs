@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameTimer gameTimer;
     public BulletTime bt;
+    public DynamicTextManager dynamicTextManager;
 
     public bool isPaused;
     

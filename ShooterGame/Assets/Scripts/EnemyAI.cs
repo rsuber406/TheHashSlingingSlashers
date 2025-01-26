@@ -28,6 +28,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] GameObject meleeWeapon;
     [SerializeField] float enemyBulletSpread;
     [Header("AI Configuration")]
+    [SerializeField] private ParticleSystem bloodEffect;
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
     [SerializeField] Transform locateWallPos;
@@ -55,9 +56,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     float stoppingDistance;
     Color originalColor;
     Coroutine roamCo;
+    private DynamicTextManager dynamicTextManager;
 
     void Start()
     {
+        dynamicTextManager = GameManager.instance.dynamicTextManager;
         playerPreviousPosition = Vector3.zero;
         startingPos = this.transform.position;
         originalColor = model.material.color;
@@ -150,7 +153,21 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         health -= amount;
         StartCoroutine(RegisterHit());
 
+
+        //blood
+        Quaternion bloodRotation = Quaternion.LookRotation(playerDirection);
+        Vector3 bloodSpawnPos = transform.position + (Vector3.up * 1f);
+        ParticleSystem blood = Instantiate(bloodEffect, bloodSpawnPos, bloodRotation);
+        blood.transform.SetParent(headPos.transform);
+
+        //text
+        Vector3 textPos = headPos.transform.position; 
+        string dmgText = amount.ToString();
+        DynamicTextData damageTextData = Resources.Load<DynamicTextData>("EnemyDamageTextData");
+        DynamicTextManager.CreateText(textPos, dmgText, damageTextData);
+
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)

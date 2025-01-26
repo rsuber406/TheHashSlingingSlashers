@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5496328042219297764}
   - component: {fileID: 5440754179277999109}
+  - component: {fileID: 1294571572128374838}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -71,7 +72,23 @@ MonoBehaviour:
   player: {fileID: 5957547874870576521, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
   gameTimer: {fileID: 5125041522626363649, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
   bt: {fileID: -6493490633546217453, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+  dynamicTextManager: {fileID: 1294571572128374838}
   isPaused: 0
+--- !u!114 &1294571572128374838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220074373911408502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7c18620c323414a849913f889acb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultData: {fileID: 11400000, guid: 7b78e326a655a354883eb6f3a36070e7, type: 2}
+  _canvasPrefab: {fileID: 1926280506753864649, guid: dd88e50c89d53eb46abb5b1e73d9d025, type: 3}
+  _mainCamera: {fileID: 0}
 --- !u!1 &283845150583729086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1996,12 +2013,12 @@ GameObject:
   - component: {fileID: 2596986634335826766}
   - component: {fileID: 9025846478600732617}
   m_Layer: 5
-  m_Name: 
+  m_Name: reticle(3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7423906359883441818
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4244,7 +4261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6792453, g: 0.019223807, b: 0.019223807, a: 0.78431374}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.21568628}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

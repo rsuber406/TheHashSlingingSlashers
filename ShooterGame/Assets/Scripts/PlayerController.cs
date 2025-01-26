@@ -9,8 +9,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public bool isDebugMode;
 
     // Serialized fields
-    [Header("------- General Movement ------")]
-    [SerializeField] int movementSpeed;
+    [SerializeField] public float movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
     [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
@@ -19,6 +18,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
+    [SerializeField] int healthRegen;
+    [SerializeField] private float healthRegenDelay;
 
 
     [Header("------- Wall Running ------")]
@@ -83,6 +84,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private int maxMagCapacity;
     int numBulletsReserve;
     int numBulletsInMag;
+    private Coroutine regenCo;
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
@@ -249,8 +251,27 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
         if (!hasTakenDmg)
             StartCoroutine(FlashDmgScreen());
+        if(regenCo != null)
+        {
+            StopCoroutine(regenCo);
+        }
+        regenCo = StartCoroutine(RegenerateHealth());
 
         UpdatePlayerUI();
+    }
+
+    private IEnumerator RegenerateHealth()
+    {
+        yield return new WaitForSeconds(healthRegenDelay);
+
+        while (health < maxHealth)
+        {
+            health += healthRegen;
+            health = Mathf.Min(health, maxHealth);
+            UpdatePlayerUI();
+            yield return new WaitForSeconds(1f);
+        }
+        regenCo = null;
     }
 
     void UpdatePlayerUI()
