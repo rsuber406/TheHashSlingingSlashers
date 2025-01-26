@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float fireRate;
     [SerializeField] GameObject gunModel;
     [SerializeField] GunScripts firearmScript;
+    [SerializeField] GameObject muzzleFlash;
     [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
 
     // Private fields
@@ -303,8 +304,16 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             {
                 numBulletsInMag--;
                 firearmScript.PlayerShoot(projectileDmg);
+                StartCoroutine(FlashMuzzle());
             }
         }
+    }
+
+    IEnumerator FlashMuzzle()
+    {
+        muzzleFlash.SetActive(true);
+        yield return new WaitForSeconds(0.01f);
+        muzzleFlash.SetActive(false);
     }
 
     void HandleGrappleHook()

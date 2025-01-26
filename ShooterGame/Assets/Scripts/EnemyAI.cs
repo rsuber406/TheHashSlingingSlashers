@@ -424,6 +424,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         if (isMelee) return;
        
         PerformReload();
+        StartCoroutine(DelayFireBack());
         StartCoroutine(Shoot());
 
     }
@@ -431,6 +432,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void TakeDamage(int amount)
     {
 
+    }
+    IEnumerator DelayFireBack()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 
     void FindNearestWall()
