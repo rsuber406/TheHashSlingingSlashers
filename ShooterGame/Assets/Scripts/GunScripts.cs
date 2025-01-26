@@ -39,7 +39,6 @@ public class GunScripts : MonoBehaviour
         if (Physics.Raycast(cameraRay, out hit))
         {
             targetPoint = hit.point;
-            Debug.Log(hit.point.x);
             Vector3 directionFromShootToCam = (targetPoint - shootPos.position).normalized;
             Quaternion shootRot = Quaternion.LookRotation(directionFromShootToCam);
             

@@ -55,7 +55,7 @@ public class Damage : MonoBehaviour
 
             else if (collision.gameObject.CompareTag("Enemy"))
             {
-                Debug.Log("Enemy hit");
+                
                 AINetwork aiNetwork = collision.gameObject.GetComponent<AINetwork>();
                 if (aiNetwork != null)
                 {
