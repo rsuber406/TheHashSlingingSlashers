@@ -295,6 +295,8 @@ MonoBehaviour:
   forwardGrappleForce: 50
   upwardGrappleArkForce: 20
   minGrappleDistance: 5
+  grappleCooldown: 1
+  lineRenderer: {fileID: 0}
   crouchHeight: 1
   crouchMovementSpeed: 4
   crouchSpeed: 8
