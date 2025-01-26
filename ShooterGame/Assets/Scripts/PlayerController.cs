@@ -32,6 +32,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] [Range(1, 60)] float forwardGrappleForce;
     [SerializeField] [Range(1, 30)] float upwardGrappleArkForce;
     [SerializeField] [Range(1, 10)] float minGrappleDistance;
+    [SerializeField] [Range(0.5f, 5)] float grappleCooldown;
+    [SerializeField] LineRenderer lineRenderer;
+    private bool isGrappling;
 
     [Header("------- Crouching ---------")]
     [SerializeField] float crouchHeight;
@@ -54,6 +57,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     // Private fields
     private CollisionInfo collisionInfo;
+    private Camera playerCamera;
     private Vector3 playerVel;
     private Vector3 moveDir;
     private Vector3 grapplePoint;
@@ -85,6 +89,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     
     void Start()
     {
+        playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
@@ -109,6 +114,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         UpdateAmmoUI();
         CheckTimeSinceReload();
         SelectGun();
+        
         if (isDebugMode)
         {
             DrawDebugLines();
@@ -281,20 +287,45 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void HandleGrappleHook()
     {
-        if (Input.GetButtonDown("Fire2"))
+        
+        if (Input.GetButtonDown("Fire2") && !isGrappling)
         {
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, grappleCheckRay ))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, grappleCheckRay ))
             {
                 float distance = Vector3.Distance(transform.position, hit.point);
                 if (distance > minGrappleDistance)
                 {
+                    isGrappling = true;
                     grapplePoint = hit.point;
                     
                     Vector3 direction = (grapplePoint - transform.position).normalized;
                     
                     playerVel = direction * forwardGrappleForce + Vector3.up * Mathf.Clamp(distance * 0.5f, 0, upwardGrappleArkForce);
+
+                    if (lineRenderer)
+                    {
+                        lineRenderer.enabled = true;
+                        lineRenderer.positionCount = 2;
+                        lineRenderer.SetPosition(0, transform.position);
+                        lineRenderer.SetPosition(1, grapplePoint);
+                    }
+                    else
+                    {
+                        Debug.LogError("Missing Line Render For Grapple Rope");
+                    }
                 }
             }
+        }
+        
+        if (isGrappling )
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, grapplePoint);   
+        }
+        
+        if (Input.GetButtonUp("Fire2"))
+        {
+            StartCoroutine(EndGrappleHookTrail());
         }
     }
 
@@ -365,9 +396,12 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void DrawDebugLines()
     {
-        // Forward
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
-
+        // Shoot Distance Ray
+        Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * 50, Color.red);
+        
+        // Grapple Check Ray
+        Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * grappleCheckRay, Color.yellow);
+        
         // Raycast to the left
         bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHit, 1f);
         Debug.DrawRay(transform.position, -transform.right, isCollidingOnLeftWall ? Color.red : Color.green);
@@ -640,6 +674,16 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
         SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
         numBulletsReserve = gun.ammoMax;
+    }
+
+    IEnumerator EndGrappleHookTrail()
+    {
+        yield return new WaitForSeconds(grappleCooldown);
+        isGrappling = false;
+        if (lineRenderer)
+        {
+            lineRenderer.enabled = false;
+        }
     }
 }
 
