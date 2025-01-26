@@ -424,6 +424,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         if (isMelee) return;
        
         PerformReload();
+        StartCoroutine(DelayFireBack());
         StartCoroutine(Shoot());
 
     }
@@ -431,6 +432,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void TakeDamage(int amount)
     {
 
+    }
+    IEnumerator DelayFireBack()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 
     void FindNearestWall()
@@ -448,7 +453,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         int layerMask = LayerMask.GetMask("Wall");
         for (int i = 0; i < 9; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
+          
             if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask))
             {
 
@@ -493,15 +498,15 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             float dotProductToWall = Vector3.Dot(transform.forward, GameManager.instance.player.transform.position);
             if (dotProductToWall < 0)
             {
-                Debug.Log("Less than zero");
+               
                 hitNorm = hitNorm * -1;
             }
             else if (dotProductToWall > 0)
             {
-                Debug.Log("Greater than zero");
+              
             }
             Vector3 aiToWall = (hitNorm * Vector3.Distance(transform.position, wallPoint) * 1.5f) + transform.position;
-            Debug.Log($"{aiToWall.x}, {aiToWall.y}, {aiToWall.z}");
+           
             float dotProductNewPosToPlayer = Vector3.Dot(aiToWall, (GameManager.instance.player.transform.forward).normalized);
             if(dotProductNewPosToPlayer < 0)
             {
