@@ -10,11 +10,12 @@ public class DynamicTextManager : MonoBehaviour
     public static GameObject canvasPrefab;
     public static Transform mainCamera;
 
+    // what is the point of this????
     [SerializeField] private DynamicTextData _defaultData;
     [SerializeField] private GameObject _canvasPrefab;
-    [SerializeField] private Transform _mainCamera;
+    Transform _mainCamera;
 
-    private void Awake()
+    private void Start()
     {
         defaultData = _defaultData;
         mainCamera = _mainCamera;

@@ -145,7 +145,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            if (!isShooting)
+            if (!isShooting && !isMelee)
                 HandleRangedCombatOnDmg(playerDirection);
 
 
@@ -421,8 +421,9 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
         transform.rotation = rotateAi;
         agent.SetDestination(playerDirection);
-        PerformReload();
         if (isMelee) return;
+       
+        PerformReload();
         StartCoroutine(Shoot());
 
     }
