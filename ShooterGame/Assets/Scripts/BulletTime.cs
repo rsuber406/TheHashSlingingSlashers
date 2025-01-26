@@ -16,6 +16,7 @@ public class BulletTime : MonoBehaviour
 
     private void Start()
     {
+        playerController = GameManager.instance.player.GetComponent<PlayerController>();
         currentSlowMotionDuration = maxSlowMotionDuration;
         originalPlayerSpeed = playerController.movementSpeed;
     }

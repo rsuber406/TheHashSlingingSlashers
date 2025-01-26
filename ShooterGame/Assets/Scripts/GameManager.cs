@@ -44,24 +44,36 @@ public class GameManager : MonoBehaviour
     public DynamicTextManager dynamicTextManager;
 
     public bool isPaused;
-    
+
 
     float scoreTimer;
     int goalCount;
     int playerCurrentHealth;
-    void Start()
+    bool loadedConfigs = false;
+    void Awake()
     {
 
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
         scoreSys = FindFirstObjectByType<ScoreSys>();
+
+
+    }
+
+    void LoadConfigs()
+    {
         
+        DynamicTextManager.mainCamera = Camera.main.transform;
+        loadedConfigs = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!loadedConfigs)
+            LoadConfigs();
+
         if (Input.GetButtonDown("Cancel"))
         {
             if (menuActive == null)
@@ -162,32 +174,32 @@ public class GameManager : MonoBehaviour
             timePassed += Time.deltaTime;
             yield return null;
         }
-       // DisableScoreDetails();
+        // DisableScoreDetails();
         SceneChanger.instance.loadNewScene();
-      
+
         //TODO: Add time and Enemies Killed to the score screen as parameters
     }
     IEnumerator DisplayScores(int completedlvl, int ScoreIn)
     {
         Time.timeScale = 1;
         disablePlayerHUD();
-           LevelCompleteText.text = "F0 Level " + completedlvl + " Completed!";
-           timeToComplete.text = "F0 Time: To be Determined";
-          enemiesKilled.text = "F0 Enemies Killed: To be Determined";
-          curScore.text = "F0 Total Score: " + curScore;
-           topScore.text = "F0 Top Score: " + curScore; //TODO: need code to read from a txt file.
+        LevelCompleteText.text = "F0 Level " + completedlvl + " Completed!";
+        timeToComplete.text = "F0 Time: To be Determined";
+        enemiesKilled.text = "F0 Enemies Killed: To be Determined";
+        curScore.text = "F0 Total Score: " + curScore;
+        topScore.text = "F0 Top Score: " + curScore; //TODO: need code to read from a txt file.
 
 
-          LevelCompleteText.enabled = true;
-         // yield return new WaitForSeconds(1f);
-          timeToComplete.enabled = true;
-         // yield return new WaitForSeconds(1f);
-          enemiesKilled.enabled = true;
-         // yield return new WaitForSeconds(1f);
-          curScore.enabled = true;
-         // yield return new WaitForSeconds(1f);
-          topScore.enabled = true;
-          yield return new WaitForSeconds(2f);
+        LevelCompleteText.enabled = true;
+        // yield return new WaitForSeconds(1f);
+        timeToComplete.enabled = true;
+        // yield return new WaitForSeconds(1f);
+        enemiesKilled.enabled = true;
+        // yield return new WaitForSeconds(1f);
+        curScore.enabled = true;
+        // yield return new WaitForSeconds(1f);
+        topScore.enabled = true;
+        yield return new WaitForSeconds(2f);
 
 
         //Then turn them all off again
