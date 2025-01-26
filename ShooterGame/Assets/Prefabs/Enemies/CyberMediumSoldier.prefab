@@ -1068,7 +1068,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d69d01f788504a4dbd5253a33dfda18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 500
   sprintMod: 2
   facePlayerSpeed: 300
   distanceToActivateSprint: 20
@@ -1084,6 +1083,7 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   meleeWeapon: {fileID: 0}
   enemyBulletSpread: 3
+  bloodEffect: {fileID: 1457965128566214532, guid: daf3b5ed3660fb74e9fed57613b97a26, type: 3}
   animatorController: {fileID: 6493151389807901328}
   animSpeedTrans: 1
   locateWallPos: {fileID: 0}
@@ -1092,7 +1092,8 @@ MonoBehaviour:
   headPos: {fileID: 4578084996333317927}
   playerSphere: {fileID: 6971955848217395080}
   aiSphere: {fileID: 2768251631489912935}
-  rb: {fileID: -3280182982413767127}
+  roamDistance: 0
+  roamPauseTime: 0
 --- !u!136 &6772356447339329655
 CapsuleCollider:
   m_ObjectHideFlags: 0

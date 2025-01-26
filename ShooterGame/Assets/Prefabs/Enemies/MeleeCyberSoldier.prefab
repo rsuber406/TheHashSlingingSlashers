@@ -1207,6 +1207,7 @@ MonoBehaviour:
   firearmScript: {fileID: 0}
   meleeWeapon: {fileID: 8736694986035784163}
   enemyBulletSpread: 0
+  bloodEffect: {fileID: 1457965128566214532, guid: daf3b5ed3660fb74e9fed57613b97a26, type: 3}
   animatorController: {fileID: 3700920318263449828}
   animSpeedTrans: 1
   locateWallPos: {fileID: 9193405878861994825}
