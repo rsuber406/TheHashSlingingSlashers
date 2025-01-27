@@ -310,6 +310,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5116497393968361881, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
+      propertyPath: m_text
+      value: Level Complete!!!
+      objectReference: {fileID: 0}
     - target: {fileID: 6158668527819923137, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: m_IsActive
       value: 1

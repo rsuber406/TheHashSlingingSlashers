@@ -15,7 +15,7 @@ MonoBehaviour:
   model: {fileID: 8541198863447811700, guid: 2fc41c4986c86634bac9f5ff0038187b, type: 3}
   damage: 35
   range: 500
-  fireRate: 0.2
+  fireRate: 0.15
   ammoCurrent: 10
   ammoMax: 100
   shootPos: {fileID: 0}
