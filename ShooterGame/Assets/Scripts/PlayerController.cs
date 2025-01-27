@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private bool isGrounded;
     private bool isWallRunning;
     private int previousHealth;
-    private int maxHealth = 100;
+    private int maxHealth = 300;
     private bool hasTakenDmg;
     int gunListPosition = 0;
     private float originalGrappleSpeed;
