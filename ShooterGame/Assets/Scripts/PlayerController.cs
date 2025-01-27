@@ -72,6 +72,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private int maxHealth = 100;
     private bool hasTakenDmg;
     int gunListPosition = 0;
+    private float originalGrappleSpeed;
+    private float originalWallRunSpeed;
 
     float origMovementSpeed;
     float origHeight;
@@ -93,11 +95,18 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     
     void Start()
     {
+
+
+
+
         playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
+        originalGrappleSpeed = forwardGrappleForce;
+        originalWallRunSpeed = wallRunSpeed;
+        
 
         //other shit
         Timesincereload = Time.time + 10000;
@@ -715,6 +724,25 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             lineRenderer.enabled = false;
         }
+    }
+    public void DoubleGrappleSpeed()
+    {
+        forwardGrappleForce *= 2f;
+        upwardGrappleArkForce *= 2f;
+    }
+
+    public void ResetGrappleSpeed()
+    {
+        forwardGrappleForce /= 2f;
+        upwardGrappleArkForce /= 2f;
+    }
+    public void DoubleWallRunSpeed()
+    {
+        wallRunSpeed *= 2f;
+    }
+    public void ResetWallRunSpeed()
+    {
+        wallRunSpeed /= 2f;
     }
 }
 

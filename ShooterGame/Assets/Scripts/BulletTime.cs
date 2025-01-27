@@ -60,6 +60,8 @@ public class BulletTime : MonoBehaviour
             Time.timeScale = normalTimeScale;
             isBulletTimeActive = false;
             playerController.movementSpeed = originalPlayerSpeed;
+            playerController.ResetGrappleSpeed();
+            playerController.ResetWallRunSpeed();
         }
         else
         {
@@ -68,6 +70,8 @@ public class BulletTime : MonoBehaviour
             Time.timeScale = slowMotionFactor;
             isBulletTimeActive = true;
             bulletTimeTimer = 0f;
+            playerController.DoubleGrappleSpeed();
+            playerController.DoubleWallRunSpeed();
             Debug.Log("Current Movement Speed: " + playerController.movementSpeed);
         }
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
