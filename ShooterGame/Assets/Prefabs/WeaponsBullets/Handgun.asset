@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d74782e4802477e458688febbbe0a8ab, type: 3}
   m_Name: Handgun
   m_EditorClassIdentifier: 
-  model: {fileID: 5534874847616532687, guid: c08bd372cdff847d4be9a9d20c094ac2, type: 3}
+  model: {fileID: 6812088951033005018, guid: 0619925e74176274691013d52285154c, type: 3}
   damage: 20
   range: 60
   fireRate: 0.5
   ammoCurrent: 15
   ammoMax: 60
+  shootPos: {fileID: 0}
   hitEffect: {fileID: 0}
   shootSound: []
   shootSoundVolume: 0
