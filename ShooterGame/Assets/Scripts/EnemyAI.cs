@@ -232,7 +232,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
 
             }
 
-            firearmScript.AIShoot(randomRotation, transform.position);
+            firearmScript.AIShoot( randomRotation, transform.position);
 
 
         }
