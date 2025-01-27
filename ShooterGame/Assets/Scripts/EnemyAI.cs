@@ -219,7 +219,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         // This is how we should compare vectors, take a difference and then compare it against a small amount
         bool playerStationary = (playerPosition - playerPreviousPosition).sqrMagnitude < 0.0001f;
         // This will allow us to decrease the accuracy so out player is not being laser beamed
-        int applyInaccuracy = 20;
+        int applyInaccuracy = 40;
         int inaccuracyChance = Random.Range(0, 100);
         Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
         if (playerStationary)
@@ -228,7 +228,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             // Implement random number offsets so the AI does not laser beam the player
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), 1);
 
             }
 
@@ -242,7 +242,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), 1);
 
             }
             Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 45);
