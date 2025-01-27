@@ -1125,11 +1125,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
---- !u!4 &709519004 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2323207445594473063, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
-  m_PrefabInstance: {fileID: 1930523439}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &715243693 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6013582749420787289, guid: 8f2104e918042374cb5be6453d369bf2, type: 3}
@@ -1868,7 +1863,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _defaultData: {fileID: 11400000, guid: 7b78e326a655a354883eb6f3a36070e7, type: 2}
   _canvasPrefab: {fileID: 1926280506753864649, guid: dd88e50c89d53eb46abb5b1e73d9d025, type: 3}
-  _mainCamera: {fileID: 709519004}
 --- !u!1001 &1242139848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2633,13 +2627,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthAidPack
       objectReference: {fileID: 0}
+    - target: {fileID: 1609332638294674964, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2009621398791593822, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
+      propertyPath: timeToDespawn
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5365281526978796179, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
       propertyPath: m_LocalPosition.x
       value: 36.905365
       objectReference: {fileID: 0}
     - target: {fileID: 5365281526978796179, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.256
+      value: 3.91
       objectReference: {fileID: 0}
     - target: {fileID: 5365281526978796179, guid: 199ab42fa1b4cb64a859799f18dda031, type: 3}
       propertyPath: m_LocalPosition.z

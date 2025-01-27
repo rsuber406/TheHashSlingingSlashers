@@ -30,13 +30,23 @@ public class Damage : MonoBehaviour
             originPosition = rigidBody.position;
             rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
 
+            Destroy(gameObject, timeToDespawn);
         }
-        Destroy(gameObject, timeToDespawn);
 
     }
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.isTrigger) return;
+
+        IDamage dmg = other.GetComponent<IDamage>();
+        if (dmg != null)
+        {
+            if (other.gameObject.CompareTag("Player"))
+            {
+                dmg.TakeDamage(damage);
+                Destroy(gameObject);
+            }
+        }
     }
 
 
@@ -55,7 +65,7 @@ public class Damage : MonoBehaviour
 
             else if (collision.gameObject.CompareTag("Enemy"))
             {
-                
+
                 AINetwork aiNetwork = collision.gameObject.GetComponent<AINetwork>();
                 if (aiNetwork != null)
                 {
