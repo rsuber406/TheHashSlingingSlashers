@@ -43,8 +43,19 @@ public class Damage : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                dmg.TakeDamage(damage);
-                Destroy(gameObject);
+                if (damageType == DamageType.HealthPack)
+                {
+
+                    damage = damage * 3;
+                    dmg.TakeDamage(damage);
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    dmg.TakeDamage(damage);
+                    Destroy(gameObject);
+
+                }
             }
         }
     }
