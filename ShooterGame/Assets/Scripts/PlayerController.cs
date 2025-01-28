@@ -381,6 +381,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                     {
                         Debug.LogError("Missing Line Render For Grapple Rope");
                     }
+                    
+                    GameManager.instance.UseGrappleAbility();
                 }
             }
         }
@@ -767,6 +769,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         yield return new WaitForSeconds(grappleCooldown);
         isGrappling = false;
+        GameManager.instance.ReadyGrappleAbility();
 
         Debug.Log("Grapple Cooldown Ended");
     }
