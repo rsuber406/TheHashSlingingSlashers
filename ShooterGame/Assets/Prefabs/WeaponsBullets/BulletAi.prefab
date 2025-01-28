@@ -53,6 +53,7 @@ MonoBehaviour:
   rigidBody: {fileID: 7274241320571105035}
   damageType: 0
   sourceTag: Enemy
+  hitEffect: {fileID: 1311552373032290618, guid: bf6c415025a417945b1b099eea90655d, type: 3}
   damage: 20
 --- !u!54 &7274241320571105035
 Rigidbody:

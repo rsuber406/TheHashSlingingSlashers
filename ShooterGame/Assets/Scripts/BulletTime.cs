@@ -94,4 +94,5 @@ public class BulletTime : MonoBehaviour
             currentSlowMotionDuration = maxSlowMotionDuration;
         }
     }
+   public bool IsBulletTimeActive(){ return isBulletTimeActive; }
 }
