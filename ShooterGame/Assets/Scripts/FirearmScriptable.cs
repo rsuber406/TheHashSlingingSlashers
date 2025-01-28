@@ -13,4 +13,5 @@ public class FirearmScriptable : ScriptableObject
     public ParticleSystem hitEffect;
     public AudioClip[] shootSound;
     public float shootSoundVolume;
+    public bool isShotgun;
 }

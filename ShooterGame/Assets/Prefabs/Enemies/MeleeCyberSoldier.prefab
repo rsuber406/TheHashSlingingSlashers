@@ -1198,7 +1198,7 @@ MonoBehaviour:
   fov: 80
   searchForWall: 1000
   distanceRunTowardPlayerOnDmg: 40
-  health: 80
+  health: 150
   maxHealth: 50
   chasePlayer: 1
   isMelee: 1
