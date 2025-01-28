@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField][Range(1, 30)] float upwardGrappleArkForce;
     [SerializeField][Range(1, 10)] float minGrappleDistance;
     [SerializeField][Range(0.5f, 5)] float grappleCooldown;
+    [SerializeField] float grappleLineDelay;
     [SerializeField] LineRenderer lineRenderer;
     private bool isGrappling;
 
@@ -95,10 +96,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void Start()
     {
-
-
-
-
         playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
@@ -308,8 +305,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     IEnumerator Shoot()
     {
-
-
         if (numBulletsInMag > 0)
         {
             isShooting = true;
@@ -319,7 +314,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             yield return new WaitForSeconds(fireRate);
             isShooting = false;
         }
-
     }
 
     IEnumerator FlashMuzzle()
@@ -369,7 +363,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
         if (Input.GetButtonUp("Fire2"))
         {
-            StartCoroutine(EndGrappleHookTrail());
+            EndGrappleHook();
         }
     }
 
@@ -720,15 +714,29 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         numBulletsReserve = gun.ammoMax;
     }
 
-    IEnumerator EndGrappleHookTrail()
+    void EndGrappleHook()
     {
-        yield return new WaitForSeconds(grappleCooldown);
-        isGrappling = false;
+        StartCoroutine(DisableGrappleRope());
+        StartCoroutine(GrappleCoolDown());
+    }
+
+    IEnumerator DisableGrappleRope()
+    {
+        yield return new WaitForSeconds(grappleLineDelay);
         if (lineRenderer)
         {
             lineRenderer.enabled = false;
         }
     }
+
+    IEnumerator GrappleCoolDown()
+    {
+        yield return new WaitForSeconds(grappleCooldown);
+        isGrappling = false;
+        
+        Debug.Log("Grapple Cooldown Ended");
+    }
+    
     public void DoubleGrappleSpeed()
     {
         forwardGrappleForce *= 2f;
