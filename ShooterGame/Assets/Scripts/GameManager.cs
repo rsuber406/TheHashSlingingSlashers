@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
     {
         float timePassed = 0f;
         StartCoroutine(DisplayScores(completedlvl, ScoreIn));
-        float timeToWait = 8f;
+        float timeToWait = 4f;
         while (timePassed < timeToWait)
         {
             timePassed += Time.deltaTime;
