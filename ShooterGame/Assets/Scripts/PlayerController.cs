@@ -361,7 +361,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             }
         }
 
-        if (isGrappling)
+        if (isGrappling && lineRenderer)
         {
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, grapplePoint);
