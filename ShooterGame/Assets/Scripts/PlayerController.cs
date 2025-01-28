@@ -1,13 +1,15 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour, IDamage
+public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
+    [Header("------- Debug ------")]
     public bool isDebugMode;
-    
+
     // Serialized fields
-    [SerializeField] int movementSpeed;
+    [SerializeField] public float movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
     [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
@@ -16,30 +18,54 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] int health;
-    [SerializeField] GameObject bullet;
-    
-    [SerializeField] Transform shootPos;
-    [SerializeField] GameObject firearm;
-    [SerializeField] float wallRunSpeed;
-    [SerializeField] float wallRunDuration;
-    [SerializeField] float wallRunGroundCheckDistance = 2f;
-    [SerializeField] float groundCheckRay;
-    
-    // crouch
+
+    [SerializeField] int healthRegen;
+    [SerializeField] private float healthRegenDelay;
+
+
+    [Header("------- Wall Running ------")]
+    [SerializeField][Range(10, 20)] float wallRunSpeed;
+    [SerializeField][Range(1, 3)] float wallRunDuration;
+    [SerializeField][Range(1, 10)] float wallRunDetachForce;
+    [SerializeField][Range(1, 3)] float wallRunGroundCheckDistance = 2f;
+    [SerializeField][Range(1, 2)] float groundCheckRay;
+
+    [Header("------- Grappling ---------")]
+    [SerializeField][Range(1, 200)] float grappleCheckRay;
+    [SerializeField][Range(1, 60)] float forwardGrappleForce;
+    [SerializeField][Range(1, 30)] float upwardGrappleArkForce;
+    [SerializeField][Range(1, 10)] float minGrappleDistance;
+    [SerializeField][Range(0.5f, 5)] float grappleCooldown;
+    [SerializeField] LineRenderer lineRenderer;
+    private bool isGrappling;
+
+    [Header("------- Crouching ---------")]
     [SerializeField] float crouchHeight;
     [SerializeField] float crouchMovementSpeed;
     [SerializeField] float crouchSpeed;
 
-    // slide
+    [Header("------- Sliding -----------")]
     [SerializeField] float slideMod;
     [SerializeField] float slideMomentum;   // lower the number further you travel
     [SerializeField] float slideDuration;
     [SerializeField] float slideThreshold;
-    
+
+    [Header("------- Weapons -----------")]
+    [SerializeField] int projectileDmg;
+    [SerializeField] int projectileDistance;
+    [SerializeField] float fireRate;
+    [SerializeField] GameObject gunModel;
+    [SerializeField] GunScripts firearmScript;
+    [SerializeField] GameObject muzzleFlash;
+    [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
+    public int maxHealth = 300;
+
     // Private fields
     private CollisionInfo collisionInfo;
+    private Camera playerCamera;
     private Vector3 playerVel;
     private Vector3 moveDir;
+    private Vector3 grapplePoint;
     private int jumpCount;
     private bool isSprinting;
     private bool isGrounded;
@@ -49,60 +75,66 @@ public class PlayerController : MonoBehaviour, IDamage
     // jump
 
     private int previousHealth;
-    private int maxHealth = 100;
+
+    private bool hasTakenDmg;
+    int gunListPosition = 0;
+    private float originalGrappleSpeed;
+    private float originalWallRunSpeed;
 
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
-    bool isCrouching, isSliding;
+    bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
-    GunScripts firearmScript;
+
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;
     int numBulletsReserve;
     int numBulletsInMag;
+    private Coroutine regenCo;
 
     float Timesincereload;
 
-    //[SerializeField] Transform orientation;
+    private readonly float GRAVITY_CORRECTION = -2.0f;
 
-    //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
-    private float GRAVITY_CORRECTION = -2.0f;
-    
-    public int GetHealth() { return health; }
-    
     void Start()
     {
-       
-        firearmScript = firearm.GetComponent<GunScripts>();
+
+
+
+
+        playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
+        originalGrappleSpeed = forwardGrappleForce;
+        originalWallRunSpeed = wallRunSpeed;
 
-        //ammo
-        SetAllAmmoCount(30, 30, 30);
-        numBulletsReserve = maxMagCapacity * 4;
 
         //other shit
         Timesincereload = Time.time + 10000;
+
+        // GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
     void Update()
     {
-
         GameManager.instance.UpdatePlayerHeathUI(health);
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
 
         PlayerMovement();
+        HandleGrappleHook();
 
         CheckWallRun();
-        Shoot();
+        if (Input.GetButton("Shoot") && !isShooting)
+            StartCoroutine(Shoot());
         PerformReload();
         UpdateAmmoUI();
         CheckTimeSinceReload();
+        SelectGun();
 
         if (isDebugMode)
         {
@@ -121,7 +153,7 @@ public class PlayerController : MonoBehaviour, IDamage
     void Movement()
     {
         isGrounded = IsGrounded();
-        
+
         if (isGrounded && playerVel.y < 0)
         {
             jumpCount = 0;
@@ -136,7 +168,7 @@ public class PlayerController : MonoBehaviour, IDamage
             // cannot crouch while player in air
             isCrouching = false;
         }
-        
+
 
         // If wall running, handle movement against the wall
         if (isWallRunning)
@@ -150,15 +182,12 @@ public class PlayerController : MonoBehaviour, IDamage
             GroundedMovement(moveDir);
         }
 
-        //rb.AddForce(moveDir.normalized * movementSpeed * 10f, ForceMode.Force);
-        
+
         Jump();
-        
+
         // Apply player gravity, the order matters!
         playerVel.y -= gravity * Time.deltaTime;
         controller.Move(playerVel * Time.deltaTime);
-        
-        shootPos.transform.rotation = Camera.main.transform.rotation;
     }
 
     /// <summary>
@@ -174,14 +203,14 @@ public class PlayerController : MonoBehaviour, IDamage
 
         return false;
     }
-    
+
     /// <summary>
     /// Check If a player is far enough off the ground to start wall running
     /// </summary>
     /// <returns>bool</returns>
     private bool HasGroundClearance()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance ))
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, wallRunGroundCheckDistance))
         {
             if (hit.collider.CompareTag("Ground"))
             {
@@ -203,7 +232,7 @@ public class PlayerController : MonoBehaviour, IDamage
                 {
                     isCrouching = false;
                     Crouch();
-                    movementSpeed = (int) origMovementSpeed;
+                    movementSpeed = (int)origMovementSpeed;
                 }
 
                 isSprinting = true;
@@ -213,7 +242,7 @@ public class PlayerController : MonoBehaviour, IDamage
             if (Input.GetButtonUp("Sprint"))
             {
                 isSprinting = false;
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
             }
         }
     }
@@ -240,23 +269,38 @@ public class PlayerController : MonoBehaviour, IDamage
     public void TakeDamage(int amount)
     {
         previousHealth = health;
-        
+
         health -= amount;
-        
-        if(health > maxHealth)
+
+        if (health > maxHealth)
         {
             health = maxHealth;
         }
         GameManager.instance.UpdatePlayerHeathUI(health);
-        if(health > previousHealth)
-        {
-            // Input healing screen
-        }
-        
-        if(!hasTakenDmg) 
+
+        if (!hasTakenDmg)
             StartCoroutine(FlashDmgScreen());
+        if (regenCo != null)
+        {
+            StopCoroutine(regenCo);
+        }
+        regenCo = StartCoroutine(RegenerateHealth());
 
         UpdatePlayerUI();
+    }
+
+    private IEnumerator RegenerateHealth()
+    {
+        yield return new WaitForSeconds(healthRegenDelay);
+
+        while (health < maxHealth)
+        {
+            health += healthRegen;
+            health = Mathf.Min(health, maxHealth);
+            UpdatePlayerUI();
+            yield return new WaitForSeconds(1f);
+        }
+        regenCo = null;
     }
 
     void UpdatePlayerUI()
@@ -280,22 +324,70 @@ public class PlayerController : MonoBehaviour, IDamage
         }
     }
 
-    void Shoot()
+    IEnumerator Shoot()
     {
-        Camera camRef = Camera.main;
-        if (Input.GetButtonDown("Shoot") && ((numBulletsReserve > 0) || (numBulletsInMag > 0)))
+
+
+        if (numBulletsInMag > 0)
         {
-            if (numBulletsInMag > 0)
+            isShooting = true;
+            numBulletsInMag--;
+            firearmScript.PlayerShoot(projectileDmg);
+            StartCoroutine(FlashMuzzle());
+            yield return new WaitForSeconds(fireRate);
+            isShooting = false;
+        }
+
+    }
+
+    IEnumerator FlashMuzzle()
+    {
+        muzzleFlash.SetActive(true);
+        yield return new WaitForSeconds(0.01f);
+        muzzleFlash.SetActive(false);
+    }
+
+    void HandleGrappleHook()
+    {
+
+        if (Input.GetButtonDown("Fire2") && !isGrappling)
+        {
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, grappleCheckRay))
             {
-                firearmScript.PlayerShoot();
-                //count bullets set new bullet count on UI
-                numBulletsInMag--;
-                GameManager.instance.pubCurrentBulletsMagText.SetText(numBulletsInMag.ToString());
-                if (numBulletsReserve == 0)
+                float distance = Vector3.Distance(transform.position, hit.point);
+                if (distance > minGrappleDistance)
                 {
-                    Timesincereload = Time.time + 3;
+                    isGrappling = true;
+                    grapplePoint = hit.point;
+
+                    Vector3 direction = (grapplePoint - transform.position).normalized;
+
+                    playerVel = direction * forwardGrappleForce + Vector3.up * Mathf.Clamp(distance * 0.5f, 0, upwardGrappleArkForce);
+
+                    if (lineRenderer)
+                    {
+                        lineRenderer.enabled = true;
+                        lineRenderer.positionCount = 2;
+                        lineRenderer.SetPosition(0, transform.position);
+                        lineRenderer.SetPosition(1, grapplePoint);
+                    }
+                    else
+                    {
+                        Debug.LogError("Missing Line Render For Grapple Rope");
+                    }
                 }
             }
+        }
+
+        if (isGrappling && lineRenderer)
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, grapplePoint);
+        }
+
+        if (Input.GetButtonUp("Fire2"))
+        {
+            StartCoroutine(EndGrappleHookTrail());
         }
     }
 
@@ -307,7 +399,8 @@ public class PlayerController : MonoBehaviour, IDamage
             GameManager.instance.FlashDamageScreenOn();
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
-        } else
+        }
+        else
         {
             GameManager.instance.FlashHealthScreenOn();
             yield return new WaitForSeconds(0.1f);
@@ -353,13 +446,11 @@ public class PlayerController : MonoBehaviour, IDamage
     private Vector3 GetWallNormal()
     {
         // Check for left wall collision
-        RaycastHit leftHit;
-        if (Physics.Raycast(transform.position, -transform.right, out leftHit, 1f))
+        if (Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHit, 1f))
             return leftHit.normal;
 
         // Check for right wall collision
-        RaycastHit rightHit;
-        if (Physics.Raycast(transform.position, transform.right, out rightHit, 1f))
+        if (Physics.Raycast(transform.position, transform.right, out RaycastHit rightHit, 1f))
             return rightHit.normal;
 
         return Vector3.zero;
@@ -367,8 +458,11 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void DrawDebugLines()
     {
-        // Forward
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 50, Color.red);
+        // Shoot Distance Ray
+        Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * 50, Color.red);
+
+        // Grapple Check Ray
+        Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * grappleCheckRay, Color.yellow);
 
         // Raycast to the left
         bool isCollidingOnLeftWall = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHit, 1f);
@@ -381,7 +475,7 @@ public class PlayerController : MonoBehaviour, IDamage
         // Draw a raycast to the ground
         Debug.DrawRay(transform.position, Vector3.down * groundCheckRay, Color.blue);
     }
-    
+
     public void StartWallRun()
     {
         if (!isWallRunning)
@@ -395,6 +489,10 @@ public class PlayerController : MonoBehaviour, IDamage
     private IEnumerator EndWallRun_Internal()
     {
         yield return new WaitForSeconds(wallRunDuration);
+
+        Vector3 jumpDirection = GetWallNormal();
+        playerVel = jumpDirection.normalized * wallRunDetachForce;
+
         EndWallRun();
     }
 
@@ -411,27 +509,23 @@ public class PlayerController : MonoBehaviour, IDamage
                          // while running to prevent immediate gravity pull down
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
-    
+
     void GroundedMovement(Vector3 direction)
     {
         controller.Move(direction * (movementSpeed * Time.deltaTime));
     }
 
-    
+
     // Expand this to store character collision data in all directions and adata about what is being collided with.
     public struct CollisionInfo
     {
-        public bool above, below;
         public bool left, right;
-        public bool backward, forward;
 
         public void Reset()
         {
-            above = below = false;
             left = right = false;
-            backward = forward = false;
         }
-     }
+    }
 
     void PerformReload()
     {
@@ -440,7 +534,7 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             if (numBulletsReserve > 0)
             {
-               int bulletsToLoad = maxMagCapacity - numBulletsInMag;
+                int bulletsToLoad = maxMagCapacity - numBulletsInMag;
 
                 bulletsToLoad = Mathf.Min(bulletsToLoad, numBulletsReserve);
                 StartCoroutine(firearmScript.Reload());
@@ -466,14 +560,14 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
-        if(numBulletsInMag ==0 && Timesincereload >= Time.time)
+        if (numBulletsInMag == 0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
     }
     public void AddAmmo(int amount)
     {
-       numBulletsReserve += amount;
+        numBulletsReserve += amount;
         UpdateAmmoUI();
     }
 
@@ -490,7 +584,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
                 if (controller.height <= crouchHeight)
                 {
-                    movementSpeed = (int) crouchMovementSpeed;
+                    movementSpeed = (int)crouchMovementSpeed;
                     controller.height = crouchHeight;
                 }
             }
@@ -508,7 +602,7 @@ public class PlayerController : MonoBehaviour, IDamage
                     controller.height = origHeight;
 
                     if (!isSprinting)
-                        movementSpeed = (int) origMovementSpeed;
+                        movementSpeed = (int)origMovementSpeed;
 
                 }
             }
@@ -529,7 +623,7 @@ public class PlayerController : MonoBehaviour, IDamage
             controller.height = crouchHeight;
 
             movementSpeed = (int)origMovementSpeed;
-            movementSpeed *= (int) slideMod;
+            movementSpeed *= (int)slideMod;
         }
 
         else if (isSliding)
@@ -539,7 +633,7 @@ public class PlayerController : MonoBehaviour, IDamage
             {
                 isCrouching = false;
                 isSliding = false;
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
             }
 
             // Continue sliding
@@ -548,13 +642,13 @@ public class PlayerController : MonoBehaviour, IDamage
                 controller.Move(moveDir * (slideMod * Time.deltaTime));
 
                 slideTimer += Time.deltaTime;
-                movementSpeed -= (int) slideMod * (int) slideMomentum * (int) Time.deltaTime;
+                movementSpeed -= (int)slideMod * (int)slideMomentum * (int)Time.deltaTime;
             }
 
             // End slide if timer exceeds duration or player's speed drops below threshold
             if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
             {
-                movementSpeed = (int) origMovementSpeed;
+                movementSpeed = (int)origMovementSpeed;
                 isSliding = false;
                 isCrouching = true;
             }
@@ -564,7 +658,8 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
-    public void SetMaxMagCapacity(int maxMagCapacity) {
+    public void SetMaxMagCapacity(int maxMagCapacity)
+    {
         this.maxMagCapacity = maxMagCapacity;
     }
     public void SetMaxAmmo(int maxAmmo)
@@ -585,20 +680,20 @@ public class PlayerController : MonoBehaviour, IDamage
     public void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger) return;
-        if(other.tag == "DeathBox")
+        if (other.tag == "DeathBox")
         {
             //this is a deathbox trigger to kill the player. Use Deathbox Prefabs on Death pits - A
             TakeDamage(500);
             //why not just set the players health to zero?
         }
 
-        if(other.tag == "SpeedBox")
+        if (other.tag == "SpeedBox")
         {
             //This is a Speedbox Trigger. Use for speedup door/platform - A
-            StartCoroutine(Speedup());          
+            StartCoroutine(Speedup());
         }
     }
-    
+
 
     private IEnumerator Speedup()
     {
@@ -606,6 +701,70 @@ public class PlayerController : MonoBehaviour, IDamage
         movementSpeed = movementSpeed * 2;
         yield return new WaitForSeconds(2f);
         movementSpeed = (int)origMovementSpeed;
+    }
+
+    public void GrabGun(FirearmScriptable gun, Transform shootPos)
+    {
+        gunList.Add(gun);
+
+
+        ChangeGun();
+    }
+
+    void SelectGun()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPosition < gunList.Count - 1)
+        {
+
+            gunListPosition++;
+            ChangeGun();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && gunListPosition > 0)
+        {
+            gunListPosition--;
+            ChangeGun();
+        }
+
+    }
+    void ChangeGun()
+    {
+        FirearmScriptable gun = gunList[gunListPosition];
+        projectileDistance = gun.range;
+        fireRate = gun.fireRate;
+        projectileDmg = gun.damage;
+        gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+        SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
+        numBulletsReserve = gun.ammoMax;
+    }
+
+    IEnumerator EndGrappleHookTrail()
+    {
+        yield return new WaitForSeconds(grappleCooldown);
+        isGrappling = false;
+        if (lineRenderer)
+        {
+            lineRenderer.enabled = false;
+        }
+    }
+    public void DoubleGrappleSpeed()
+    {
+        forwardGrappleForce *= 2f;
+        upwardGrappleArkForce *= 2f;
+    }
+
+    public void ResetGrappleSpeed()
+    {
+        forwardGrappleForce /= 2f;
+        upwardGrappleArkForce /= 2f;
+    }
+    public void DoubleWallRunSpeed()
+    {
+        wallRunSpeed *= 2f;
+    }
+    public void ResetWallRunSpeed()
+    {
+        wallRunSpeed /= 2f;
     }
 }
 

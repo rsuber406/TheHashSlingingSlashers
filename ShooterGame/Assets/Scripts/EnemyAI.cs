@@ -28,6 +28,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     [SerializeField] GameObject meleeWeapon;
     [SerializeField] float enemyBulletSpread;
     [Header("AI Configuration")]
+    [SerializeField] private ParticleSystem bloodEffect;
     [SerializeField] Animator animatorController;
     [SerializeField] int animSpeedTrans;
     [SerializeField] Transform locateWallPos;
@@ -49,16 +50,17 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool canMeleeAttack;
     bool playerInRange;
     bool assistingFriend = false;
-    bool coverSetDirectionFinished = false;
     bool isRoaming = false;
     bool isAlive = true;
     float fovAsDecimal;
     float stoppingDistance;
     Color originalColor;
     Coroutine roamCo;
+    private DynamicTextManager dynamicTextManager;
 
     void Start()
     {
+        dynamicTextManager = GameManager.instance.dynamicTextManager;
         playerPreviousPosition = Vector3.zero;
         startingPos = this.transform.position;
         originalColor = model.material.color;
@@ -143,7 +145,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         }
         else
         {
-            if (!isShooting)
+            if (!isShooting && !isMelee)
                 HandleRangedCombatOnDmg(playerDirection);
 
 
@@ -151,7 +153,21 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         health -= amount;
         StartCoroutine(RegisterHit());
 
+
+        //blood
+        Quaternion bloodRotation = Quaternion.LookRotation(playerDirection);
+        Vector3 bloodSpawnPos = transform.position + (Vector3.up * 1f);
+        ParticleSystem blood = Instantiate(bloodEffect, bloodSpawnPos, bloodRotation);
+        blood.transform.SetParent(headPos.transform);
+
+        //text
+        Vector3 textPos = headPos.transform.position; 
+        string dmgText = amount.ToString();
+        DynamicTextData damageTextData = Resources.Load<DynamicTextData>("EnemyDamageTextData");
+        DynamicTextManager.CreateText(textPos, dmgText, damageTextData);
+
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)
@@ -203,7 +219,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         // This is how we should compare vectors, take a difference and then compare it against a small amount
         bool playerStationary = (playerPosition - playerPreviousPosition).sqrMagnitude < 0.0001f;
         // This will allow us to decrease the accuracy so out player is not being laser beamed
-        int applyInaccuracy = 20;
+        int applyInaccuracy = 40;
         int inaccuracyChance = Random.Range(0, 100);
         Quaternion randomRotation = Quaternion.Euler(1, 1, 1);
         if (playerStationary)
@@ -212,11 +228,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             // Implement random number offsets so the AI does not laser beam the player
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), 1);
 
             }
 
-            firearmScript.AIShoot(randomRotation, transform.position);
+            firearmScript.AIShoot( randomRotation, transform.position);
 
 
         }
@@ -226,7 +242,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             // Implement prediction of player movement with random offset to the player is not being laser beamed
             if (inaccuracyChance > applyInaccuracy)
             {
-                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread, enemyBulletSpread), Random.Range(-enemyBulletSpread, enemyBulletSpread), 1);
+                randomRotation = Quaternion.Euler(Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), Random.Range(-enemyBulletSpread * 2, enemyBulletSpread * 2), 1);
 
             }
             Vector3 rotateDir = PredictPlayerMovement(transform.position, GameManager.instance.player.transform.position, GameManager.instance.player.transform.position, 45);
@@ -267,7 +283,9 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
        
         agent.velocity = Vector3.zero;
         animatorController.SetTrigger("Death");
-    
+
+        CapsuleCollider disableCollider = this.GetComponent<CapsuleCollider>();
+        disableCollider.enabled = false;
         if (isMelee)
         {
             BoxCollider weaponCollider = meleeWeapon.GetComponent<BoxCollider>();
@@ -403,8 +421,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         Quaternion rotateAi = Quaternion.LookRotation(playerDirection);
         transform.rotation = rotateAi;
         agent.SetDestination(playerDirection);
-        PerformReload();
         if (isMelee) return;
+       
+        PerformReload();
+        StartCoroutine(DelayFireBack());
         StartCoroutine(Shoot());
 
     }
@@ -412,6 +432,10 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     public void TakeDamage(int amount)
     {
 
+    }
+    IEnumerator DelayFireBack()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 
     void FindNearestWall()
@@ -429,7 +453,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         int layerMask = LayerMask.GetMask("Wall");
         for (int i = 0; i < 9; i++)
         {
-            Debug.DrawRay(locateWallPos.position, directionForCast, Color.blue, Mathf.Infinity);
+          
             if (Physics.Raycast(locateWallPos.position, directionForCast, out hit, Mathf.Infinity, layerMask))
             {
 
@@ -474,15 +498,15 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
             float dotProductToWall = Vector3.Dot(transform.forward, GameManager.instance.player.transform.position);
             if (dotProductToWall < 0)
             {
-                Debug.Log("Less than zero");
+               
                 hitNorm = hitNorm * -1;
             }
             else if (dotProductToWall > 0)
             {
-                Debug.Log("Greater than zero");
+              
             }
             Vector3 aiToWall = (hitNorm * Vector3.Distance(transform.position, wallPoint) * 1.5f) + transform.position;
-            Debug.Log($"{aiToWall.x}, {aiToWall.y}, {aiToWall.z}");
+           
             float dotProductNewPosToPlayer = Vector3.Dot(aiToWall, (GameManager.instance.player.transform.forward).normalized);
             if(dotProductNewPosToPlayer < 0)
             {
