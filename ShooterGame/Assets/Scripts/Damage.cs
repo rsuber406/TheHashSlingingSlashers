@@ -94,8 +94,16 @@ public class Damage : MonoBehaviour
             }
         }
 
-        Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
-        DestroyItems();
+        if (collision.collider.gameObject.CompareTag("Bullet"))
+        {
+            return;
+        }
+        else
+        {
+            Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
+            Debug.Log(collision.collider.name);
+            DestroyItems();
+        }
     }
     //private void OnTriggerEnter(Collider other)
     //{
