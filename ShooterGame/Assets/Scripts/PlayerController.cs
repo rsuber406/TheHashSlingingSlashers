@@ -50,8 +50,6 @@ public class PlayerController : MonoBehaviour, IDamage
 
     private int previousHealth;
     private int maxHealth = 100;
-    private bool hasTakenDmg;
-    
 
     float origMovementSpeed;
     float origHeight;
@@ -71,7 +69,6 @@ public class PlayerController : MonoBehaviour, IDamage
     //[SerializeField] Transform orientation;
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
-    float Timesincereload;
     private float GRAVITY_CORRECTION = -2.0f;
     
     public int GetHealth() { return health; }
