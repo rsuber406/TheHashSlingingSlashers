@@ -61,22 +61,24 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public int maxHealth = 300;
 
     // Private fields
-    private CollisionInfo collisionInfo;
     private Camera playerCamera;
+    private CollisionInfo collisionInfo;
     private Vector3 playerVel;
     private Vector3 moveDir;
     private Vector3 grapplePoint;
-    private int jumpCount;
+
     private bool isSprinting;
     private bool isGrounded;
     private bool isWallRunning;
-
+    private bool isCrouching;
+    private bool isSliding;
+    private bool isShooting;
     private bool hasTakenDmg = false;
-    // jump
 
+
+    private int jumpCount;
     private int previousHealth;
 
-    private bool hasTakenDmg;
     int gunListPosition = 0;
     private float originalGrappleSpeed;
     private float originalWallRunSpeed;
@@ -84,7 +86,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
-    bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
 
@@ -99,11 +100,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     private readonly float GRAVITY_CORRECTION = -2.0f;
 
+
     void Start()
     {
-
-
-
 
         playerCamera = Camera.main;
         // w/e this shit is
