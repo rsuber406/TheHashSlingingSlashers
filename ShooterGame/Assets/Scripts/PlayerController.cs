@@ -5,16 +5,14 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
-    [Header("------- Debug ------")] public bool isDebugMode;
+    [Header("------- Debug ------")]
+    public bool isDebugMode;
 
     // Serialized fields
     [SerializeField] public float movementSpeed;
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
-
-    [SerializeField]
-    int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
-
+    [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
     [SerializeField] int jumpMax;
     [SerializeField] float gravity; // Negative value indicating downward force
     [SerializeField] CharacterController controller;
@@ -24,40 +22,36 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] private float healthRegenDelay;
 
 
-    [Header("------- Wall Running ------")] [SerializeField] [Range(10, 20)]
-    float wallRunSpeed;
+    [Header("------- Wall Running ------")]
+    [SerializeField][Range(10, 20)] float wallRunSpeed;
+    [SerializeField][Range(1, 3)] float wallRunDuration;
+    [SerializeField][Range(1, 10)] float wallRunDetachForce;
+    [SerializeField][Range(1, 3)] float wallRunGroundCheckDistance = 2f;
+    [SerializeField][Range(1, 2)] float groundCheckRay;
 
-    [SerializeField] [Range(1, 3)] float wallRunDuration;
-    [SerializeField] [Range(1, 10)] float wallRunDetachForce;
-    [SerializeField] [Range(1, 3)] float wallRunGroundCheckDistance = 2f;
-    [SerializeField] [Range(1, 2)] float groundCheckRay;
-
-    [Header("------- Grappling ---------")] [SerializeField] [Range(1, 200)]
-    float grappleCheckRay;
-
-    [SerializeField] [Range(1, 60)] float forwardGrappleForce;
-    [SerializeField] [Range(1, 30)] float upwardGrappleArkForce;
-    [SerializeField] [Range(1, 10)] float minGrappleDistance;
-    [SerializeField] [Range(0.5f, 5)] float grappleCooldown;
+    [Header("------- Grappling ---------")]
+    [SerializeField][Range(1, 200)] float grappleCheckRay;
+    [SerializeField][Range(1, 60)] float forwardGrappleForce;
+    [SerializeField][Range(1, 30)] float upwardGrappleArkForce;
+    [SerializeField][Range(1, 10)] float minGrappleDistance;
+    [SerializeField][Range(0.5f, 5)] float grappleCooldown;
+    [SerializeField] float grappleLineDelay;
     [SerializeField] LineRenderer lineRenderer;
     private bool isGrappling;
 
-    [Header("------- Crouching ---------")] [SerializeField]
-    float crouchHeight;
-
+    [Header("------- Crouching ---------")]
+    [SerializeField] float crouchHeight;
     [SerializeField] float crouchMovementSpeed;
     [SerializeField] float crouchSpeed;
 
-    [Header("------- Sliding -----------")] [SerializeField]
-    float slideMod;
-
-    [SerializeField] float slideMomentum; // lower number more further you go
+    [Header("------- Sliding -----------")]
+    [SerializeField] float slideMod;
+    [SerializeField] float slideMomentum;   // lower number more further you go
     [SerializeField] float slideDuration;
     [SerializeField] float slideThreshold;
 
-    [Header("------- Weapons -----------")] [SerializeField]
-    int projectileDmg;
-
+    [Header("------- Weapons -----------")]
+    [SerializeField] int projectileDmg;
     [SerializeField] int projectileDistance;
     [SerializeField] float fireRate;
     [SerializeField] GameObject gunModel;
@@ -261,7 +255,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             health = maxHealth;
         }
-
         GameManager.instance.UpdatePlayerHeathUI(health);
 
         if (!hasTakenDmg)
@@ -270,7 +263,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             StopCoroutine(regenCo);
         }
-
         regenCo = StartCoroutine(RegenerateHealth());
 
         UpdatePlayerUI();
@@ -287,7 +279,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             UpdatePlayerUI();
             yield return new WaitForSeconds(1f);
         }
-
         regenCo = null;
     }
 
@@ -316,29 +307,12 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         if (numBulletsInMag > 0)
         {
-            if (gunList[gunListPosition].isShotgun)
-            {
-                numBulletsInMag--;
-                isShooting = true;
-                for (int i = 0; i < 9; i++)
-                {
-                    firearmScript.PlayerShoot(projectileDmg, gunList[gunListPosition].isShotgun);
-                    yield return new WaitForSeconds(0.008f);
-                }
-                    StartCoroutine(FlashMuzzle());
-
-                yield return new WaitForSeconds(fireRate);
-                isShooting = false;
-            }
-            else
-            {
-                isShooting = true;
-                numBulletsInMag--;
-                firearmScript.PlayerShoot(projectileDmg);
-                StartCoroutine(FlashMuzzle());
-                yield return new WaitForSeconds(fireRate);
-                isShooting = false;
-            }
+            isShooting = true;
+            numBulletsInMag--;
+            firearmScript.PlayerShoot(projectileDmg);
+            StartCoroutine(FlashMuzzle());
+            yield return new WaitForSeconds(fireRate);
+            isShooting = false;
         }
     }
 
@@ -351,10 +325,10 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void HandleGrappleHook()
     {
+
         if (Input.GetButtonDown("Fire2") && !isGrappling)
         {
-            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit,
-                    grappleCheckRay))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, grappleCheckRay))
             {
                 float distance = Vector3.Distance(transform.position, hit.point);
                 if (distance > minGrappleDistance)
@@ -364,8 +338,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
                     Vector3 direction = (grapplePoint - transform.position).normalized;
 
-                    playerVel = direction * forwardGrappleForce +
-                                Vector3.up * Mathf.Clamp(distance * 0.5f, 0, upwardGrappleArkForce);
+                    playerVel = direction * forwardGrappleForce + Vector3.up * Mathf.Clamp(distance * 0.5f, 0, upwardGrappleArkForce);
 
                     if (lineRenderer)
                     {
@@ -382,7 +355,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             }
         }
 
-        if (isGrappling)
+        if (isGrappling && lineRenderer)
         {
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, grapplePoint);
@@ -390,7 +363,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
         if (Input.GetButtonUp("Fire2"))
         {
-            StartCoroutine(EndGrappleHookTrail());
+            EndGrappleHook();
         }
     }
 
@@ -409,7 +382,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             yield return new WaitForSeconds(0.1f);
             GameManager.instance.FlashDamageScreenOff();
         }
-
         hasTakenDmg = false;
         if (health <= 0)
         {
@@ -510,7 +482,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
         playerVel.y = 0; // This enables us to override player velocity
-        // while running to prevent immediate gravity pull down
+                         // while running to prevent immediate gravity pull down
         controller.Move(moveDirection * (wallRunSpeed * Time.deltaTime));
     }
 
@@ -533,6 +505,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void PerformReload()
     {
+
         if (Input.GetButtonDown("Reload"))
         {
             if (numBulletsReserve > 0)
@@ -561,14 +534,13 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         GameManager.instance.pubCurrentBulletsReserveText.SetText(numBulletsReserve.ToString());
     }
 
-    void CheckTimeSinceReload() //TO DO: I DONT WORK!
+    void CheckTimeSinceReload()//TO DO: I DONT WORK!
     {
         if (numBulletsInMag == 0 && Timesincereload >= Time.time)
         {
             GameManager.instance.PubReloadText.enabled = true;
         }
     }
-
     public void AddAmmo(int amount)
     {
         numBulletsReserve += amount;
@@ -607,6 +579,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
                     if (!isSprinting)
                         movementSpeed = (int)origMovementSpeed;
+
                 }
             }
         }
@@ -657,27 +630,22 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             }
         }
     }
-
     public void TakeDamage(int amount, Vector3 origin)
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
     }
-
     public void SetMaxMagCapacity(int maxMagCapacity)
     {
         this.maxMagCapacity = maxMagCapacity;
     }
-
     public void SetMaxAmmo(int maxAmmo)
     {
         numBulletsReserve = maxAmmo;
     }
-
     public void SetCurrentAmmo(int ammo)
     {
         numBulletsInMag = ammo;
     }
-
     public void SetAllAmmoCount(int maxMagCapacity, int maxAmmo, int currentAmmo)
     {
         this.maxMagCapacity = maxMagCapacity;
@@ -723,6 +691,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPosition < gunList.Count - 1)
         {
+
             gunListPosition++;
             ChangeGun();
         }
@@ -731,8 +700,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             gunListPosition--;
             ChangeGun();
         }
-    }
 
+    }
     void ChangeGun()
     {
         FirearmScriptable gun = gunList[gunListPosition];
@@ -745,16 +714,29 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         numBulletsReserve = gun.ammoMax;
     }
 
-    IEnumerator EndGrappleHookTrail()
+    void EndGrappleHook()
     {
-        yield return new WaitForSeconds(grappleCooldown);
-        isGrappling = false;
+        StartCoroutine(DisableGrappleRope());
+        StartCoroutine(GrappleCoolDown());
+    }
+
+    IEnumerator DisableGrappleRope()
+    {
+        yield return new WaitForSeconds(grappleLineDelay);
         if (lineRenderer)
         {
             lineRenderer.enabled = false;
         }
     }
 
+    IEnumerator GrappleCoolDown()
+    {
+        yield return new WaitForSeconds(grappleCooldown);
+        isGrappling = false;
+        
+        Debug.Log("Grapple Cooldown Ended");
+    }
+    
     public void DoubleGrappleSpeed()
     {
         forwardGrappleForce *= 2f;
@@ -766,14 +748,15 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         forwardGrappleForce /= 2f;
         upwardGrappleArkForce /= 2f;
     }
-
     public void DoubleWallRunSpeed()
     {
         wallRunSpeed *= 2f;
     }
-
     public void ResetWallRunSpeed()
     {
         wallRunSpeed /= 2f;
     }
 }
+
+
+
