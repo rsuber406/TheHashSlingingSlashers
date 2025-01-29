@@ -157,11 +157,19 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         //blood
         Quaternion bloodRotation = Quaternion.LookRotation(playerDirection);
         Vector3 bloodSpawnPos = transform.position + (Vector3.up * 1f);
+        float randomX = Random.Range(-0.1f, 0.2f);
+        float randomY = Random.Range(0.1f, 0.1f);
+        float randomZ = Random.Range(-0.1f, 0.1f);
+        bloodSpawnPos += new Vector3(randomX, randomY, randomZ);
         ParticleSystem blood = Instantiate(bloodEffect, bloodSpawnPos, bloodRotation);
         blood.transform.SetParent(headPos.transform);
 
         //text
-        Vector3 textPos = headPos.transform.position; 
+        Vector3 textPos = headPos.transform.position;
+        float randomXText = Random.Range(-0.6f, 0.6f);
+        float randomYText = Random.Range(0.1f, 0.6f);
+        float randomZText = Random.Range(-0.6f, 0.6f);
+        textPos += new Vector3(randomXText, randomYText, randomZText);
         string dmgText = amount.ToString();
         DynamicTextData damageTextData = Resources.Load<DynamicTextData>("EnemyDamageTextData");
         DynamicTextManager.CreateText(textPos, dmgText, damageTextData);
