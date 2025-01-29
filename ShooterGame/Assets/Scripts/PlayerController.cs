@@ -5,32 +5,44 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
-    [Header("------- Debug ------")]
+    [Header("------- Debug -------")]
     public bool isDebugMode;
 
-    // Serialized fields
-    [SerializeField] public float movementSpeed;
-    [SerializeField] int sprintMod;
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
-    [SerializeField] int jumpMax;
-    [SerializeField] float gravity; // Negative value indicating downward force
+    [Header("------- Components -------")]
+
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
-    [SerializeField] int health;
+    [SerializeField] AudioSource aud;
 
+    [Header("------- Player Movement -------")]
+    [SerializeField] public float movementSpeed;
+    [SerializeField][Range(1, 3)] float sprintSpeed;
+    [SerializeField] float jumpSpeed;
+    [SerializeField] float jumpMax;
+    [SerializeField] float forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
+    [SerializeField] float gravity; // Negative value indicating downward force
+    
+    [Header("------- Crouch -------")]
+    [SerializeField][Range(1, 5)] float crouchMovementSpeed;
+    [SerializeField][Range(1, 10)] float crouchSpeed;
+    [SerializeField][Range(0.3f, 1)] float crouchHeight;
+    [SerializeField][Range(2, 4)] float slideSpeed;
+    [SerializeField][Range(1, 8)] float slideDis;   // lower the number further you travel
+
+    [Header("------- Player Health -------")]
+    [SerializeField] int health;
     [SerializeField] int healthRegen;
     [SerializeField] private float healthRegenDelay;
+    public int maxHealth = 300;
 
-
-    [Header("------- Wall Running ------")]
+    [Header("------- Wall Running -------")]
     [SerializeField][Range(10, 20)] float wallRunSpeed;
     [SerializeField][Range(1, 3)] float wallRunDuration;
     [SerializeField][Range(1, 10)] float wallRunDetachForce;
     [SerializeField][Range(1, 3)] float wallRunGroundCheckDistance = 2f;
     [SerializeField][Range(1, 2)] float groundCheckRay;
 
-    [Header("------- Grappling ---------")]
+    [Header("------- Grappling -------")]
     [SerializeField][Range(1, 200)] float grappleCheckRay;
     [SerializeField][Range(1, 60)] float forwardGrappleForce;
     [SerializeField][Range(1, 30)] float upwardGrappleArkForce;
@@ -39,18 +51,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LineRenderer lineRenderer;
     private bool isGrappling;
 
-    [Header("------- Crouching ---------")]
-    [SerializeField] float crouchHeight;
-    [SerializeField] float crouchMovementSpeed;
-    [SerializeField] float crouchSpeed;
-
-    [Header("------- Sliding -----------")]
-    [SerializeField] float slideMod;
-    [SerializeField] float slideMomentum;   // lower the number further you travel
-    [SerializeField] float slideDuration;
-    [SerializeField] float slideThreshold;
-
-    [Header("------- Weapons -----------")]
+    [Header("------- Weapons -------")]
     [SerializeField] int projectileDmg;
     [SerializeField] int projectileDistance;
     [SerializeField] float fireRate;
@@ -58,7 +59,15 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GunScripts firearmScript;
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
-    public int maxHealth = 300;
+
+    [Header("------- Audio -------")]
+    [SerializeField] AudioClip[] audSlide;
+    [SerializeField][Range(0, 1)] float audSlideVol; 
+    [SerializeField] AudioClip[] audJump;
+    [SerializeField][Range(0, 1)] float audJumpVol;
+
+
+
 
     // Private fields
     private Camera playerCamera;
@@ -73,6 +82,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     private bool isCrouching;
     private bool isSliding;
     private bool isShooting;
+    private bool wasSprinting;
     private bool hasTakenDmg = false;
 
 
@@ -86,7 +96,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     float origMovementSpeed;
     float origHeight;
     float slideTimer;
-
+    float crouch;
     float bulletTimeLeft;
 
     BulletTime bt;
@@ -107,7 +117,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
-        origHeight = controller.height;
+        origHeight = transform.localScale.y;
         origMovementSpeed = movementSpeed;
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
@@ -231,18 +241,19 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                 {
                     isCrouching = false;
                     Crouch();
-                    movementSpeed = (int)origMovementSpeed;
+                    movementSpeed = origMovementSpeed;
                 }
 
                 isSprinting = true;
-                movementSpeed *= sprintMod;
+                movementSpeed *= sprintSpeed;
             }
 
             if (Input.GetButtonUp("Sprint"))
             {
                 isSprinting = false;
-                movementSpeed = (int)origMovementSpeed;
+                movementSpeed = origMovementSpeed;
             }
+
         }
     }
 
@@ -251,6 +262,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
+            aud.PlayOneShot(audJump[Random.Range(0, audJump.Length)], audJumpVol);
 
             if (isWallRunning)
             {
@@ -579,30 +591,32 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
             if (isCrouching)
             {
-                controller.height -= crouchSpeed * Time.deltaTime;
+                movementSpeed = crouchMovementSpeed;
 
-                if (controller.height <= crouchHeight)
+                crouch = transform.localScale.y;
+                crouch -= crouchSpeed * Time.deltaTime;
+
+                transform.localScale = new Vector3(transform.localScale.x, crouch, transform.localScale.z);
+
+                if (crouch <= crouchHeight)
                 {
-                    movementSpeed = (int)crouchMovementSpeed;
-                    controller.height = crouchHeight;
+                    transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
                 }
             }
 
-            else if (!isCrouching && !isSliding)
-            {
-                controller.height += crouchSpeed * Time.deltaTime;
+            else if (!isCrouching)
+        {
+                crouch = transform.localScale.y;
+                crouch += crouchSpeed * Time.deltaTime;
 
-                // was Supposed to stop the jitter from un crouching
-                /* if (controller.height < normalHeight)
-                    player.position += offset * Time.deltaTime;*/
+                transform.localScale = new Vector3(transform.localScale.x, crouch, transform.localScale.z);
 
-                if (controller.height >= origHeight)
+                if (crouch >= origHeight)
                 {
-                    controller.height = origHeight;
+                    transform.localScale = new Vector3(transform.localScale.x, origHeight, transform.localScale.z);
 
                     if (!isSprinting)
-                        movementSpeed = (int)origMovementSpeed;
-
+                        movementSpeed = origMovementSpeed;
                 }
             }
         }
@@ -615,14 +629,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             // Start sliding
             isSliding = true;
-            isCrouching = false;
-            isSprinting = false;
-
-            slideTimer = 0f;
-            controller.height = crouchHeight;
-
-            movementSpeed = (int)origMovementSpeed;
-            movementSpeed *= (int)slideMod;
+            movementSpeed = origMovementSpeed * slideSpeed;
+            aud.PlayOneShot(audSlide[Random.Range(0, audSlide.Length)], audSlideVol);
         }
 
         else if (isSliding)
@@ -630,29 +638,51 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             // slide cancel
             if (Input.GetButtonDown("Crouch"))
             {
-                isCrouching = false;
                 isSliding = false;
-                movementSpeed = (int)origMovementSpeed;
+                movementSpeed = origMovementSpeed;
+                aud.Stop();
+            }
+
+            else if (Input.GetButtonDown("Sprint"))
+            {
+                isSliding = false;
+                movementSpeed *= sprintSpeed;
+                aud.Stop();
             }
 
             // Continue sliding
             else
             {
-                controller.Move(moveDir * (slideMod * Time.deltaTime));
+                crouch = transform.localScale.y;
+                crouch -= crouchSpeed * Time.deltaTime;
 
-                slideTimer += Time.deltaTime;
-                movementSpeed -= (int)slideMod * (int)slideMomentum * (int)Time.deltaTime;
-            }
+                transform.localScale = new Vector3(transform.localScale.x, crouch, transform.localScale.z);
 
-            // End slide if timer exceeds duration or player's speed drops below threshold
-            if ((slideTimer >= slideDuration || movementSpeed < slideThreshold) && isSliding)
-            {
-                movementSpeed = (int)origMovementSpeed;
-                isSliding = false;
-                isCrouching = true;
+                if (crouch <= crouchHeight)
+                {
+                    transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
+                }
+
+                controller.Move(moveDir * (slideSpeed * Time.deltaTime));
+                movementSpeed -= slideSpeed * slideDis * Time.deltaTime;
+
+                // End slide when slide speed reaches crouch speed
+                if ((movementSpeed <= crouchMovementSpeed))
+                {
+                    isCrouching = true;
+                    isSliding = false;
+                    aud.Stop();
+                }
+                else if (!isGrounded)
+                {
+                    movementSpeed = origMovementSpeed;
+                    isSliding = false;
+                    aud.Stop();
+                }
             }
         }
     }
+
     public void TakeDamage(int amount, Vector3 origin)
     {
         // There should be no implementation here. This is only because of the interface class and AI needing special override
@@ -766,6 +796,3 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         wallRunSpeed /= 2f;
     }
 }
-
-
-

@@ -522,17 +522,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebugMode: 1
-  movementSpeed: 5
-  sprintMod: 2
-  jumpSpeed: 17
-  forwardJumpBoost: 1
-  jumpMax: 2
-  gravity: 40
   controller: {fileID: 2320961185408548562}
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 64
-
+  movementSpeed: 5
+  sprintSpeed: 2
+  jumpSpeed: 12
+  jumpMax: 2
+  forwardJumpBoost: 1
+  gravity: 35
+  crouchMovementSpeed: 4
+  crouchSpeed: 5
+  crouchHeight: 0.5
+  slideSpeed: 3
+  slideDis: 5
   health: 100
   healthRegen: 0
   healthRegenDelay: 0
@@ -541,21 +545,12 @@ MonoBehaviour:
   wallRunDetachForce: 5
   wallRunGroundCheckDistance: 2
   groundCheckRay: 1.2
-
   grappleCheckRay: 200
   forwardGrappleForce: 50
   upwardGrappleArkForce: 20
   minGrappleDistance: 5
-  grappleCooldown: 1
+  grappleCooldown: 5
   lineRenderer: {fileID: 5189091951890410549}
-  crouchHeight: 1
-  crouchMovementSpeed: 4
-  crouchSpeed: 8
-  slideMod: 4
-  slideMomentum: 8
-  slideDuration: 0.75
-  slideThreshold: 1
-
   projectileDmg: 0
   projectileDistance: 0
   fireRate: 0
