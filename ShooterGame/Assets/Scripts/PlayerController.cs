@@ -89,7 +89,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
-
+    private float maxSpeedClamp;
+    private float minSpeedClamp;
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;

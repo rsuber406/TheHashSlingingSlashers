@@ -9,7 +9,8 @@ public class Damage : MonoBehaviour
         Moving,
         Stationary,
         HealthPack,
-        GroundTrap
+        GroundTrap,
+        Lava
     }
 
     [Header("Bullet Info")] [SerializeField]
@@ -53,6 +54,11 @@ public class Damage : MonoBehaviour
                 audioSource.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)], 5f);
             Destroy(gameObject, timeToDespawn);
         }
+        else if (damageType == DamageType.Lava)
+        {
+            audioSource.PlayOneShot(hitSounds[0], 5f);
+        }
+        
     }
 
     IEnumerator ActivateCollider(Collider collider)
