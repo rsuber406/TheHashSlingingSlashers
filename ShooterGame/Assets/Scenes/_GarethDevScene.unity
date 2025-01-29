@@ -221,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3164523505579826833, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 10
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 3986547786841233704, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: m_Name
@@ -239,10 +239,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5440754179277999109, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
-      propertyPath: playerDmgScreen
-      value: 
-      objectReference: {fileID: 599613706}
     - target: {fileID: 7471664568411328949, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
       propertyPath: m_SizeDelta.x
       value: 1920
@@ -256,11 +252,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
---- !u!1 &599613706 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6503075276398383793, guid: 3f4162683cbd62343a5d681dcc895686, type: 3}
-  m_PrefabInstance: {fileID: 434894237}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &833518879
 PrefabInstance:
   m_ObjectHideFlags: 0
