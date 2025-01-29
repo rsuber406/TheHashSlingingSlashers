@@ -6650,6 +6650,10 @@ PrefabInstance:
       propertyPath: gunList.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3447812434844131785, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 4271366464552701038, guid: 0f5ec05fd7babbe49a3572f2445d38a7, type: 3}
     - target: {fileID: 4125394140292719060, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: m_LocalPosition.x
       value: 52.272625
