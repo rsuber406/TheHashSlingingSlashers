@@ -82,7 +82,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int gunListPosition = 0;
     private float originalGrappleSpeed;
     private float originalWallRunSpeed;
-    private float originalFireRate;
 
     float origMovementSpeed;
     float origHeight;
@@ -90,7 +89,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
-    
+
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;
@@ -101,8 +100,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
     private readonly float GRAVITY_CORRECTION = -2.0f;
-    private BulletTime bulletTimeScript;
-    private bool bulletTimeEnded = false;
+
     void Start()
     {
         playerCamera = Camera.main;
@@ -112,7 +110,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         origMovementSpeed = movementSpeed;
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
-        bulletTimeScript = this.GetComponent<BulletTime>();
 
 
         //other shit
@@ -129,11 +126,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         Crouch();
         Slide();
         CheckWallRun();
-        if (Input.GetButton("Shoot") && !isShooting && !GameManager.instance.isPaused)
-        {
+        if (Input.GetButton("Shoot") && !isShooting)
             StartCoroutine(Shoot());
-        }
-
         PerformReload();
         UpdateAmmoUI();
         CheckTimeSinceReload();
@@ -144,7 +138,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             DrawDebugLines();
         }
     }
-    
 
     void Movement()
     {
@@ -328,19 +321,14 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             {
                 isShooting = true;
                 numBulletsInMag--;
-                
-                float waitTime = fireRate;
-                if (bulletTimeScript.IsBulletTimeActive())
-                {
-                    waitTime = waitTime / 2;
-                }
+
                 for (int i = 0; i < 9; i++)
                 {
                     firearmScript.PlayerShoot(projectileDmg, gunList[gunListPosition].isShotgun);
                     StartCoroutine(FlashMuzzle());
                 }
 
-                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(fireRate);
                 isShooting = false;
             }
             else
@@ -349,14 +337,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                 numBulletsInMag--;
                 firearmScript.PlayerShoot(projectileDmg);
                 StartCoroutine(FlashMuzzle());
-                float waitTime = fireRate;
-                if (bulletTimeScript.IsBulletTimeActive())
-                {
-                    waitTime = waitTime / 2;
-                }
-                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(fireRate);
                 isShooting = false;
+                
             }
+
         }
     }
 
@@ -763,7 +748,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
         SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
         numBulletsReserve = gun.ammoMax;
-        originalFireRate = fireRate;
     }
 
     void EndGrappleHook()

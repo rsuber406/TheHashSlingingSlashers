@@ -120,8 +120,13 @@ public class Damage : MonoBehaviour
         else
         {
             Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
+
+            Debug.Log(collision.collider.name);
+            DestroyItems();
+
             
             
+
         }
 
         StartCoroutine((DestroyBullets()));
