@@ -49,6 +49,8 @@ public class Damage : MonoBehaviour
             collider.enabled = false;
             rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
             StartCoroutine(ActivateCollider(collider));
+            if (hitSounds.Length > 0)
+                audioSource.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)], 5f);
             Destroy(gameObject, timeToDespawn);
         }
     }
@@ -110,8 +112,7 @@ public class Damage : MonoBehaviour
             }
         }
 
-        if (hitSounds.Length > 0)
-            audioSource.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)], 5f);
+      
         if (collision.collider.gameObject.CompareTag("Bullet"))
         {
             return;
