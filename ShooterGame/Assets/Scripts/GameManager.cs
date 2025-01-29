@@ -7,15 +7,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    [Header("----------- Player HUD --------------")]
     [SerializeField] GameObject PlayerHUD;
+    [SerializeField] private Image grappleHookImage;
+    [SerializeField] private Color grappleHookInactiveColor;
+    [SerializeField] GameObject playerDmgScreen;
+    [SerializeField] GameObject playerGainHealth;
+    [SerializeField] GameObject lowHealthScreen;
+    
+    [Header("----------- Game Menus --------------")]
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
-    [SerializeField] GameObject playerDmgScreen;
-    [SerializeField] GameObject playerGainHealth;
 
-    [SerializeField] GameObject lowHealthScreen;
+
     [SerializeField] TMP_Text CurrentBulletsMagText;
     [SerializeField] TMP_Text CurrentBulletsReserveText;
     [SerializeField] TMP_Text ReloadText;
@@ -52,18 +58,14 @@ public class GameManager : MonoBehaviour
     bool loadedConfigs = false;
     void Awake()
     {
-
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerscript = player.GetComponent<PlayerController>();
         scoreSys = FindFirstObjectByType<ScoreSys>();
-
-
     }
 
     void LoadConfigs()
     {
-        
         DynamicTextManager.mainCamera = Camera.main.transform;
         loadedConfigs = true;
     }
@@ -168,7 +170,7 @@ public class GameManager : MonoBehaviour
     {
         float timePassed = 0f;
         StartCoroutine(DisplayScores(completedlvl, ScoreIn));
-        float timeToWait = 8f;
+        float timeToWait = 4f;
         while (timePassed < timeToWait)
         {
             timePassed += Time.deltaTime;
@@ -215,6 +217,16 @@ public class GameManager : MonoBehaviour
         curScore.enabled = false;
         topScore.enabled = false;
         scoreTimer = 0;
+    }
+
+    public void UseGrappleAbility()
+    {
+        grappleHookImage.color = grappleHookInactiveColor;
+    }
+
+    public void ReadyGrappleAbility()
+    {
+        grappleHookImage.color = Color.white;
     }
 
 }

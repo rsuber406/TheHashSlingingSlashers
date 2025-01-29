@@ -16,8 +16,8 @@ MonoBehaviour:
   damage: 35
   range: 500
   fireRate: 0.15
-  ammoCurrent: 10
-  ammoMax: 100
+  ammoCurrent: 30
+  ammoMax: 150
   shootPos: {fileID: 0}
   hitEffect: {fileID: 0}
   shootSound: []

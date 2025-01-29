@@ -550,6 +550,8 @@ MonoBehaviour:
   upwardGrappleArkForce: 20
   minGrappleDistance: 5
   grappleCooldown: 5
+
+  grappleLineDelay: 1
   lineRenderer: {fileID: 5189091951890410549}
   projectileDmg: 0
   projectileDistance: 0

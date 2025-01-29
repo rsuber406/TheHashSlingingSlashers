@@ -32,7 +32,7 @@ public class GunScripts : MonoBehaviour
 
     public float GetFireRate() { return fireRate; }
 
-    public void PlayerShoot(int damageRef)
+    public void PlayerShoot(int damageRef ,bool isShotgun = false)
     {
         Ray cameraRay = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         Vector3 targetPoint;
@@ -42,8 +42,12 @@ public class GunScripts : MonoBehaviour
             targetPoint = hit.point;
             Vector3 directionFromShootToCam = (targetPoint - shootPos.position).normalized;
             Quaternion shootRot = Quaternion.LookRotation(directionFromShootToCam);
-            
-            Instantiate(bullet, shootPos.position,  shootPos.rotation);
+            Quaternion adjustShotgunRot = Quaternion.Euler(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 1);
+            if (isShotgun)
+            {
+                Instantiate(bullet, shootPos.position, shootPos.rotation * adjustShotgunRot);
+            }
+           else Instantiate(bullet, shootPos.position,  shootPos.rotation);
         }
 
 
