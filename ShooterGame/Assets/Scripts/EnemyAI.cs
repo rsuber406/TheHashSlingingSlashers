@@ -52,6 +52,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     bool assistingFriend = false;
     bool isRoaming = false;
     bool isAlive = true;
+    bool isDead = false;
     float fovAsDecimal;
     float stoppingDistance;
     Color originalColor;
@@ -278,6 +279,11 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     IEnumerator OnDeath()
     {
 
+        if (isDead)
+        {
+            yield break;
+        }
+        isDead = true;
 
         BulletTime bt = FindAnyObjectByType<BulletTime>();
         if (bt != null)
