@@ -646,7 +646,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             else if (Input.GetButtonDown("Sprint"))
             {
                 isSliding = false;
-                movementSpeed *= sprintSpeed;
+                movementSpeed = origMovementSpeed * slideSpeed;
                 aud.Stop();
             }
 
