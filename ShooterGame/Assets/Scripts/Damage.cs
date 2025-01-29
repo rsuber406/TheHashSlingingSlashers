@@ -12,13 +12,27 @@ public class Damage : MonoBehaviour
         GroundTrap
     }
 
-    [SerializeField] int bulletSpeed;
+    [Header("Bullet Info")] [SerializeField]
+    int bulletSpeed;
+
     [SerializeField] int travelDistance;
     [SerializeField] int timeToDespawn;
-    [SerializeField] Rigidbody rigidBody;
+
+    [Header("Physical Properites")] [SerializeField]
+    Rigidbody rigidBody;
+
     [SerializeField] DamageType damageType;
-    [SerializeField] string sourceTag;
-    [SerializeField] ParticleSystem hitEffect;
+
+    [Header("Projectile Source Info")] [SerializeField]
+    string sourceTag;
+
+    [Header("Particle Effects")] [SerializeField]
+    private ParticleSystem hitEffect;
+
+    [Header("Sound Effects")] [SerializeField]
+    private AudioClip[] hitSounds;
+
+    [SerializeField] AudioSource audioSource;
     public int damage;
     GameObject player;
     Vector3 originPosition;
@@ -26,6 +40,8 @@ public class Damage : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.enabled = true;
         if (damageType == DamageType.Moving)
         {
             originPosition = rigidBody.position;
@@ -39,7 +55,7 @@ public class Damage : MonoBehaviour
 
     IEnumerator ActivateCollider(Collider collider)
     {
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.0001f);
         collider.enabled = true;
     }
 
@@ -94,6 +110,8 @@ public class Damage : MonoBehaviour
             }
         }
 
+        if (hitSounds.Length > 0)
+            audioSource.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)], 5f);
         if (collision.collider.gameObject.CompareTag("Bullet"))
         {
             return;
@@ -101,48 +119,13 @@ public class Damage : MonoBehaviour
         else
         {
             Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
-            DestroyItems();
+            
+            
         }
+
+        StartCoroutine((DestroyBullets()));
     }
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.isTrigger)
-    //    {
-    //        return;
-    //    }
 
-
-    //    IDamage dmg = other.GetComponent<IDamage>();
-    //    if (dmg != null)
-    //    {
-    //        if (other.CompareTag(sourceTag))
-    //        {
-    //            return;
-    //        }
-
-    //       else if (other.gameObject.CompareTag("Enemy"))
-    //        {
-    //            Debug.Log("Enemy hit");
-    //            AINetwork aiNetwork = other.GetComponent<AINetwork>();
-    //            if (aiNetwork != null)
-    //            {
-    //                aiNetwork.ActivateCollider();
-
-    //            }
-    //            DamageAI(ref dmg);
-    //        }
-    //        else
-    //        {
-
-    //            DamagePlayer(ref dmg);
-
-    //        }
-
-    //    }
-    //    DestroyItems();
-
-
-    //}
     void DamagePlayer(ref IDamage dmg)
     {
         dmg.TakeDamage(damage);
@@ -171,5 +154,11 @@ public class Damage : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+    }
+
+    IEnumerator DestroyBullets()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(this.gameObject);
     }
 }
