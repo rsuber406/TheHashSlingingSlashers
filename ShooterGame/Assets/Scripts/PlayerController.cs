@@ -2,6 +2,18 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
+
+public struct CollisionInfo
+{
+    public bool left, right;
+
+    public void Reset()
+    {
+        left = right = false;
+    }
+}
+
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
@@ -60,17 +72,20 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GunScripts firearmScript;
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
-
-    [Header("------- Audio -------")]
-    [SerializeField] private AudioClip[] hurtSounds;
-    [SerializeField][Range(0, 1)] float hurtVol; 
-    [SerializeField] private AudioClip[] stepSounds;
-    [SerializeField][Range(0, 1)] float stepVol; 
+    
+    [Header("------- Audio Config -------")]
+    [SerializeField] private AudioSource audioController;
+    [SerializeField] private float hurtVolume;
+    [SerializeField] private float jumpVolume;
+    [SerializeField] private float footstepVolume;
+    [SerializeField] private float wallrunVolume;
     [SerializeField] private AudioClip[] jumpSounds;
-    [SerializeField][Range(0, 1)] float jumpVol; 
+    [SerializeField] private AudioClip[] hurtSounds;
+    [SerializeField] private AudioClip[] stepSounds;
     [SerializeField] private AudioClip[] slideSounds;
     [SerializeField][Range(0, 1)] float slideVol; 
-
+    [SerializeField] private AudioClip[] wallRunSounds;
+    private bool isPlayingFootsteps;
 
     // Private fields
     private Camera playerCamera;
@@ -120,7 +135,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
 
         playerCamera = Camera.main;
+
         audioController = GetComponent<AudioSource>();
+        playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
         origHeight = transform.localScale.y;
@@ -128,11 +145,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
 
-
         //other shit
         Timesincereload = Time.time + 10000;
 
-        // GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
     void Update()
@@ -195,6 +210,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
             GroundedMovement(moveDir);
+        }
+        
+        if (moveDir.magnitude > 0.3f && !isPlayingFootsteps && isGrounded)
+        {
+            StartCoroutine(PlayFootsteps());
         }
 
 
@@ -277,8 +297,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], 0.3f);
-            
+
+            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
+
             if (isWallRunning)
             {
                 Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
@@ -297,7 +318,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
-        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.3f);
+        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], hurtVolume);
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -424,6 +445,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                         Debug.LogError("Missing Line Render For Grapple Rope");
                     }
                     
+                    audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
                     GameManager.instance.UseGrappleAbility();
                 }
             }
@@ -532,6 +554,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (!isWallRunning)
         {
             isWallRunning = true;
+            audioController.PlayOneShot(wallRunSounds[Random.Range(0, wallRunSounds.Length)], wallrunVolume);
             jumpCount = 0;
             StartCoroutine(EndWallRun_Internal());
         }
@@ -551,6 +574,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         if (!isWallRunning) return;
         isWallRunning = false;
+        audioController.Stop();
     }
 
     void WallRunMovement(Vector3 direction)
@@ -568,15 +592,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
 
     // Expand this to store character collision data in all directions and adata about what is being collided with.
-    public struct CollisionInfo
-    {
-        public bool left, right;
-
-        public void Reset()
-        {
-            left = right = false;
-        }
-    }
 
     void PerformReload()
     {
@@ -857,5 +872,31 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         wallRunSpeed /= 2f;
     }
-}
 
+    
+    IEnumerator PlayFootsteps()
+    {
+        isPlayingFootsteps = true;
+        
+        audioController.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], footstepVolume);
+
+        if (isSprinting)
+        {
+            yield return new WaitForSeconds(0.3f);
+        } 
+        else if (isWallRunning)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+        else if (isCrouching && !isSliding)
+        {
+            yield return new WaitForSeconds(0.7f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.45f);
+        }
+        
+        isPlayingFootsteps = false;
+    }
+}
