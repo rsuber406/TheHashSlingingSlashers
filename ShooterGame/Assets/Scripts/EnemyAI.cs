@@ -90,7 +90,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
         PlayerDetection();
         if (!isMelee)
         {
-            PerformReload();
+          //  PerformReload();
 
         }
 
