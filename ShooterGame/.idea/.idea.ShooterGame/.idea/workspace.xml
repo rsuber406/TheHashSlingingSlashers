@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f9eff79c-3bfe-40c2-9339-bae52eda43fd" name="Changes" comment="Moved footstep code around so that it is handling onground in the area we are already doing the if check" />
+    <list default="true" id="f9eff79c-3bfe-40c2-9339-bae52eda43fd" name="Changes" comment="Moved footstep code around so that it is handling onground in the area we are already doing the if check">
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Unity Store DL/Dynamic Floating Text/Scripts/DynamicTextManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Unity Store DL/Dynamic Floating Text/Scripts/DynamicTextManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,9 +41,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Prefabs/WeaponsBullets/BullpupRifle.asset" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Scripts/Damage.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Scripts/EnemyAI.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/FirearmScriptable.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -225,10 +230,10 @@
           <line>63</line>
           <properties documentPath="D:\UnityProjects\GitTrackedProjects\TheHashSlingingSlashers\ShooterGame\Assets\Scripts\EnemyAI.cs" containingFunctionPresentation="Method 'Start'">
             <startOffsets>
-              <option value="2105" />
+              <option value="2109" />
             </startOffsets>
             <endOffsets>
-              <option value="2166" />
+              <option value="2170" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
