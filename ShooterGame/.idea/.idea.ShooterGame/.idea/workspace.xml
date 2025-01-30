@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f9eff79c-3bfe-40c2-9339-bae52eda43fd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ShooterGame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ShooterGame/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="f9eff79c-3bfe-40c2-9339-bae52eda43fd" name="Changes" comment="Moved footstep code around so that it is handling onground in the area we are already doing the if check">
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Unity Store DL/Dynamic Floating Text/Scripts/DynamicTextManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Unity Store DL/Dynamic Floating Text/Scripts/DynamicTextManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +41,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/FirearmScriptable.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -169,7 +173,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738118028975</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Moved footstep code around so that it is handling onground in the area we are already doing the if check">
+      <option name="closed" value="true" />
+      <created>1738209770012</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1738209770012</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,6 +213,32 @@
     <MESSAGE value="Adjusted a mechanic with bullet time so we can shoot at a slightly faster rate when time is slowed" />
     <MESSAGE value="Made changes to bullet prefabs." />
     <MESSAGE value="committing to get all files up to synchronization. IDE did not commit all files" />
-    <option name="LAST_COMMIT_MESSAGE" value="committing to get all files up to synchronization. IDE did not commit all files" />
+    <MESSAGE value="Added sound to the lava, also added a sniper rifle, have not tested sniper rifle" />
+    <MESSAGE value="Added test weapon sniper to my level, do not use yet" />
+    <MESSAGE value="Lots of changes. Input audio for player, changed textures of map1. Rebaked navmesh as I changed a few things on map1 and wanted to ensure there are no issues" />
+    <MESSAGE value="Added more sounds, changed the textures on some objects in map1" />
+    <MESSAGE value="More materials added" />
+    <MESSAGE value="Added more sounds and footsteps along with slide sounds" />
+    <MESSAGE value="Moved footstep code around so that it is handling onground in the area we are already doing the if check" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved footstep code around so that it is handling onground in the area we are already doing the if check" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs</url>
+          <line>63</line>
+          <properties documentPath="D:\UnityProjects\GitTrackedProjects\TheHashSlingingSlashers\ShooterGame\Assets\Scripts\EnemyAI.cs" containingFunctionPresentation="Method 'Start'">
+            <startOffsets>
+              <option value="2109" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2170" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
