@@ -9,7 +9,6 @@ TagManager:
   - Wall
   - DeathBox
   - SpeedBox
-  - Bullet
   layers:
   - Default
   - TransparentFX

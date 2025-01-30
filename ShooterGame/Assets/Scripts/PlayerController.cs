@@ -65,6 +65,12 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GunScripts firearmScript;
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
+    [Header("Sounds")]
+    [SerializeField] private AudioClip[] hurtSounds;
+    [SerializeField] private AudioClip[] stepSounds;
+    [SerializeField] private AudioClip[] jumpSounds;
+    
+    
     public int maxHealth = 300;
 
     // Private fields
@@ -82,7 +88,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int gunListPosition = 0;
     private float originalGrappleSpeed;
     private float originalWallRunSpeed;
-    private float originalFireRate;
 
     float origMovementSpeed;
     float origHeight;
@@ -90,7 +95,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
-    
+    private float maxSpeedClamp;
+    private float minSpeedClamp;
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;
@@ -98,21 +104,21 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int numBulletsInMag;
     private Coroutine regenCo;
 
+    private AudioSource audioController;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
     private readonly float GRAVITY_CORRECTION = -2.0f;
-    private BulletTime bulletTimeScript;
-    private bool bulletTimeEnded = false;
+
     void Start()
     {
         playerCamera = Camera.main;
+        audioController = GetComponent<AudioSource>();
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
         origMovementSpeed = movementSpeed;
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
-        bulletTimeScript = this.GetComponent<BulletTime>();
 
 
         //other shit
@@ -130,10 +136,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         Slide();
         CheckWallRun();
         if (Input.GetButton("Shoot") && !isShooting && !GameManager.instance.isPaused)
-        {
             StartCoroutine(Shoot());
-        }
-
         PerformReload();
         UpdateAmmoUI();
         CheckTimeSinceReload();
@@ -144,7 +147,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             DrawDebugLines();
         }
     }
-    
 
     void Movement()
     {
@@ -245,7 +247,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-
+            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], 0.3f);
             if (isWallRunning)
             {
                 Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
@@ -264,7 +266,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
-
+        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.3f);
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -328,35 +330,29 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             {
                 isShooting = true;
                 numBulletsInMag--;
-                
-                float waitTime = fireRate;
-                if (bulletTimeScript.IsBulletTimeActive())
-                {
-                    waitTime = waitTime / 2;
-                }
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 for (int i = 0; i < 9; i++)
                 {
                     firearmScript.PlayerShoot(projectileDmg, gunList[gunListPosition].isShotgun);
                     StartCoroutine(FlashMuzzle());
                 }
 
-                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(fireRate);
                 isShooting = false;
             }
             else
             {
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 isShooting = true;
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 numBulletsInMag--;
                 firearmScript.PlayerShoot(projectileDmg);
                 StartCoroutine(FlashMuzzle());
-                float waitTime = fireRate;
-                if (bulletTimeScript.IsBulletTimeActive())
-                {
-                    waitTime = waitTime / 2;
-                }
-                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(fireRate);
                 isShooting = false;
+                
             }
+            
         }
     }
 
@@ -763,7 +759,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
         SetAllAmmoCount(gun.ammoCurrent, gun.ammoMax, gun.ammoCurrent);
         numBulletsReserve = gun.ammoMax;
-        originalFireRate = fireRate;
     }
 
     void EndGrappleHook()
