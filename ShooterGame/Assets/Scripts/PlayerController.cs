@@ -171,6 +171,10 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             // The player might appear to "float" briefly after landing because gravity isn't pulling them back down.
             // We make the player slightly stick to the floor
             playerVel.y = GRAVITY_CORRECTION;
+            if (moveDir.magnitude > 0.3f && !isPlayingFootsteps)
+            {
+                StartCoroutine(PlayFootsteps());
+            }
         }
         else if (playerVel.y > 0)
         {
@@ -190,10 +194,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             GroundedMovement(moveDir);
         }
         
-        if (moveDir.magnitude > 0.3f && !isPlayingFootsteps && isGrounded)
-        {
-            StartCoroutine(PlayFootsteps());
-        }
+      
 
         Jump();
 
