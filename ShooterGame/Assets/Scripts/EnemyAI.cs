@@ -58,7 +58,7 @@ public class EnemyAI : MonoBehaviour, IDamage, AINetwork
     Color originalColor;
     Coroutine roamCo;
     private DynamicTextManager dynamicTextManager;
-
+    
     void Start()
     {
         dynamicTextManager = GameManager.instance.dynamicTextManager;

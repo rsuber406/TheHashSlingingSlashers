@@ -56,7 +56,7 @@ public class Damage : MonoBehaviour
         }
         else if (damageType == DamageType.Lava)
         {
-            audioSource.PlayOneShot(hitSounds[0], 5f);
+            audioSource.PlayOneShot(hitSounds[0], 1f);
         }
         
     }
