@@ -527,10 +527,9 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 64
-  aud: {fileID: 0}
   movementSpeed: 6
   sprintMod: 15
-  sprintMovementSpeed: 10
+  sprintMovementSpeed: 12
   jumpSpeed: 15
   jumpMax: 2
   forwardJumpBoost: 1
@@ -538,7 +537,6 @@ MonoBehaviour:
   crouchMovementSpeed: 4
   crouchSpeed: 5
   crouchHeight: 0.5
-  crouchMod: 0
   slideMod: 3
   slideDis: 5
   health: 100
@@ -569,17 +567,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 86444139c49feeb49a6a69e5141d943a, type: 3}
   - {fileID: 8300000, guid: 5d1a297cafff43643af3b393af9db220, type: 3}
   - {fileID: 8300000, guid: 8c1b35be7c915dc4ea41fa1dbef4913c, type: 3}
+  hurtVol: 0.25
   stepSounds: []
+  stepVol: 0.25
   jumpSounds:
   - {fileID: 8300000, guid: e737210a55e90f24db67e392c3c11707, type: 3}
   - {fileID: 8300000, guid: a4ba821cd7b51f647ad170d1e830c69d, type: 3}
   - {fileID: 8300000, guid: c88db1bd2a4553348979cb2e600c3d61, type: 3}
   - {fileID: 8300000, guid: 7218d59c60ef0c140b29690a67707fd9, type: 3}
-  maxHealth: 300
-  audSlide:
+  jumpVol: 0.25
+  slideSounds:
   - {fileID: 8300000, guid: 05caa5e5fc6ce084e91fa5d5a8467024, type: 3}
-  audSlideVol: 0.25
-
+  slideVol: 0.25
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0

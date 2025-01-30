@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [Header("------- Components -------")]
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
-    [SerializeField] AudioSource aud;
+    private AudioSource audioController;
 
     [Header("------- Player Movement -------")]
     [SerializeField] public float movementSpeed;
@@ -63,10 +63,13 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     [Header("------- Audio -------")]
     [SerializeField] private AudioClip[] hurtSounds;
+    [SerializeField][Range(0, 1)] float hurtVol; 
     [SerializeField] private AudioClip[] stepSounds;
+    [SerializeField][Range(0, 1)] float stepVol; 
     [SerializeField] private AudioClip[] jumpSounds;
-    [SerializeField] AudioClip[] audSlide;
-    [SerializeField][Range(0, 1)] float audSlideVol; 
+    [SerializeField][Range(0, 1)] float jumpVol; 
+    [SerializeField] private AudioClip[] slideSounds;
+    [SerializeField][Range(0, 1)] float slideVol; 
 
 
     // Private fields
@@ -106,7 +109,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int numBulletsInMag;
     private Coroutine regenCo;
 
-    private AudioSource audioController;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
 
     float Timesincereload;
@@ -666,7 +668,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             // Start sliding
             isSliding = true;
             movementSpeed = origMovementSpeed * slideMod;
-            aud.PlayOneShot(audSlide[Random.Range(0, audSlide.Length)], audSlideVol);
+            audioController.PlayOneShot(slideSounds[Random.Range(0, slideSounds.Length)], slideVol);
             isCrouching = true;
         }
 
@@ -680,14 +682,14 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                     isSliding = false;
                     isCrouching = false;
                     movementSpeed = origMovementSpeed * sprintMod;
-                    aud.Stop();
+                    audioController.Stop();
                 }
                 else
                 {
                     isSliding = false;
                     isSprinting = false;
                     movementSpeed = origMovementSpeed;
-                    aud.Stop();
+                    audioController.Stop();
                 }
             }
 
@@ -696,7 +698,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                 isSliding = false;
                 isCrouching = false;
                 movementSpeed = origMovementSpeed * sprintMod;
-                aud.Stop();
+                audioController.Stop();
             }
 
             // Continue sliding
@@ -711,13 +713,13 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                     isCrouching = true;
                     isSliding = false;
                     isSprinting = false;
-                    aud.Stop();
+                    audioController.Stop();
                 }
                 else if (!isGrounded)
                 {
                     movementSpeed = origMovementSpeed;
                     isSliding = false;
-                    aud.Stop();
+                    audioController.Stop();
                 }
             }
         }
