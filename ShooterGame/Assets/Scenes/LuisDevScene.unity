@@ -11634,6 +11634,10 @@ PrefabInstance:
       value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: audJumpVol
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: slideSpeed
       value: 3
       objectReference: {fileID: 0}
@@ -11690,12 +11694,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: grappleLineDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: momentumBuildRate
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: momentumDecayRate
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: audJump.Array.size
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: audSlide.Array.size
@@ -11705,6 +11717,22 @@ PrefabInstance:
       propertyPath: crouchMovementSpeed
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: sprintMovementSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: 'audJump.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: acd53d53a53d28942aad8de81cda152b, type: 3}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: 'audJump.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: fab8e032b3b04b443b945c27b4f649d5, type: 3}
+    - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
+      propertyPath: 'audJump.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 6c1f686e618369948949deceaae8428e, type: 3}
     - target: {fileID: 1480984659832651383, guid: 2120e9eeb45a36542acb32a0b77ed753, type: 3}
       propertyPath: 'audSlide.Array.data[0]'
       value: 
