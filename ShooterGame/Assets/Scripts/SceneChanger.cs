@@ -7,7 +7,7 @@ public class SceneChanger : MonoBehaviour
 {
     public static SceneChanger instance {  get; private set; }
     public int activeScene;
-    public int numMaps = 3;
+    public int numMaps = 4;
     public void Awake()
     {
         if(instance == null)
