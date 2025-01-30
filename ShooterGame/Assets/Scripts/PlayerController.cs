@@ -26,7 +26,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField][Range(1, 5)] float crouchMovementSpeed;
     [SerializeField][Range(1, 10)] float crouchSpeed;
     [SerializeField][Range(0.3f, 1)] float crouchHeight;
-    [SerializeField] float crouchMod;
     [SerializeField][Range(2, 4)] float slideMod;
     [SerializeField][Range(1, 8)] float slideDis;   // lower the number further you travel
 
