@@ -21,7 +21,7 @@ public class GunScripts : MonoBehaviour
 
     public void AIShoot(Quaternion rotation, Vector3 aiPosition)
     {
-        if (shotsPerMagazine <= 0) return;
+      
         float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
         if (dotProduct < 0) return;
         Vector3 direction = GameManager.instance.player.transform.position - shootPos.position;

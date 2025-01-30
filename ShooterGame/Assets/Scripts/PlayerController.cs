@@ -77,13 +77,14 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public int maxHealth = 300;
     
     [Header("------- Audio Config ----------")]
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip[] hurtClips;
+    [SerializeField] private AudioSource audioController;
     [SerializeField] private float hurtVolume;
-    [SerializeField] private AudioClip[] footstepClips;
+    [SerializeField] private float jumpVolume;
     [SerializeField] private float footstepVolume;
+    [SerializeField] private AudioClip[] jumpSounds;
+    [SerializeField] private AudioClip[] hurtSounds;
+    [SerializeField] private AudioClip[] stepSounds;
     private bool isPlayingFootsteps;
-
 
     // Private fields
     private CollisionInfo collisionInfo;
@@ -107,7 +108,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     bool isCrouching, isSliding, isShooting;
 
     float bulletTimeLeft;
-
+    private float maxSpeedClamp;
+    private float minSpeedClamp;
     BulletTime bt;
     GameManager gameManager;
     private int maxMagCapacity;
@@ -121,7 +123,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        audioController = GetComponent<AudioSource>();
         playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
@@ -129,7 +131,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         origMovementSpeed = movementSpeed;
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
-
 
         //other shit
         Timesincereload = Time.time + 10000;
@@ -144,7 +145,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         Crouch();
         Slide();
         CheckWallRun();
-        if (Input.GetButton("Shoot") && !isShooting)
+        if (Input.GetButton("Shoot") && !isShooting && !GameManager.instance.isPaused)
             StartCoroutine(Shoot());
         PerformReload();
         UpdateAmmoUI();
@@ -261,7 +262,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-
+            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
             if (isWallRunning)
             {
                 Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
@@ -280,9 +281,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
-        
-        audioSource.PlayOneShot(hurtClips[Random.Range(0, hurtClips.Length)], hurtVolume);
-        
+        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], hurtVolume);
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -346,7 +345,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             {
                 isShooting = true;
                 numBulletsInMag--;
-
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 for (int i = 0; i < 9; i++)
                 {
                     firearmScript.PlayerShoot(projectileDmg, gunList[gunListPosition].isShotgun);
@@ -358,7 +357,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             }
             else
             {
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 isShooting = true;
+                audioController.PlayOneShot(gunList[gunListPosition].shootSound[Random.Range(0, gunList[gunListPosition].shootSound.Length)], 0.5f);
                 numBulletsInMag--;
                 firearmScript.PlayerShoot(projectileDmg);
                 StartCoroutine(FlashMuzzle());
@@ -366,7 +367,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                 isShooting = false;
                 
             }
-
+            
         }
     }
 
@@ -816,7 +817,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         isPlayingFootsteps = true;
         
-        audioSource.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)], footstepVolume);
+        audioController.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], footstepVolume);
 
         if (isSprinting)
         {

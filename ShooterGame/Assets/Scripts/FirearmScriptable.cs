@@ -14,4 +14,5 @@ public class FirearmScriptable : ScriptableObject
     public AudioClip[] shootSound;
     public float shootSoundVolume;
     public bool isShotgun;
+    public AudioClip gunReload;
 }
