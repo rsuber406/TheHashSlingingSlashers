@@ -81,9 +81,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] private float hurtVolume;
     [SerializeField] private float jumpVolume;
     [SerializeField] private float footstepVolume;
+    [SerializeField] private float wallrunVolume;
     [SerializeField] private AudioClip[] jumpSounds;
     [SerializeField] private AudioClip[] hurtSounds;
     [SerializeField] private AudioClip[] stepSounds;
+    [SerializeField] private AudioClip[] wallRunSounds;
     private bool isPlayingFootsteps;
 
     // Private fields
@@ -408,6 +410,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                         Debug.LogError("Missing Line Render For Grapple Rope");
                     }
                     
+                    audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
                     GameManager.instance.UseGrappleAbility();
                 }
             }
@@ -516,6 +519,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (!isWallRunning)
         {
             isWallRunning = true;
+            audioController.PlayOneShot(wallRunSounds[Random.Range(0, wallRunSounds.Length)], wallrunVolume);
             jumpCount = 0;
             StartCoroutine(EndWallRun_Internal());
         }
@@ -535,6 +539,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         if (!isWallRunning) return;
         isWallRunning = false;
+        audioController.Stop();
     }
 
     void WallRunMovement(Vector3 direction)
