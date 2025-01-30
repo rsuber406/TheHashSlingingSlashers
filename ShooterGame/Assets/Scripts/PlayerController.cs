@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] private AudioClip[] hurtSounds;
     [SerializeField] private AudioClip[] stepSounds;
     [SerializeField] private AudioClip[] jumpSounds;
+    [SerializeField] private AudioClip[] slideSounds;
     
     
     public int maxHealth = 300;
@@ -108,6 +109,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
     private readonly float GRAVITY_CORRECTION = -2.0f;
+    private bool isPlayingSteps;
 
     void Start()
     {
@@ -159,6 +161,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             // The player might appear to "float" briefly after landing because gravity isn't pulling them back down.
             // We make the player slightly stick to the floor
             playerVel.y = GRAVITY_CORRECTION;
+            if (moveDir.magnitude > 0.3f && !isPlayingSteps)
+            {
+                StartCoroutine(PlaySteps());
+
+            }
         }
         else if (playerVel.y > 0)
         {
@@ -634,6 +641,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (isSprinting && Input.GetButtonDown("Crouch"))
         {
             // Start sliding
+            audioController.PlayOneShot(slideSounds[0], 0.5f);
             isSliding = true;
             isCrouching = false;
             isSprinting = false;
@@ -805,5 +813,13 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public void ResetWallRunSpeed()
     {
         wallRunSpeed /= 2f;
+    }
+    IEnumerator PlaySteps()
+    {
+        isPlayingSteps = true;
+        float waitTime = isSprinting ? 0.25f : 0.5f;
+        audioController.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], 0.3f);
+        yield return new WaitForSeconds(waitTime);
+        isPlayingSteps = false;
     }
 }

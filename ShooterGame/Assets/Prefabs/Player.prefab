@@ -569,12 +569,17 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 86444139c49feeb49a6a69e5141d943a, type: 3}
   - {fileID: 8300000, guid: 5d1a297cafff43643af3b393af9db220, type: 3}
   - {fileID: 8300000, guid: 8c1b35be7c915dc4ea41fa1dbef4913c, type: 3}
-  stepSounds: []
+  stepSounds:
+  - {fileID: 8300000, guid: 1c308f121249ec547b07d6680156b4e8, type: 3}
+  - {fileID: 8300000, guid: b4f5f8837948be54592f79ddd193855d, type: 3}
+  - {fileID: 8300000, guid: 85dcb37fe57832542bd8f5fa74ff3fba, type: 3}
   jumpSounds:
   - {fileID: 8300000, guid: e737210a55e90f24db67e392c3c11707, type: 3}
   - {fileID: 8300000, guid: a4ba821cd7b51f647ad170d1e830c69d, type: 3}
   - {fileID: 8300000, guid: c88db1bd2a4553348979cb2e600c3d61, type: 3}
   - {fileID: 8300000, guid: 7218d59c60ef0c140b29690a67707fd9, type: 3}
+  slideSounds:
+  - {fileID: 8300000, guid: 05caa5e5fc6ce084e91fa5d5a8467024, type: 3}
   maxHealth: 300
 --- !u!23 &29848391063268711
 MeshRenderer:
