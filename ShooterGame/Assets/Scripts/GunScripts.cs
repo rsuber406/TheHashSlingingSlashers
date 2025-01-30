@@ -19,21 +19,38 @@ public class GunScripts : MonoBehaviour
     }
 
 
-    public void AIShoot(Quaternion rotation)
+    public void AIShoot(Quaternion rotation, Vector3 aiPosition)
     {
-        if (shotsPerMagazine <= 0) return;
-        Instantiate(bullet, shootPos.position, rotation);
+      
+        float dotProduct = Vector3.Dot(transform.forward, (GameManager.instance.player.transform.position - transform.position).normalized);
+        if (dotProduct < 0) return;
+        Vector3 direction = GameManager.instance.player.transform.position - shootPos.position;
+        Quaternion rotateDir = Quaternion.LookRotation(direction);
+        Instantiate(bullet, shootPos.position, rotateDir * rotation);
         shotsPerMagazine--;
     }
 
     public float GetFireRate() { return fireRate; }
 
-    public void PlayerShoot()
+    public void PlayerShoot(int damageRef ,bool isShotgun = false)
     {
-        if (shotsPerMagazine <= 0) return;
-        shootPos.rotation = Camera.main.transform.rotation;
-        Instantiate(bullet, shootPos.position, shootPos.transform.rotation);
-        shotsPerMagazine--;
+        Ray cameraRay = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector3 targetPoint;
+        RaycastHit hit;
+        if (Physics.Raycast(cameraRay, out hit))
+        {
+            targetPoint = hit.point;
+            Vector3 directionFromShootToCam = (targetPoint - shootPos.position).normalized;
+            Quaternion shootRot = Quaternion.LookRotation(directionFromShootToCam);
+            Quaternion adjustShotgunRot = Quaternion.Euler(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 1);
+            if (isShotgun)
+            {
+                Instantiate(bullet, shootPos.position, shootPos.rotation * adjustShotgunRot);
+            }
+           else Instantiate(bullet, shootPos.position,  shootPos.rotation);
+        }
+
+
     }
 
     public IEnumerator Reload()

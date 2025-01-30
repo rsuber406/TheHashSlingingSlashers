@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damage : MonoBehaviour
@@ -8,94 +9,168 @@ public class Damage : MonoBehaviour
         Moving,
         Stationary,
         HealthPack,
-        GroundTrap
+        GroundTrap,
+        Lava
     }
-    [SerializeField] int bulletSpeed;
-    [SerializeField] int damage;
+
+    [Header("Bullet Info")] [SerializeField]
+    int bulletSpeed;
+
     [SerializeField] int travelDistance;
     [SerializeField] int timeToDespawn;
-    [SerializeField] Rigidbody rigidBody;
+
+    [Header("Physical Properites")] [SerializeField]
+    Rigidbody rigidBody;
+
     [SerializeField] DamageType damageType;
-    [SerializeField] string sourceTag;
+
+    [Header("Projectile Source Info")] [SerializeField]
+    string sourceTag;
+
+    [Header("Particle Effects")] [SerializeField]
+    private ParticleSystem hitEffect;
+
+    [Header("Sound Effects")] [SerializeField]
+    private AudioClip[] hitSounds;
+
+    [SerializeField] AudioSource audioSource;
+    public int damage;
+    GameObject player;
     Vector3 originPosition;
+    Vector3 startPosition;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.enabled = true;
         if (damageType == DamageType.Moving)
         {
-            rigidBody.linearVelocity = transform.forward * bulletSpeed;
-            originPosition = transform.position;
+            originPosition = rigidBody.position;
+            Collider collider = rigidBody.GetComponent<Collider>();
+            collider.enabled = false;
+            rigidBody.linearVelocity = transform.forward * bulletSpeed * Time.deltaTime;
+            StartCoroutine(ActivateCollider(collider));
+            if (hitSounds.Length > 0)
+                audioSource.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)], 5f);
             Destroy(gameObject, timeToDespawn);
         }
-
-
+        else if (damageType == DamageType.Lava)
+        {
+            audioSource.PlayOneShot(hitSounds[0], 1f);
+        }
+        
     }
 
+    IEnumerator ActivateCollider(Collider collider)
+    {
+        yield return new WaitForSeconds(0.0001f);
+        collider.enabled = true;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger)
-        {
-            return;
-        }
-
+        if (other.isTrigger) return;
 
         IDamage dmg = other.GetComponent<IDamage>();
         if (dmg != null)
         {
-            if (other.CompareTag(sourceTag))
+            if (other.gameObject.CompareTag("Player"))
+            {
+                if (damageType == DamageType.HealthPack)
+                {
+                    damage = damage * 3;
+                    dmg.TakeDamage(damage);
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    dmg.TakeDamage(damage);
+                    Destroy(gameObject);
+                }
+            }
+        }
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        IDamage dmg = collision.gameObject.GetComponent<IDamage>();
+        if (dmg != null)
+        {
+            if (collision.gameObject.CompareTag(sourceTag))
             {
                 return;
             }
 
-            if (other.gameObject.CompareTag("Enemy"))
+            else if (collision.gameObject.CompareTag("Enemy"))
             {
+                AINetwork aiNetwork = collision.gameObject.GetComponent<AINetwork>();
+                if (aiNetwork != null)
+                {
+                    aiNetwork.ActivateCollider();
+                }
+
                 DamageAI(ref dmg);
             }
             else
             {
                 DamagePlayer(ref dmg);
             }
+        }
 
+      
+        if (collision.collider.gameObject.CompareTag("Bullet"))
+        {
+            return;
         }
         else
         {
+            Instantiate(hitEffect, collision.contacts[0].point, Quaternion.identity);
+
+            Debug.Log(collision.collider.name);
             DestroyItems();
+
+            
+            
+
         }
 
-
+        StartCoroutine((DestroyBullets()));
     }
+
     void DamagePlayer(ref IDamage dmg)
     {
-
         dmg.TakeDamage(damage);
         DestroyItems();
-
     }
 
     void DamageAI(ref IDamage dmg)
     {
-
         dmg.TakeDamage(damage, originPosition);
         DestroyItems();
-
     }
 
     void DestroyItems()
     {
         if (damageType == DamageType.Moving)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
+
         if (damageType == DamageType.HealthPack)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
+
         if (damageType == DamageType.GroundTrap)
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
+    }
 
+    IEnumerator DestroyBullets()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(this.gameObject);
     }
 }
-

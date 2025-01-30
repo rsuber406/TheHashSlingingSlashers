@@ -9,8 +9,20 @@ EditorBuildSettings:
     path: Assets/Scenes/Maps/Main Menu.unity
     guid: 11d42e2481c88e641b7766adfb5446ce
   - enabled: 1
+    path: Assets/Scenes/tutScene.unity
+    guid: 2eeabae8cd6f29c4c8b592bee98f361d
+  - enabled: 1
     path: Assets/Scenes/Maps/Map1.unity
     guid: 55ee390061e4b13449f1e73422513d85
+  - enabled: 1
+    path: Assets/Scenes/Maps/Map2.unity
+    guid: b51b702cbc1aff44fb202f2c706fa08b
+  - enabled: 1
+    path: Assets/Scenes/Maps/Dev_Room.unity
+    guid: 215a04399e08f7a458f7ea8d411da259
+  - enabled: 1
+    path: Assets/Scenes/Maps/ScoreScene.unity
+    guid: 7b84b67e90997ce40a8ad8e63c8cd36c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0
