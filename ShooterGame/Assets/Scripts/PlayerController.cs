@@ -2,6 +2,18 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
+
+public struct CollisionInfo
+{
+    public bool left, right;
+
+    public void Reset()
+    {
+        left = right = false;
+    }
+}
+
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     // Public Variables
@@ -12,8 +24,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] int sprintMod;
     [SerializeField] int jumpSpeed;
 
-    [SerializeField]
-    int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
+    [SerializeField] int forwardJumpBoost; // Controls how much forward bias is applied to the player, 1 is a good default
 
     [SerializeField] int jumpMax;
     [SerializeField] float gravity; // Negative value indicating downward force
@@ -23,41 +34,39 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] int healthRegen;
     [SerializeField] private float healthRegenDelay;
 
-
-    [Header("------- Wall Running ------")] [SerializeField] [Range(10, 20)]
-    float wallRunSpeed;
-
+    [Header("------- Wall Running ------")] 
+    [SerializeField] [Range(10, 20)] float wallRunSpeed;
     [SerializeField] [Range(1, 3)] float wallRunDuration;
     [SerializeField] [Range(1, 10)] float wallRunDetachForce;
     [SerializeField] [Range(1, 3)] float wallRunGroundCheckDistance = 2f;
     [SerializeField] [Range(1, 2)] float groundCheckRay;
 
-    [Header("------- Grappling ---------")] [SerializeField] [Range(1, 200)]
-    float grappleCheckRay;
-
+    [Header("------- Grappling ---------")] 
+    [SerializeField] [Range(1, 200)] float grappleCheckRay;
+    [SerializeField] float grappleLineDelay;
+    [SerializeField] LineRenderer lineRenderer;
+    private bool isGrappling;
+    
     [SerializeField] [Range(1, 60)] float forwardGrappleForce;
     [SerializeField] [Range(1, 30)] float upwardGrappleArkForce;
     [SerializeField] [Range(1, 10)] float minGrappleDistance;
     [SerializeField] [Range(0.5f, 5)] float grappleCooldown;
-    [SerializeField] float grappleLineDelay;
-    [SerializeField] LineRenderer lineRenderer;
-    private bool isGrappling;
 
-    [Header("------- Crouching ---------")] [SerializeField]
-    float crouchHeight;
 
+    [Header("------- Crouching ---------")] 
+    [SerializeField] float crouchHeight;
     [SerializeField] float crouchMovementSpeed;
     [SerializeField] float crouchSpeed;
 
-    [Header("------- Sliding -----------")] [SerializeField]
-    float slideMod;
+    [Header("------- Sliding -----------")] 
+    [SerializeField] float slideMod;
 
     [SerializeField] float slideMomentum; // lower number more further you go
     [SerializeField] float slideDuration;
     [SerializeField] float slideThreshold;
 
-    [Header("------- Weapons -----------")] [SerializeField]
-    int projectileDmg;
+    [Header("------- Weapons -----------")] 
+    [SerializeField] int projectileDmg;
 
     [SerializeField] int projectileDistance;
     [SerializeField] float fireRate;
@@ -65,13 +74,19 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GunScripts firearmScript;
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] List<FirearmScriptable> gunList = new List<FirearmScriptable>();
-    [Header("Sounds")]
+    public int maxHealth = 300;
+    
+    [Header("------- Audio Config ----------")]
+    [SerializeField] private AudioSource audioController;
+    [SerializeField] private float hurtVolume;
+    [SerializeField] private float jumpVolume;
+    [SerializeField] private float footstepVolume;
+    [SerializeField] private float wallrunVolume;
+    [SerializeField] private AudioClip[] jumpSounds;
     [SerializeField] private AudioClip[] hurtSounds;
     [SerializeField] private AudioClip[] stepSounds;
-    [SerializeField] private AudioClip[] jumpSounds;
-    
-    
-    public int maxHealth = 300;
+    [SerializeField] private AudioClip[] wallRunSounds;
+    private bool isPlayingFootsteps;
 
     // Private fields
     private CollisionInfo collisionInfo;
@@ -104,15 +119,14 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int numBulletsInMag;
     private Coroutine regenCo;
 
-    private AudioSource audioController;
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
     private readonly float GRAVITY_CORRECTION = -2.0f;
 
     void Start()
     {
-        playerCamera = Camera.main;
         audioController = GetComponent<AudioSource>();
+        playerCamera = Camera.main;
         // w/e this shit is
         health = maxHealth;
         origHeight = controller.height;
@@ -120,10 +134,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         originalGrappleSpeed = forwardGrappleForce;
         originalWallRunSpeed = wallRunSpeed;
 
-
         //other shit
         Timesincereload = Time.time + 10000;
-        // GameManager.instance.UpdatePlayerHeathUI(health);
     }
 
     void Update()
@@ -176,6 +188,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
             GroundedMovement(moveDir);
+        }
+        
+        if (moveDir.magnitude > 0.3f && !isPlayingFootsteps && isGrounded)
+        {
+            StartCoroutine(PlayFootsteps());
         }
 
         Jump();
@@ -247,7 +264,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], 0.3f);
+            audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
             if (isWallRunning)
             {
                 Vector3 jumpDirection = GetWallNormal() + Vector3.up + transform.forward * forwardJumpBoost;
@@ -266,7 +283,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
-        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.3f);
+        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], hurtVolume);
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -393,6 +410,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
                         Debug.LogError("Missing Line Render For Grapple Rope");
                     }
                     
+                    audioController.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Length)], jumpVolume);
                     GameManager.instance.UseGrappleAbility();
                 }
             }
@@ -501,6 +519,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         if (!isWallRunning)
         {
             isWallRunning = true;
+            audioController.PlayOneShot(wallRunSounds[Random.Range(0, wallRunSounds.Length)], wallrunVolume);
             jumpCount = 0;
             StartCoroutine(EndWallRun_Internal());
         }
@@ -520,6 +539,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         if (!isWallRunning) return;
         isWallRunning = false;
+        audioController.Stop();
     }
 
     void WallRunMovement(Vector3 direction)
@@ -537,15 +557,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
 
 
     // Expand this to store character collision data in all directions and adata about what is being collided with.
-    public struct CollisionInfo
-    {
-        public bool left, right;
-
-        public void Reset()
-        {
-            left = right = false;
-        }
-    }
 
     void PerformReload()
     {
@@ -805,5 +816,31 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public void ResetWallRunSpeed()
     {
         wallRunSpeed /= 2f;
+    }
+    
+    IEnumerator PlayFootsteps()
+    {
+        isPlayingFootsteps = true;
+        
+        audioController.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], footstepVolume);
+
+        if (isSprinting)
+        {
+            yield return new WaitForSeconds(0.3f);
+        } 
+        else if (isWallRunning)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+        else if (isCrouching && !isSliding)
+        {
+            yield return new WaitForSeconds(0.7f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.45f);
+        }
+        
+        isPlayingFootsteps = false;
     }
 }
