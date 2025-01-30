@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f9eff79c-3bfe-40c2-9339-bae52eda43fd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ShooterGame/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ShooterGame/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -37,7 +37,9 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Prefabs/WeaponsBullets/BullpupRifle.asset" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Scripts/Damage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnityProjects/GitTrackedProjects/TheHashSlingingSlashers/ShooterGame/Assets/Scripts/EnemyAI.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -201,6 +203,31 @@
     <MESSAGE value="Adjusted a mechanic with bullet time so we can shoot at a slightly faster rate when time is slowed" />
     <MESSAGE value="Made changes to bullet prefabs." />
     <MESSAGE value="committing to get all files up to synchronization. IDE did not commit all files" />
-    <option name="LAST_COMMIT_MESSAGE" value="committing to get all files up to synchronization. IDE did not commit all files" />
+    <MESSAGE value="Added sound to the lava, also added a sniper rifle, have not tested sniper rifle" />
+    <MESSAGE value="Added test weapon sniper to my level, do not use yet" />
+    <MESSAGE value="Lots of changes. Input audio for player, changed textures of map1. Rebaked navmesh as I changed a few things on map1 and wanted to ensure there are no issues" />
+    <MESSAGE value="Added more sounds, changed the textures on some objects in map1" />
+    <MESSAGE value="More materials added" />
+    <MESSAGE value="Added more sounds and footsteps along with slide sounds" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added more sounds and footsteps along with slide sounds" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/EnemyAI.cs</url>
+          <line>63</line>
+          <properties documentPath="D:\UnityProjects\GitTrackedProjects\TheHashSlingingSlashers\ShooterGame\Assets\Scripts\EnemyAI.cs" containingFunctionPresentation="Method 'Start'">
+            <startOffsets>
+              <option value="2105" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2166" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

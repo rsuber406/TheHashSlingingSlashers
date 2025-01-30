@@ -110,6 +110,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     float Timesincereload;
     private readonly float GRAVITY_CORRECTION = -2.0f;
     private bool isPlayingSteps;
+    private bool playDmgSound;
 
     void Start()
     {
@@ -273,7 +274,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
+        if (!playDmgSound)
+        {
+            playDmgSound = true;
         audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.3f);
+        }
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -291,6 +296,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         regenCo = StartCoroutine(RegenerateHealth());
 
         UpdatePlayerUI();
+        playDmgSound = false;
     }
 
     private IEnumerator RegenerateHealth()
