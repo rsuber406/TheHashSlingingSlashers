@@ -3,18 +3,21 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] int sensitivity;
-    [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invYAxis;
     [SerializeField] int leftLean;
     [SerializeField] int rightLean;
     [SerializeField] int leanSpeed;
     [SerializeField] int leftCameraLeanMovement;
-    
+
+    //[SerializeField] Transform orientation;
 
     private Quaternion initialAngle;
     private Vector3 cameraInitPos;
     float rotX;
+    float rotY;
     float rotZ;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -91,14 +94,18 @@ public class CameraController : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+
         if (invYAxis)
         {
             rotX += mouseY;
         }
         else rotX -= mouseY;
 
-        rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
-        transform.localRotation = Quaternion.Euler(rotX, 0, rotZ);
+        rotX = Mathf.Clamp(rotX, -90, 90);
+
+
         transform.parent.Rotate(Vector3.up * mouseX);
+        transform.localRotation = Quaternion.Euler(rotX, 0, rotZ);
+        
     }
 }

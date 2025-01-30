@@ -157,8 +157,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensitivity: 500
-  lockVertMin: -90
-  lockVertMax: 50
   invYAxis: 0
   leftLean: -45
   rightLean: 45
@@ -525,19 +523,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebugMode: 1
-  movementSpeed: 5
-  sprintMod: 2
-  jumpSpeed: 17
-  forwardJumpBoost: 1
-  jumpMax: 2
-  gravity: 40
   controller: {fileID: 2320961185408548562}
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 64
+  aud: {fileID: 0}
+  movementSpeed: 6
+  sprintMod: 15
+  sprintMovementSpeed: 10
+  jumpSpeed: 15
+  jumpMax: 2
+  forwardJumpBoost: 1
+  gravity: 35
+  crouchMovementSpeed: 4
+  crouchSpeed: 5
+  crouchHeight: 0.5
+  crouchMod: 0
+  slideMod: 3
+  slideDis: 5
   health: 100
   healthRegen: 0
   healthRegenDelay: 0
+  maxHealth: 300
   wallRunSpeed: 20
   wallRunDuration: 1.5
   wallRunDetachForce: 5
@@ -550,13 +557,6 @@ MonoBehaviour:
   grappleCooldown: 5
   grappleLineDelay: 1
   lineRenderer: {fileID: 5189091951890410549}
-  crouchHeight: 1
-  crouchMovementSpeed: 4
-  crouchSpeed: 8
-  slideMod: 4
-  slideMomentum: 8
-  slideDuration: 0.75
-  slideThreshold: 1
   projectileDmg: 0
   projectileDistance: 0
   fireRate: 0
@@ -576,6 +576,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c88db1bd2a4553348979cb2e600c3d61, type: 3}
   - {fileID: 8300000, guid: 7218d59c60ef0c140b29690a67707fd9, type: 3}
   maxHealth: 300
+  audSlide:
+  - {fileID: 8300000, guid: 05caa5e5fc6ce084e91fa5d5a8467024, type: 3}
+  audSlideVol: 0.25
+
 --- !u!23 &29848391063268711
 MeshRenderer:
   m_ObjectHideFlags: 0
