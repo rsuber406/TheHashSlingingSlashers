@@ -20,5 +20,8 @@ MonoBehaviour:
   ammoMax: 150
   shootPos: {fileID: 0}
   hitEffect: {fileID: 0}
-  shootSound: []
+  shootSound:
+  - {fileID: 8300000, guid: 74a8eabc38225534a9052c5a440f6ec0, type: 3}
   shootSoundVolume: 0
+  isShotgun: 0
+  gunReload: {fileID: 8300000, guid: 755f3a6910d68574998ff4375d57b60c, type: 3}
