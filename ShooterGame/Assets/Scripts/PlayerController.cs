@@ -118,6 +118,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     int numBulletsReserve;
     int numBulletsInMag;
     private Coroutine regenCo;
+    private bool playerDmgTaken;
 
     //this is silly, but now if you sit in the level for 10 minutes, you will be told to reload.
     float Timesincereload;
@@ -171,6 +172,10 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             // The player might appear to "float" briefly after landing because gravity isn't pulling them back down.
             // We make the player slightly stick to the floor
             playerVel.y = GRAVITY_CORRECTION;
+            if (moveDir.magnitude > 0.3f && !isPlayingFootsteps)
+            {
+                StartCoroutine(PlayFootsteps());
+            }
         }
         else if (playerVel.y > 0)
         {
@@ -190,10 +195,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
             GroundedMovement(moveDir);
         }
         
-        if (moveDir.magnitude > 0.3f && !isPlayingFootsteps && isGrounded)
-        {
-            StartCoroutine(PlayFootsteps());
-        }
+      
 
         Jump();
 
@@ -283,7 +285,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         previousHealth = health;
 
         health -= amount;
-        audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], hurtVolume);
+        if (!playerDmgTaken)
+        {
+            audioController.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], hurtVolume);
+            playerDmgTaken = true;
+        }
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -301,6 +307,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         regenCo = StartCoroutine(RegenerateHealth());
 
         UpdatePlayerUI();
+        playerDmgTaken = false;
     }
 
     private IEnumerator RegenerateHealth()
