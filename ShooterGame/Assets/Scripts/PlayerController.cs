@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [Header("------- Components -------")]
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
-    private AudioSource audioController;
 
     [Header("------- Player Movement -------")]
     [SerializeField] public float movementSpeed;
